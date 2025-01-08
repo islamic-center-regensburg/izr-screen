@@ -1,0 +1,33 @@
+{
+    "name": "IZR Screen Dev",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+      "vscod^e": {
+        "extensions": [
+            "dbaeumer.vscode-eslint",
+            "eg2.vscode-npm-script",
+            "ms-vscode.vscode-typescript-next",
+            "msjsdiag.vscode-react-native",
+            "eamodio.gitlens",
+            "esbenp.prettier-vscode",
+            "formulahendry.auto-rename-tag",
+            "xdebug.php-debug",
+            "GitHub.copilot",
+            "christian-kohler.npm-intellisense",
+            "forbeslindesay.forbeslindesay-taskrunner"
+        ]
+    },
+    "vscode": {
+        "extensions": [
+            "forbeslindesay.forbeslindesay-taskrunner"
+        ]
+    }
+    },
+    "mounts": [
+      "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"
+  	],
+    "forwardPorts": [19000, 19001, 19002, 8081]  // Standard Expo ports
+  }
+  
