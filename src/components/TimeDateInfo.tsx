@@ -2,6 +2,7 @@ import { HStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import IText from "./IText";
 import DigitalClock from "./DigitalClock";
+import { colors } from "../config";
 
 interface props {
   data: string[];
@@ -27,7 +28,7 @@ function TimeDateInfo({ data }: props) {
       alignItems={"center"}
       height={"100%"}
       style={{
-        background: "white",
+        background: colors.grad,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
         borderRadius: "1rem",
       }}
@@ -37,7 +38,7 @@ function TimeDateInfo({ data }: props) {
           <IText
             style={{
               fontSize: "1.5vw",
-              color: "black",
+              color: "white",
               transition: "ease 2s",
               textAlign: "left",
               fontWeight: "bold",
@@ -47,7 +48,7 @@ function TimeDateInfo({ data }: props) {
             {d}
           </IText>
         ))}
-      <div style={{ padding: 10, width: "30%" }}>
+      <div style={{ padding: 5, width: "30%" }}>
         <DigitalClock />
       </div>
     </HStack>

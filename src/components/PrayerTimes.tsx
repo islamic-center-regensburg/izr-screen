@@ -31,9 +31,9 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     tarawih: 0,
   });
   useEffect(() => {}, []);
-  const FetchTodayPrayerTimes = () => {
+  const FetchTodayPrayerTimes = async () => {
     const ptimes: DayPrayerTimes =
-      FetchCurrentDayPrayerTimes() as DayPrayerTimes;
+      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
     const iqamas = GetIqamaTimes();
@@ -47,11 +47,11 @@ const PrayerTimes = ({ GoToEvents }: props) => {
   }, []);
 
   useEffect(() => {
-    setInterval(() => {
+    setInterval(async () => {
       const today = new Date();
       const time = today.getHours();
       if (time === 0) {
-        FetchTodayPrayerTimes();
+        await FetchTodayPrayerTimes();
       }
     }, 5 * 60 * 5000);
   }, []);
@@ -89,11 +89,11 @@ const PrayerTimes = ({ GoToEvents }: props) => {
   //   setPrayersLayout("2fr 1fr 1fr 1fr 1fr");
   // }, [NextPrayer]);
 
-  const HandleNextDay = () => {
+  const HandleNextDay = async () => {
     console.log("hnalding next day");
 
     const ptimes: DayPrayerTimes =
-      FetchCurrentDayPrayerTimes() as DayPrayerTimes;
+      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
   };
@@ -165,10 +165,11 @@ const PrayerTimes = ({ GoToEvents }: props) => {
       }}
     >
       <Grid
-        templateAreas={`"header header header header header"
-                  "Fajr Dhuhr Asr Maghrib Isha"
+        templateAreas={`
+          "Fajr Dhuhr Asr Maghrib Isha"
+          "header header header header header"
                   "footer footer footer footer footer"`}
-        gridTemplateRows={"1fr 8fr 1fr "}
+        gridTemplateRows={"8fr 1fr 1fr "}
         gridTemplateColumns={PrayersLayout}
         gap="50px"
         // backgroundColor={colors.primary}

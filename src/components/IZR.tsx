@@ -1,4 +1,4 @@
-import { HStack, VStack, Image, Button } from "@chakra-ui/react";
+import { HStack, VStack, Image } from "@chakra-ui/react";
 import logo from "./imgs/IZRLOGONOBG.png";
 import IText from "./IText";
 import { FetchIqamaTimes, FetchAndStorePrayerTimes } from "../toolsfn";
@@ -95,51 +95,36 @@ export function IZR({ GoTo }: props) {
       </HStack>
 
       <VStack gap={0} alignItems={"left"} padding={"0.5rem"} height={"100%"}>
-        <Button
-          variant={"ghost"}
-          colorScheme="purple"
-          fontFamily={"Tajawal"}
+        <button
           onClick={async () => await FetchIqamaTimes()}
-          size={"xs"}
+          style={{ fontSize: 10 }}
         >
           Iqama Zeiten aktualisieren
-        </Button>
-        <Button
-          variant={"ghost"}
-          colorScheme="purple"
-          fontFamily={"Tajawal"}
+        </button>
+        <button
           onClick={async () => await FetchAndStorePrayerTimes()}
-          size={"xs"}
+          style={{ fontSize: 10 }}
         >
           Gebetszeiten des Jahres aktualisieren
-        </Button>
-        <Button
-          variant={"ghost"}
-          colorScheme="purple"
-          fontFamily={"Tajawal"}
+        </button>
+        <button
           onClick={() => GoTo("hadith")}
-          size={"xs"}
+          style={{ fontSize: 10 }}
         >
           Hadith
-        </Button>
-        <Button
-          variant={"ghost"}
-          colorScheme="purple"
-          fontFamily={"Tajawal"}
+        </button>
+        <button
           onClick={() => GoTo("events")}
-          size={"xs"}
+          style={{ fontSize: 10 }}
         >
           Veranstaltungen
-        </Button>
-        <Button
-          variant={"ghost"}
-          colorScheme="purple"
-          fontFamily={"Tajawal"}
+        </button>
+        <button
           onClick={() => GoTo("werbung")}
-          size={"xs"}
+          style={{ fontSize: 10 }}
         >
           Werbung
-        </Button>
+        </button>
       </VStack>
     </HStack>
   );

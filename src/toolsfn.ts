@@ -85,7 +85,7 @@ export const getTime = (date : Date) => {
 }
 
 
-export const FetchCurrentDayPrayerTimes = (fake : boolean = false) => {
+export const FetchCurrentDayPrayerTimes = async (fake : boolean = false) => {
   if(fake){
     const now = new Date()
     const min = 60 * 1000
@@ -101,25 +101,21 @@ export const FetchCurrentDayPrayerTimes = (fake : boolean = false) => {
       Isha : getTime(new Date(now.getTime() + 20 * min)),
       }
   }
-  let testPreyerTimes  = LoadItem("yearPrayerTimes")
-  console.log("is null ?");
-  if(testPreyerTimes === null){
-    console.log("yes ?");
-    FetchAndStorePrayerTimes()
+  let today = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear()
+  let todayPrayerTimes : DayPrayerTimes |null = null
+  // let today = "31-5-2024"
+  
+  try {
+    let testPrayerTimes  = LoadItem("yearPrayerTimes").value
+    todayPrayerTimes = testPrayerTimes[today] as DayPrayerTimes
+  }catch(err) {
+    console.log("Fetching data again !")
+    await FetchAndStorePrayerTimes()
+    let testPrayerTimes  = LoadItem("yearPrayerTimes").value
+    todayPrayerTimes = testPrayerTimes[today] as DayPrayerTimes
   }
-    let preyerTimes  = LoadItem("yearPrayerTimes").value
-    let todayPrayerTimes : DayPrayerTimes |null = null
-    let today = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear()
-    // let today = "31-5-2024"
-    
-    try {
-        todayPrayerTimes = preyerTimes[today] as DayPrayerTimes
-        
-    }catch(err){
-        console.error("error :", err)
-    }
-    console.log(todayPrayerTimes)    
-    return todayPrayerTimes
+
+  return todayPrayerTimes
 }
 export const GetIqamaTimes = (fake : boolean = false) => {
   if(fake){

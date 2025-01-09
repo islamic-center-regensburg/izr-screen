@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import IText from "./IText";
-import { colors } from "../config";
 
 const DigitalClock = () => {
   const [time, setTime] = useState(new Date());
@@ -24,15 +23,15 @@ const DigitalClock = () => {
   return (
     <div
       style={{
-        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
+        // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
         borderRadius: "1rem",
         width: "100%",
         height: "100%",
-        background: colors.grad,
+        // background: colors.grad,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 10,
+        padding: 5,
       }}
     >
       <IText
