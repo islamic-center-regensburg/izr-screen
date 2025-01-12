@@ -33,8 +33,8 @@ const Prayer = ({
   const [diff, setDiff] = useState(0);
 
   const containerStyle = {
-    height: "100%",
-    width: "100%",
+    height: "95%",
+    // width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -44,7 +44,7 @@ const Prayer = ({
     // border: "2px solid lightgrey",
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
     transition: "ease 2s",
-    padding: "1rem",
+    padding: "0.5rem",
   };
   const prayerData = highlight
     ? [prayer_de, time, prayer_ar, remainingTime]
@@ -183,7 +183,7 @@ const Prayer = ({
         <VStack>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -194,7 +194,7 @@ const Prayer = ({
           </IText>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -213,7 +213,7 @@ const Prayer = ({
         <VStack>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -224,7 +224,7 @@ const Prayer = ({
           </IText>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -234,7 +234,7 @@ const Prayer = ({
           </IText>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -254,7 +254,7 @@ const Prayer = ({
         <VStack>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -265,7 +265,7 @@ const Prayer = ({
           </IText>
           <IText
             style={{
-              fontSize: "4vw",
+              fontSize: "3vw",
               fontWeight: "bold",
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
@@ -286,7 +286,7 @@ const Prayer = ({
           index !== 3 ? (
             <IText
               style={{
-                fontSize: "4vw",
+                fontSize: "3vw",
                 fontWeight: "bold",
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
@@ -298,7 +298,7 @@ const Prayer = ({
             currentState !== "prayer" && (
               <IText
                 style={{
-                  fontSize: "4vw",
+                  fontSize: "3vw",
                   fontWeight: "bold",
                   color: highlight ? "white" : "#132a13",
                   transition: "ease 2s",

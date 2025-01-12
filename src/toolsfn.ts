@@ -64,12 +64,11 @@ export const FetchAndStorePrayerTimes = async () => {
     let wholeYearPrayerTimes : DayPrayerTimes[] = []
     await axios.post<DayPrayerTimes[]>(izr_server + "/calculTimes/", {
         city_name: "Regensburg",
-        lat : 0,
-        lng : 0,
+        lat : 49.007734,
+        lng : 12.102841,
         start_date: { y : new Date().getFullYear(), m : 1, d : 1},
         end_date: { y : new Date().getFullYear(), m : 12, d : 31},
-        method : 6,
-        offset : null
+        method : 10,
     }).then((resp) => wholeYearPrayerTimes = resp.data).catch(() => console.error("Prayer times of the while year could not be fetched"))
     const tranformedPrayerTimes = transformArrayToObject(wholeYearPrayerTimes)
     console.log("prayer times of the while year")
@@ -104,6 +103,9 @@ export const FetchCurrentDayPrayerTimes = async (fake : boolean = false) => {
   let today = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear()
   let todayPrayerTimes : DayPrayerTimes |null = null
   // let today = "31-5-2024"
+
+  console.log("Today",today);
+  
   
   try {
     let testPrayerTimes  = LoadItem("yearPrayerTimes").value

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 import Prayer from "./Prayer";
 import {
   DayPrayerTimes,
@@ -62,22 +62,22 @@ const PrayerTimes = ({ GoToEvents }: props) => {
 
     switch (next.prayer) {
       case "Fajr":
-        setPrayersLayout("2fr 1fr 1fr 1fr 1fr");
+        setPrayersLayout("1.5fr 1fr 1fr 1fr 1fr");
         break;
       case "Dhuhr":
-        setPrayersLayout("1fr 2fr 1fr 1fr 1fr");
+        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr");
         break;
       case "Jumaa":
-        setPrayersLayout("1fr 2fr 1fr 1fr 1fr");
+        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr");
         break;
       case "Asr":
-        setPrayersLayout("1fr 1fr 2fr 1fr 1fr");
+        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr");
         break;
       case "Maghrib":
-        setPrayersLayout("1fr 1fr 1fr 2fr 1fr");
+        setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr");
         break;
       case "Isha":
-        setPrayersLayout("1fr 1fr 1fr 1fr 2fr");
+        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr");
         break;
     }
     setNextPrayer(next.prayer);
@@ -168,16 +168,17 @@ const PrayerTimes = ({ GoToEvents }: props) => {
         templateAreas={`
           "Fajr Dhuhr Asr Maghrib Isha"
           "header header header header header"
-                  "footer footer footer footer footer"`}
-        gridTemplateRows={"8fr 1fr 1fr "}
+          "footer footer footer footer footer"`}
+        gridTemplateRows={"8fr 1fr 1fr"}
         gridTemplateColumns={PrayersLayout}
-        gap="50px"
+        gap="10px"
         // backgroundColor={colors.primary}
         borderRadius={"1rem"}
         // margin={"1rem"}
         height={"100%"}
-        width={"100%"}
-        transition={"ease 2s"}
+        // width={"100wv"}
+        
+        transition={"ease 1s"}
       >
         <GridItem area={"header"}>
           {TodayPrayerTimes && (
@@ -203,9 +204,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
           </GridItem>
         ))}
         <GridItem area={"footer"}>
-          <HStack>
             <IZR GoTo={GoToEvents} />
-          </HStack>
         </GridItem>
       </Grid>
     </div>

@@ -23,7 +23,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div style={{backgroundColor : "white", width : "100%"}}>
       {current === "izr" && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Fade>

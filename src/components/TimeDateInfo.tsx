@@ -26,12 +26,13 @@ function TimeDateInfo({ data }: props) {
     <HStack
       justifyContent={"space-around"}
       alignItems={"center"}
-      height={"100%"}
+      // height={"100%"}
       style={{
         background: colors.grad,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
         borderRadius: "1rem",
       }}
+      
     >
       {today &&
         today.map((d, index) => (

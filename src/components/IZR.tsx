@@ -19,7 +19,9 @@ export function IZR({ GoTo }: props) {
         borderRadius: "1rem",
         width: "100%",
         justifyContent: "space-between",
+
       }}
+
     >
       <HStack>
         <Image src={logo} boxSize="4vw" objectFit="contain"></Image>
