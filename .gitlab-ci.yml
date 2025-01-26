@@ -1,0 +1,12 @@
+stages:
+  - deploy
+
+deploy_izr_screen:
+  stage: deploy
+  image: node:alpine
+  variables:
+    TARGET: screen
+  trigger:
+    include: 
+      - project: izr-production/izr-server
+        file: .gitlab-ci.yml
