@@ -23,7 +23,7 @@ build_izr_screen:
     - git config --global user.name "CI Runner"
     - git add deploy/
     - git commit -m "Deploy built content to main"
-    - git remote set-url origin https://$CI_JOB_TOKEN@gitlab.com/islamic-center-rgbg/izr-screen.git
+    - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/islamic-center-rgbg/izr-screen.git
     - git push origin main
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
