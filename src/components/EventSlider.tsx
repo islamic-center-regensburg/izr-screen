@@ -23,8 +23,7 @@ function EventSlider({ onEnd }: Props) {
         const eventUrls = response.data.events.map((event) => event.flyerTV);
         // Add default images at the end
         eventUrls.push(
-          "https://izr-cloud.online/media/gallery_images/APPFlyer.png",
-          "https://izr-cloud.online/media/gallery_images/IZRFlyer.png"
+          "https://izr-cloud.online/media/gallery_images/IZR_Flyer_Wide_1.png",
         );
         console.log(eventUrls);
         setEvents(eventUrls);

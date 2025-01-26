@@ -157,6 +157,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     <div
       style={{
         height: "100vh",
+        width : "100vw",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -176,17 +177,10 @@ const PrayerTimes = ({ GoToEvents }: props) => {
         borderRadius={"1rem"}
         // margin={"1rem"}
         height={"100%"}
-        // width={"100wv"}
+        width={"100%"}
         
         transition={"ease 1s"}
       >
-        <GridItem area={"header"}>
-          {TodayPrayerTimes && (
-            <TimeDateInfo
-              data={[TodayPrayerTimes["Hijri"], TodayPrayerTimes["Hijri_ar"]]}
-            />
-          )}
-        </GridItem>
         {prayers.map((prayer) => (
           <GridItem key={prayer.de} area={prayer.key} transition={"ease 2s"}>
             <Prayer
@@ -205,6 +199,13 @@ const PrayerTimes = ({ GoToEvents }: props) => {
         ))}
         <GridItem area={"footer"}>
             <IZR GoTo={GoToEvents} />
+        </GridItem>
+        <GridItem area={"header"}>
+          {TodayPrayerTimes && (
+            <TimeDateInfo
+              data={[TodayPrayerTimes["Hijri"], TodayPrayerTimes["Hijri_ar"]]}
+            />
+          )}
         </GridItem>
       </Grid>
     </div>

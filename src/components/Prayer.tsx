@@ -33,7 +33,7 @@ const Prayer = ({
   const [diff, setDiff] = useState(0);
 
   const containerStyle = {
-    height: "95%",
+    height: "100%",
     // width: "100%",
     display: "flex",
     justifyContent: "center",
@@ -309,11 +309,11 @@ const Prayer = ({
             )
           )
         )}
-        <HStack justifyContent={"space-between"} width={"100%"}>
+        <VStack justifyContent={"space-between"} width={"100%"}>
           {iqama !== 0 && (
             <IText
               style={{
-                fontSize: "1vw",
+                fontSize: "1.5vw",
                 fontWeight: "bold",
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
@@ -326,7 +326,7 @@ const Prayer = ({
           {iqama !== 0 && iqama >= 10 && (
             <IText
               style={{
-                fontSize: "1vw",
+                fontSize: "1.5vw",
                 fontWeight: "bold",
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
@@ -339,7 +339,7 @@ const Prayer = ({
           {iqama !== 0 && iqama <= 10 && (
             <IText
               style={{
-                fontSize: "1vw",
+                fontSize: "1.5vw",
                 fontWeight: "bold",
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
@@ -349,7 +349,7 @@ const Prayer = ({
               الإقامة {iqama} دقائق بعد الأذان
             </IText>
           )}
-        </HStack>
+        </VStack>
       </VStack>
     </div>
   );
