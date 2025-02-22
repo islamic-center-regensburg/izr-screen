@@ -25,6 +25,10 @@ const Fade = ({ children }: props) => {
       style={{
         transition: `opacity 2s ease-in-out`,
         opacity: String(Opacity),
+        height : "100vh",
+        width : "100vw",
+        justifyContent : "center",
+        alignItems : "center"
       }}
     >
       {children}

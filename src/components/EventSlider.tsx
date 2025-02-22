@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { izr_server } from "../config";
 import "react-slideshow-image/dist/styles.css";
 import Slide from "./Slide";
-import { Image } from "@chakra-ui/react";
+import {  Image } from "@chakra-ui/react";
 
 interface Props {
   onEnd: () => void;
@@ -41,11 +41,9 @@ function EventSlider({ onEnd }: Props) {
           key={index}
           src={slideImage}
           style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover", // or 'cover' for a full bleed effect
             borderRadius: "20px",
             boxShadow: "0px 0px 10px 4px lightgrey",
+            border : "5px solid darkgreen"
           }}
         />
       ))}

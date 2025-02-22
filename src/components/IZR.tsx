@@ -34,7 +34,7 @@ export function IZR({ GoTo }: props) {
         >
           <IText
             style={{
-              fontSize: "1.2vw",
+              fontSize: "1vw",
               color: "black",
               transition: "ease 2s",
               textAlign: "left",
@@ -45,7 +45,7 @@ export function IZR({ GoTo }: props) {
           </IText>
           <IText
             style={{
-              fontSize: "1.5vw",
+              fontSize: "1vw",
               color: "black",
               transition: "ease 2s",
               textAlign: "center",
@@ -59,7 +59,7 @@ export function IZR({ GoTo }: props) {
       <VStack gap={0} alignItems={"left"} padding={"1rem"}>
         <IText
           style={{
-            fontSize: "1.5vw",
+            fontSize: "1vw",
             color: "black",
             transition: "ease 2s",
             textAlign: "left",
@@ -70,7 +70,7 @@ export function IZR({ GoTo }: props) {
         </IText>{" "}
         <IText
           style={{
-            fontSize: "1.5vw",
+            fontSize: "1vw",
             color: "black",
             transition: "ease 2s",
             textAlign: "left",
@@ -83,7 +83,7 @@ export function IZR({ GoTo }: props) {
       <HStack>
         <IText
           style={{
-            fontSize: "1.5vw",
+            fontSize: "1vw",
             color: "black",
             transition: "ease 2s",
             textAlign: "left",
@@ -99,31 +99,29 @@ export function IZR({ GoTo }: props) {
       <VStack gap={0} alignItems={"left"} padding={"0.5rem"} height={"100%"}>
         <Button
           onClick={async () => await FetchIqamaTimes()}
-          style={{ fontSize: 10 }}
-          size={"xs"}
+          style={{ fontSize: "0.5rem" }}
+          size={"s"}
         >
           Iqama Zeiten aktualisieren
         </Button>
         <Button
           onClick={async () => await FetchAndStorePrayerTimes()}
-          style={{ fontSize: 10 }}
-          size={"xs"}
+          style={{ fontSize: "0.5rem" }}
+          size={"s"}
         >
           Gebetszeiten des Jahres aktualisieren
         </Button>
         <Button
           onClick={() => GoTo("hadith")}
-          style={{ fontSize: 10 }}
-          size={"xs"}
+          style={{ fontSize: "0.5rem" }}
+          size={"s"}
         >
           Hadith
         </Button>
         <Button
           onClick={() => GoTo("events")}
-          style={{ fontSize: 10 }}
-          size={"xs"}
-          
-          
+          style={{ fontSize: "0.5rem" }}
+          size={"s"}
         >
           Veranstaltungen
         </Button>

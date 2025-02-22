@@ -27,7 +27,7 @@ function Slide({ children, interval, onEnd }: SlideProps) {
   }, [children.length, interval, onEnd]);
 
   return (
-    <VStack maxH={"100vh"} padding={"3rem"}>
+    <VStack height={"100%"} justifyContent={"center"} alignItems={"center"} padding={"1rem"}>
       {children[currentIndex]}
     </VStack>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PrayerTimes from "./components/PrayerTimes";
 import EventSlider from "./components/EventSlider";
-import { Image } from "@chakra-ui/react";
+import {  Image } from "@chakra-ui/react";
 import izr from "./components/imgs/IZRBG.png";
 import Fade from "./components/Fade";
 import HadithSlider from "./HadithSlider";
@@ -23,7 +23,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{backgroundColor : "white", width : "100%"}}>
+    <>
       {current === "izr" && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Fade>
@@ -43,7 +43,7 @@ function App() {
       )}
       {current === "adhkar" && (
         <Fade>
-          <EventSlider onEnd={() => handleSwitch("hadith")} />
+          <EventSlider onEnd={() => handleSwitch("events")} />
         </Fade>
       )}
       {current === "hadith" && (
@@ -60,7 +60,7 @@ function App() {
           height={"100vh"}
         />
       )}
-    </div>
+    </>
   );
 }
 

@@ -45,6 +45,8 @@ const Prayer = ({
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
     transition: "ease 2s",
     padding: "0.5rem",
+
+    
   };
   const prayerData = highlight
     ? [prayer_de, time, prayer_ar, remainingTime]
