@@ -174,6 +174,7 @@ export function getNextPrayerTime(prayerTimes: DayPrayerTimes) {
         currentHour < prayerHour ||
         (currentHour === prayerHour && currentMinute < prayerMinute)
       ) {
+        console.log("Next Prayer : ", prayer)
         return { prayer };
       }
     }

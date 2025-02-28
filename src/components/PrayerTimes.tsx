@@ -122,9 +122,9 @@ const PrayerTimes = ({ GoToEvents }: props) => {
       iqama: iqamaTimes.maghrib,
     },
     {
-      de: "Qiam",
-      key: "Qiam",
-      ar: "القيام",
+      de: "Tarawih",
+      key: "Tarawih",
+      ar: "التراويح",
       time: TodayPrayerTimes?.Tarawih,
       iqama: iqamaTimes.tarawih,
     }
@@ -174,7 +174,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     >
       <Grid
         templateAreas={`
-          "Fajr Dhuhr Asr Maghrib Qiam"
+          "Fajr Dhuhr Asr Maghrib Tarawih"
           "header header header header header"
           "footer footer footer footer footer"`}
         gridTemplateRows={"8fr 1fr 1fr"}
