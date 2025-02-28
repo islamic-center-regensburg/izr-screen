@@ -30,7 +30,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     maghrib: 5,
     tarawih: 0,
   });
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const FetchTodayPrayerTimes = async () => {
     const ptimes: DayPrayerTimes =
       await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
@@ -122,42 +122,49 @@ const PrayerTimes = ({ GoToEvents }: props) => {
       iqama: iqamaTimes.maghrib,
     },
     {
-      de: "Isha",
-      key: "Isha",
-      ar: "العشاء",
-      time: TodayPrayerTimes?.Isha,
-      iqama: iqamaTimes.isha,
-    },
+      de: "Qiam",
+      key: "Qiam",
+      ar: "القيام",
+      time: TodayPrayerTimes?.Tarawih,
+      iqama: iqamaTimes.tarawih,
+    }
+    // {
+    //   de: "Isha",
+    //   key: "Isha",
+    //   ar: "العشاء",
+    //   time: TodayPrayerTimes?.Isha,
+    //   iqama: iqamaTimes.isha,
+    // },
   ];
 
   const prayers =
     new Date().getDay() === 5
       ? [
-          ...prayer_times,
-          {
-            de: "Jumaa",
-            key: "Dhuhr",
-            ar: "الجمعة",
-            time: TodayPrayerTimes?.Jumaa,
-            iqama: iqamaTimes.jumaa,
-          },
-        ]
+        ...prayer_times,
+        {
+          de: "Jumaa",
+          key: "Dhuhr",
+          ar: "الجمعة",
+          time: TodayPrayerTimes?.Jumaa,
+          iqama: iqamaTimes.jumaa,
+        },
+      ]
       : [
-          ...prayer_times,
-          {
-            de: "Dhuhr",
-            key: "Dhuhr",
-            ar: "الظهر",
-            time: TodayPrayerTimes?.Dhuhr,
-            iqama: iqamaTimes.dhuhr,
-          },
-        ];
+        ...prayer_times,
+        {
+          de: "Dhuhr",
+          key: "Dhuhr",
+          ar: "الظهر",
+          time: TodayPrayerTimes?.Dhuhr,
+          iqama: iqamaTimes.dhuhr,
+        },
+      ];
 
   return (
     <div
       style={{
         height: "100vh",
-        width : "100vw",
+        width: "100vw",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -167,7 +174,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     >
       <Grid
         templateAreas={`
-          "Fajr Dhuhr Asr Maghrib Isha"
+          "Fajr Dhuhr Asr Maghrib Qiam"
           "header header header header header"
           "footer footer footer footer footer"`}
         gridTemplateRows={"8fr 1fr 1fr"}
@@ -178,7 +185,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
         // margin={"1rem"}
         height={"100%"}
         width={"100%"}
-        
+
         transition={"ease 1s"}
       >
         {prayers.map((prayer) => (
@@ -198,7 +205,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
           </GridItem>
         ))}
         <GridItem area={"footer"}>
-            <IZR GoTo={GoToEvents} />
+          <IZR GoTo={GoToEvents} />
         </GridItem>
         <GridItem area={"header"}>
           {TodayPrayerTimes && (

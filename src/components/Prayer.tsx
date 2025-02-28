@@ -46,7 +46,7 @@ const Prayer = ({
     transition: "ease 2s",
     padding: "0.5rem",
 
-    
+
   };
   const prayerData = highlight
     ? [prayer_de, time, prayer_ar, remainingTime]
@@ -66,9 +66,9 @@ const Prayer = ({
     const timeUntilNextDay = nextDay.getTime() - now.getTime();
     console.log(
       "this function is triggered and the time until next day is " +
-        timeUntilNextDay / 60 / 60 / 1000 +
-        " hours  and minutes : " +
-        timeUntilNextDay / 60 / 100
+      timeUntilNextDay / 60 / 60 / 1000 +
+      " hours  and minutes : " +
+      timeUntilNextDay / 60 / 100
     );
     setTimeout(() => {
       reloadPrayerTimes();
@@ -117,7 +117,6 @@ const Prayer = ({
         setCurrentState("prayer");
       }
       if (currentState === "prayer") {
-        prayer_de !== "Jumaa" && GoToEvents("adhkar");
         prayer_de === "Jumaa" && GetNextPrayerTimes();
       }
     }

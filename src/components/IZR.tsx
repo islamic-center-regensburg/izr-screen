@@ -1,10 +1,11 @@
-import { HStack, VStack, Image, Button } from "@chakra-ui/react";
+import { HStack, VStack, Image } from "@chakra-ui/react";
 import logo from "./imgs/izr_logo.png";
 import IText from "./IText";
-import { FetchIqamaTimes, FetchAndStorePrayerTimes } from "../toolsfn";
 import ios from "./imgs/ios.png";
 import andy from "./imgs/andy.png";
 import izr from "./imgs/izr.png";
+import { IoSettingsOutline } from "react-icons/io5";
+
 
 interface props {
   GoTo: (what: string) => void;
@@ -19,7 +20,7 @@ export function IZR({ GoTo }: props) {
         borderRadius: "1rem",
         width: "100%",
         justifyContent: "space-between",
-
+        padding: 10
       }}
 
     >
@@ -94,38 +95,9 @@ export function IZR({ GoTo }: props) {
         </IText>
         <Image boxSize="5vw" objectFit="contain" src={ios}></Image>
         <Image boxSize="5vw" objectFit="contain" src={andy}></Image>
+        <IoSettingsOutline onClick={() => GoTo("settings")} size={"2vw"} cursor={"pointer"} />
       </HStack>
 
-      <VStack gap={0} alignItems={"left"} padding={"0.5rem"} height={"100%"}>
-        <Button
-          onClick={async () => await FetchIqamaTimes()}
-          style={{ fontSize: "0.5rem" }}
-          size={"s"}
-        >
-          Iqama Zeiten aktualisieren
-        </Button>
-        <Button
-          onClick={async () => await FetchAndStorePrayerTimes()}
-          style={{ fontSize: "0.5rem" }}
-          size={"s"}
-        >
-          Gebetszeiten des Jahres aktualisieren
-        </Button>
-        <Button
-          onClick={() => GoTo("hadith")}
-          style={{ fontSize: "0.5rem" }}
-          size={"s"}
-        >
-          Hadith
-        </Button>
-        <Button
-          onClick={() => GoTo("events")}
-          style={{ fontSize: "0.5rem" }}
-          size={"s"}
-        >
-          Veranstaltungen
-        </Button>
-      </VStack>
     </HStack>
   );
 }

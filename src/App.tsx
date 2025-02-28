@@ -5,6 +5,7 @@ import {  Image } from "@chakra-ui/react";
 import izr from "./components/imgs/IZRBG.png";
 import Fade from "./components/Fade";
 import HadithSlider from "./HadithSlider";
+import Settings from "./components/Settings";
 
 function App() {
   const [current, setCurrent] = useState("prayer");
@@ -41,24 +42,13 @@ function App() {
           <EventSlider onEnd={() => handleSwitch("hadith")} />
         </Fade>
       )}
-      {current === "adhkar" && (
-        <Fade>
-          <EventSlider onEnd={() => handleSwitch("events")} />
-        </Fade>
-      )}
       {current === "hadith" && (
         <Fade>
           <HadithSlider onEnd={() => setCurrent("prayer")} />
         </Fade>
       )}
-      {current === "werbung" && (
-        <Image
-          src="https://izr-cloud.online/getEvents/werbung.jpg"
-          alt="Werbung"
-          alignSelf={"center"}
-          width={"100vw"}
-          height={"100vh"}
-        />
+      {current === "settings" && (
+          <Settings GoTo={(what) => setCurrent(what)} />
       )}
     </>
   );
