@@ -121,7 +121,7 @@ export const FetchCurrentDayPrayerTimes = async (fake: boolean = false) => {
     let testPrayerTimes = LoadItem("yearPrayerTimes").value
     todayPrayerTimes = testPrayerTimes[today] as DayPrayerTimes
   }
-  todayPrayerTimes["Tarawih"] = "20:30"
+  todayPrayerTimes["Isha"] = "20:30"
   return todayPrayerTimes
 }
 export const GetIqamaTimes = (fake: boolean = false) => {
@@ -157,7 +157,7 @@ export function getNextPrayerTime(prayerTimes: DayPrayerTimes) {
   const currentDay = currentDate.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
 
   // Define the prayer order
-  const prayerOrder = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Tarawih"];
+  const prayerOrder = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
   // If it's Friday, replace Dhuhr with Jumaa
   if (currentDay === 5) {
@@ -175,7 +175,7 @@ export function getNextPrayerTime(prayerTimes: DayPrayerTimes) {
         (currentHour === prayerHour && currentMinute < prayerMinute)
       ) {
         console.log("Next Prayer : ", prayer)
-        return { prayer };
+        return { prayer};
       }
     }
   }

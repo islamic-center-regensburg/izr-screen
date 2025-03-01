@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PrayerTimes from "./components/PrayerTimes";
 import EventSlider from "./components/EventSlider";
-import {  Image } from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 import izr from "./components/imgs/IZRBG.png";
 import Fade from "./components/Fade";
 import HadithSlider from "./HadithSlider";
@@ -34,7 +34,7 @@ function App() {
       )}
       {current === "prayer" && (
         <Fade>
-          <PrayerTimes GoToEvents={(what) => handleSwitch(what)} />
+          <PrayerTimes GoTo={(what) => handleSwitch(what)} />
         </Fade>
       )}
       {current === "events" && (
@@ -48,7 +48,7 @@ function App() {
         </Fade>
       )}
       {current === "settings" && (
-          <Settings GoTo={(what) => setCurrent(what)} />
+        <Settings GoTo={(what) => setCurrent(what)} />
       )}
     </>
   );

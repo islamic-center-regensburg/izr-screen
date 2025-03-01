@@ -12,7 +12,7 @@ interface props {
   iqama: number;
   GetNextPrayerTimes: () => void;
   reloadPrayerTimes: () => void;
-  GoToEvents: (what: string) => void;
+  GoTo: (what: string) => void;
 }
 
 const Prayer = ({
@@ -23,7 +23,7 @@ const Prayer = ({
   iqama,
   GetNextPrayerTimes,
   reloadPrayerTimes,
-  GoToEvents,
+  GoTo,
 }: props) => {
   const [remainingTime, setRemainingTime] = useState<string | null>(null);
   const [highlight, setHighlight] = useState(false);
@@ -83,7 +83,7 @@ const Prayer = ({
       currentState === "countdown" &&
       diff >= 5 * 60 * 1000
     ) {
-      GoToEvents("events");
+      GoTo("events");
     }
   }, [eventsCounter]);
   function calculateRemainingTime() {
@@ -319,9 +319,24 @@ const Prayer = ({
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
                 direction: "ltr",
+                textAlign: "center"
               }}
             >
               Iqama {iqama} min nach Adhan
+            </IText>
+          )}
+          {iqama === 0 && (
+            <IText
+              style={{
+                fontSize: "1.5vw",
+                fontWeight: "bold",
+                color: highlight ? "white" : "#132a13",
+                transition: "ease 2s",
+                direction: "ltr",
+                textAlign: "center"
+              }}
+            >
+              Iqama direkt nach Adhan
             </IText>
           )}
           {iqama !== 0 && iqama >= 10 && (
@@ -332,6 +347,7 @@ const Prayer = ({
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
                 direction: "rtl",
+                textAlign: "center"
               }}
             >
               الإقامة {iqama} دقيقة بعد الأذان
@@ -345,9 +361,24 @@ const Prayer = ({
                 color: highlight ? "white" : "#132a13",
                 transition: "ease 2s",
                 direction: "rtl",
+                textAlign: "center"
               }}
             >
               الإقامة {iqama} دقائق بعد الأذان
+            </IText>
+          )}
+          {iqama === 0 && (
+            <IText
+              style={{
+                fontSize: "1.5vw",
+                fontWeight: "bold",
+                color: highlight ? "white" : "#132a13",
+                transition: "ease 2s",
+                direction: "rtl",
+                textAlign: "center"
+              }}
+            >
+              الإقامة بعد الأذان
             </IText>
           )}
         </VStack>

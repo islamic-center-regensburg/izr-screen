@@ -11,10 +11,10 @@ import { IZR } from "./IZR";
 import TimeDateInfo from "./TimeDateInfo";
 
 interface props {
-  GoToEvents: (what: string) => void;
+  GoTo: (what: string) => void;
 }
 
-const PrayerTimes = ({ GoToEvents }: props) => {
+const PrayerTimes = ({ GoTo }: props) => {
   const [TodayPrayerTimes, setTodayPrayerTimes] =
     useState<DayPrayerTimes | null>(null);
   const [NextPrayer, setNextPrayer] = useState<string | null>(null);
@@ -25,7 +25,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     asr: 15,
     dhuhr: 15,
     fajr: 15,
-    isha: 5,
+    isha: 0,
     jumaa: 0,
     maghrib: 5,
     tarawih: 0,
@@ -77,10 +77,16 @@ const PrayerTimes = ({ GoToEvents }: props) => {
         setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr");
         break;
       case "Isha":
-        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr");
+        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr 1fr");
         break;
     }
     setNextPrayer(next.prayer);
+    if (next.prayer === "none") {
+      setTimeout(() => {
+        console.log("next is none")
+        GoTo("events")
+      }, 2 * 60 * 1000);
+    }
   };
 
   // useEffect(() => {
@@ -122,19 +128,13 @@ const PrayerTimes = ({ GoToEvents }: props) => {
       iqama: iqamaTimes.maghrib,
     },
     {
-      de: "Tarawih",
-      key: "Tarawih",
-      ar: "التراويح",
-      time: TodayPrayerTimes?.Tarawih,
-      iqama: iqamaTimes.tarawih,
-    }
-    // {
-    //   de: "Isha",
-    //   key: "Isha",
-    //   ar: "العشاء",
-    //   time: TodayPrayerTimes?.Isha,
-    //   iqama: iqamaTimes.isha,
-    // },
+      de: "Isha",
+      key: "Isha",
+      ar: "العشاء",
+      time: TodayPrayerTimes?.Isha,
+      // iqama: iqamaTimes.isha,
+      iqama: 0,
+    },
   ];
 
   const prayers =
@@ -174,7 +174,7 @@ const PrayerTimes = ({ GoToEvents }: props) => {
     >
       <Grid
         templateAreas={`
-          "Fajr Dhuhr Asr Maghrib Tarawih"
+          "Fajr Dhuhr Asr Maghrib Isha"
           "header header header header header"
           "footer footer footer footer footer"`}
         gridTemplateRows={"8fr 1fr 1fr"}
@@ -200,12 +200,12 @@ const PrayerTimes = ({ GoToEvents }: props) => {
               GetNextPrayerTimes={() =>
                 HandleGetNextPrayerTimes(TodayPrayerTimes!)
               }
-              GoToEvents={(what) => GoToEvents(what)}
+              GoTo={(what) => GoTo(what)}
             ></Prayer>
           </GridItem>
         ))}
         <GridItem area={"footer"}>
-          <IZR GoTo={GoToEvents} />
+          <IZR GoTo={GoTo} />
         </GridItem>
         <GridItem area={"header"}>
           {TodayPrayerTimes && (
