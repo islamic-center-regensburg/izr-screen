@@ -197,6 +197,7 @@ const PrayerTimes = ({ GoTo }: props) => {
               time={prayer.time!}
               next={NextPrayer!}
               iqama={prayer.iqama}
+              comments={prayer.de == "Isha" ? ["Tarawih Gebet gleich nach Isha", "صلاة التراويح بعد العشاء مباشرة"] : []}
               GetNextPrayerTimes={() =>
                 HandleGetNextPrayerTimes(TodayPrayerTimes!)
               }
@@ -215,7 +216,7 @@ const PrayerTimes = ({ GoTo }: props) => {
           )}
         </GridItem>
       </Grid>
-    </div>
+    </div >
   );
 };
 

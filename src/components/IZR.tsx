@@ -35,7 +35,7 @@ export function IZR({ GoTo }: props) {
         >
           <IText
             style={{
-              fontSize: "1vw",
+              fontSize: "1.5vw",
               color: "black",
               transition: "ease 2s",
               textAlign: "left",
@@ -46,7 +46,7 @@ export function IZR({ GoTo }: props) {
           </IText>
           <IText
             style={{
-              fontSize: "1vw",
+              fontSize: "2vw",
               color: "black",
               transition: "ease 2s",
               textAlign: "center",
@@ -60,7 +60,7 @@ export function IZR({ GoTo }: props) {
       <VStack gap={0} alignItems={"left"} padding={"1rem"}>
         <IText
           style={{
-            fontSize: "1vw",
+            fontSize: "2vw",
             color: "black",
             transition: "ease 2s",
             textAlign: "left",
@@ -71,7 +71,7 @@ export function IZR({ GoTo }: props) {
         </IText>{" "}
         <IText
           style={{
-            fontSize: "1vw",
+            fontSize: "2vw",
             color: "black",
             transition: "ease 2s",
             textAlign: "left",

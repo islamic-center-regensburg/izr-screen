@@ -10,6 +10,7 @@ interface props {
   time: string;
   next: string;
   iqama: number;
+  comments?: string[]
   GetNextPrayerTimes: () => void;
   reloadPrayerTimes: () => void;
   GoTo: (what: string) => void;
@@ -21,6 +22,7 @@ const Prayer = ({
   time,
   next,
   iqama,
+  comments,
   GetNextPrayerTimes,
   reloadPrayerTimes,
   GoTo,
@@ -117,6 +119,7 @@ const Prayer = ({
         setCurrentState("prayer");
       }
       if (currentState === "prayer") {
+        prayer_de !== "Jumaa" && GoTo("events");
         prayer_de === "Jumaa" && GetNextPrayerTimes();
       }
     }
@@ -275,6 +278,24 @@ const Prayer = ({
           >
             {prayer_de} Iqamah
           </IText>
+          {comments && <VStack>
+            <IText style={{
+              fontSize: "1vw",
+              fontWeight: "bold",
+              color: highlight ? "white" : "#132a13",
+              transition: "ease 2s",
+              direction: "rtl",
+              textAlign: "center"
+            }} >{comments[0]}</IText>
+            <IText style={{
+              fontSize: "1vw",
+              fontWeight: "bold",
+              color: highlight ? "white" : "#132a13",
+              transition: "ease 2s",
+              direction: "rtl",
+              textAlign: "center"
+            }}>{comments[1]}</IText>
+          </VStack>}
         </VStack>
       </div>
     );
@@ -382,6 +403,24 @@ const Prayer = ({
             </IText>
           )}
         </VStack>
+        {comments && <VStack>
+          <IText style={{
+            fontSize: "1vw",
+            fontWeight: "bold",
+            color: highlight ? "white" : "#132a13",
+            transition: "ease 2s",
+            direction: "rtl",
+            textAlign: "center"
+          }}>{comments[0]}</IText>
+          <IText style={{
+            fontSize: "1vw",
+            fontWeight: "bold",
+            color: highlight ? "white" : "#132a13",
+            transition: "ease 2s",
+            direction: "rtl",
+            textAlign: "center"
+          }}>{comments[1]}</IText>
+        </VStack>}
       </VStack>
     </div>
   );
