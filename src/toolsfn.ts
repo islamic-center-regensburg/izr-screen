@@ -95,11 +95,11 @@ export const FetchCurrentDayPrayerTimes = async (fake: boolean = false) => {
       Hijri: now.toDateString(),
       Hijri_ar: now.toDateString(),
       Fajr: getTime(new Date(now.getTime() - 1 * min)),
-      Dhuhr: getTime(new Date(now.getTime() + 5 * min)),
+      Dhuhr: getTime(new Date(now.getTime() + 2 * min)),
       Jumaa: getTime(new Date(now.getTime() + 1 * min)),
-      Asr: getTime(new Date(now.getTime() + 10 * min)),
-      Maghrib: getTime(new Date(now.getTime() + 15 * min)),
-      Isha: getTime(new Date(now.getTime() + 20 * min)),
+      Asr: getTime(new Date(now.getTime() + 4 * min)),
+      Maghrib: getTime(new Date(now.getTime() + 6 * min)),
+      Isha: getTime(new Date(now.getTime() + 8 * min)),
     }
   }
   let today =

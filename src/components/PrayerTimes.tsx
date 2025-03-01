@@ -33,10 +33,10 @@ const PrayerTimes = ({ GoTo }: props) => {
   useEffect(() => { }, []);
   const FetchTodayPrayerTimes = async () => {
     const ptimes: DayPrayerTimes =
-      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
+      await FetchCurrentDayPrayerTimes(true) as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
-    const iqamas = GetIqamaTimes();
+    const iqamas = GetIqamaTimes(true);
     console.log("log");
     setIqamaTime(iqamas);
     console.log("Fetching");
@@ -77,7 +77,7 @@ const PrayerTimes = ({ GoTo }: props) => {
         setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr");
         break;
       case "Isha":
-        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr 1fr");
+        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr");
         break;
     }
     setNextPrayer(next.prayer);
