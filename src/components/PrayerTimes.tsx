@@ -33,10 +33,10 @@ const PrayerTimes = ({ GoTo }: props) => {
   useEffect(() => { }, []);
   const FetchTodayPrayerTimes = async () => {
     const ptimes: DayPrayerTimes =
-      await FetchCurrentDayPrayerTimes(true) as DayPrayerTimes;
+      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
-    const iqamas = GetIqamaTimes(true);
+    const iqamas = GetIqamaTimes();
     console.log("log");
     setIqamaTime(iqamas);
     console.log("Fetching");
