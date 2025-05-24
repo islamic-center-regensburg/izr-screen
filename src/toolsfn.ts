@@ -41,6 +41,7 @@ export interface DayPrayerTimes {
   Datum: string
   Dhuhr: string
   Fajr: string
+  Shuruq: string
   Hijri: string
   Hijri_ar: string
   Isha: string
@@ -64,13 +65,10 @@ export const FetchAndStorePrayerTimes = async () => {
   alert("Fetching prayer times... Please wait unitl you are notified !");
 
   let wholeYearPrayerTimes: DayPrayerTimes[] = []
-  await axios.post<DayPrayerTimes[]>(izr_server + "/calculTimes/", {
-    city_name: "Regensburg",
-    lat: 49.007734,
-    lng: 12.102841,
-    start_date: { y: new Date().getFullYear(), m: 1, d: 1 },
-    end_date: { y: new Date().getFullYear(), m: 12, d: 31 },
-    method: 10,
+  await axios.post<DayPrayerTimes[]>(izr_server + "/prayer-times", {
+    method: "izr",
+    value: new Date().getFullYear(),
+    period : "annual"
   }).then((resp) => { wholeYearPrayerTimes = resp.data; alert("Prayer times successfully fetched and stored! Click on Reload !"); }).catch(() => alert("Error: Prayer times could not be fetched."))
   const tranformedPrayerTimes = transformArrayToObject(wholeYearPrayerTimes)
   console.log("prayer times of the while year")
@@ -121,7 +119,8 @@ export const FetchCurrentDayPrayerTimes = async (fake: boolean = false) => {
     let testPrayerTimes = LoadItem("yearPrayerTimes").value
     todayPrayerTimes = testPrayerTimes[today] as DayPrayerTimes
   }
-  todayPrayerTimes["Isha"] = "20:30"
+  // todayPrayerTimes["Isha"] = "20:30"
+  todayPrayerTimes["Jumaa"] = "15:00"
   return todayPrayerTimes
 }
 export const GetIqamaTimes = (fake: boolean = false) => {
@@ -137,6 +136,8 @@ export const GetIqamaTimes = (fake: boolean = false) => {
   }
   FetchIqamaTimes()
   const iqamas = LoadItem("iqama").value;
+  iqamas["shuruq"] = 0;
+  iqamas["fajr"] = 0;
   return iqamas
 }
 
@@ -157,7 +158,7 @@ export function getNextPrayerTime(prayerTimes: DayPrayerTimes) {
   const currentDay = currentDate.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
 
   // Define the prayer order
-  const prayerOrder = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+  const prayerOrder = ["Fajr", "Shuruq", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
   // If it's Friday, replace Dhuhr with Jumaa
   if (currentDay === 5) {

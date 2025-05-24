@@ -19,7 +19,7 @@ const PrayerTimes = ({ GoTo }: props) => {
     useState<DayPrayerTimes | null>(null);
   const [NextPrayer, setNextPrayer] = useState<string | null>(null);
   const [PrayersLayout, setPrayersLayout] = useState<string>(
-    "1fr 1fr 1fr 1fr 1fr"
+    "1fr 1fr 1fr 1fr 1fr 1fr"
   );
   const [iqamaTimes, setIqamaTime] = useState({
     asr: 15,
@@ -29,6 +29,7 @@ const PrayerTimes = ({ GoTo }: props) => {
     jumaa: 0,
     maghrib: 5,
     tarawih: 0,
+    shuruq: 0,
   });
   useEffect(() => { }, []);
   const FetchTodayPrayerTimes = async () => {
@@ -62,24 +63,28 @@ const PrayerTimes = ({ GoTo }: props) => {
 
     switch (next.prayer) {
       case "Fajr":
-        setPrayersLayout("1.5fr 1fr 1fr 1fr 1fr");
+        setPrayersLayout("1.5fr 1fr 1fr 1fr 1fr 1fr");
+        break;
+      case "Shuruq":
+        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr 1fr");
         break;
       case "Dhuhr":
-        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr");
+        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr 1fr");
         break;
-      case "Jumaa":
-        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr");
+      case "Jumaa":  // Optional: could use same layout as Dhuhr or a unique one
+        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr 1fr");
         break;
       case "Asr":
-        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr");
+        setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr 1fr");
         break;
       case "Maghrib":
-        setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr");
+        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr 1fr");
         break;
       case "Isha":
-        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr");
+        setPrayersLayout("1fr 1fr 1fr 1fr 1fr 1.5fr");
         break;
     }
+
     setNextPrayer(next.prayer);
     if (next.prayer === "none") {
       setTimeout(() => {
@@ -112,6 +117,13 @@ const PrayerTimes = ({ GoTo }: props) => {
       key: "Fajr",
       iqama: iqamaTimes.fajr,
     },
+    {
+      de: "Shuruq",
+      ar: "شروق",
+      time: TodayPrayerTimes?.Shuruq,
+      key: "Shuruq",
+      iqama: iqamaTimes.shuruq,
+    },
 
     {
       de: "Asr",
@@ -132,8 +144,8 @@ const PrayerTimes = ({ GoTo }: props) => {
       key: "Isha",
       ar: "العشاء",
       time: TodayPrayerTimes?.Isha,
-      // iqama: iqamaTimes.isha,
-      iqama: 0,
+      iqama: iqamaTimes.isha,
+      // iqama: 0,
     },
   ];
 
@@ -160,6 +172,34 @@ const PrayerTimes = ({ GoTo }: props) => {
         },
       ];
 
+
+  const getComments = (prayer: string, iqama: number) => {
+    let ar = ""
+    let de = ""
+
+    if (iqama !== 0 && iqama >= 10) {
+      ar = `الإقامة ${iqama} دقائق بعد الأذان`
+      de = `Iqama ${iqama} min nach Adhan`
+
+    }
+    else if (iqama !== 0 && iqama <= 10) {
+      ar = `الإقامة ${iqama} دقيقة بعد الأذان`
+      de = `Iqama ${iqama} min nach Adhan`
+    }
+    else if (iqama === 0) {
+      ar = "الإقامة بعد الأذان"
+      de = "Iqama direkt nach Adhan"
+    }
+
+
+
+    switch (prayer) {
+      case "Fajr": console.log("returning two empty strings"); return ["Iqama 30 min vor Shuruq", "الإقامة قبل الشروق بـ 30 دقيقة"];
+      case "Shuruq": console.log("returning two empty strings"); return [" ", " "];
+      default: return [ar, de];
+    }
+  }
+
   return (
     <div
       style={{
@@ -174,9 +214,9 @@ const PrayerTimes = ({ GoTo }: props) => {
     >
       <Grid
         templateAreas={`
-          "Fajr Dhuhr Asr Maghrib Isha"
-          "header header header header header"
-          "footer footer footer footer footer"`}
+          "Fajr Shuruq Dhuhr Asr Maghrib Isha"
+          "header header header header header header"
+          "footer footer footer footer footer footer"`}
         gridTemplateRows={"8fr 1fr 1fr"}
         gridTemplateColumns={PrayersLayout}
         gap="10px"
@@ -197,7 +237,7 @@ const PrayerTimes = ({ GoTo }: props) => {
               time={prayer.time!}
               next={NextPrayer!}
               iqama={prayer.iqama}
-              comments={prayer.de == "Isha" ? ["Tarawih Gebet gleich nach Isha", "صلاة التراويح بعد العشاء مباشرة"] : []}
+              comments={getComments(prayer.de, prayer.iqama)}
               GetNextPrayerTimes={() =>
                 HandleGetNextPrayerTimes(TodayPrayerTimes!)
               }

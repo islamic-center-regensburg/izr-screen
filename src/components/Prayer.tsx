@@ -332,78 +332,32 @@ const Prayer = ({
           )
         )}
         <VStack justifyContent={"space-between"} width={"100%"}>
-          {iqama !== 0 && (
-            <IText
-              style={{
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-                direction: "ltr",
-                textAlign: "center"
-              }}
-            >
-              Iqama {iqama} min nach Adhan
-            </IText>
-          )}
-          {iqama === 0 && (
-            <IText
-              style={{
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-                direction: "ltr",
-                textAlign: "center"
-              }}
-            >
-              Iqama direkt nach Adhan
-            </IText>
-          )}
-          {iqama !== 0 && iqama >= 10 && (
-            <IText
-              style={{
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-                direction: "rtl",
-                textAlign: "center"
-              }}
-            >
-              الإقامة {iqama} دقيقة بعد الأذان
-            </IText>
-          )}
-          {iqama !== 0 && iqama <= 10 && (
-            <IText
-              style={{
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-                direction: "rtl",
-                textAlign: "center"
-              }}
-            >
-              الإقامة {iqama} دقائق بعد الأذان
-            </IText>
-          )}
-          {iqama === 0 && (
-            <IText
-              style={{
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-                direction: "rtl",
-                textAlign: "center"
-              }}
-            >
-              الإقامة بعد الأذان
-            </IText>
-          )}
+          <IText
+            style={{
+              fontSize: "1.5vw",
+              fontWeight: "bold",
+              color: highlight ? "white" : "#132a13",
+              transition: "ease 2s",
+              direction: "ltr",
+              textAlign: "center"
+            }}
+          >
+            {comments![0]}
+          </IText>
+          <IText
+            style={{
+              fontSize: "1.5vw",
+              fontWeight: "bold",
+              color: highlight ? "white" : "#132a13",
+              transition: "ease 2s",
+              direction: "rtl",
+              textAlign: "center"
+            }}
+          >
+            {comments![1]}
+          </IText>
         </VStack>
-        {comments && <VStack>
+        {/* {comments && <VStack>
           <IText style={{
             fontSize: "1vw",
             fontWeight: "bold",
@@ -420,7 +374,7 @@ const Prayer = ({
             direction: "rtl",
             textAlign: "center"
           }}>{comments[1]}</IText>
-        </VStack>}
+        </VStack>} */}
       </VStack>
     </div>
   );
