@@ -5,7 +5,7 @@ deploy_izr_screen:
   stage: deploy
   variables:
     TARGET: screen
-    BRANCH: normal-mode
+    BRANCH: main
     SUBMODULE: apps/screen
   trigger:
     include: 

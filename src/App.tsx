@@ -2,19 +2,24 @@ import { useEffect, useState } from "react";
 import PrayerTimes from "./components/PrayerTimes";
 import EventSlider from "./components/EventSlider";
 import { Image } from "@chakra-ui/react";
-import izr from "./components/imgs/IZRBG.png";
 import Fade from "./components/Fade";
 import HadithSlider from "./HadithSlider";
 import Settings from "./components/Settings";
 
 function App() {
-  const [current, setCurrent] = useState("prayer");
+  const [current, setCurrent] = useState("events");
+  // const [current, setCurrent] = useState("prayer");
 
   const handleSwitch = (what: string) => {
     setCurrent(what);
   };
   useEffect(() => {
     console.log("current", current);
+    if (current === "izr") {
+      setTimeout(() => {
+        setCurrent("hadith");
+      }, 5000);
+    }
   }, [current]);
 
   useEffect(() => {
@@ -25,13 +30,6 @@ function App() {
 
   return (
     <>
-      {current === "izr" && (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <Fade>
-            <Image height={"100vh"} src={izr} />
-          </Fade>
-        </div>
-      )}
       {current === "prayer" && (
         <Fade>
           <PrayerTimes GoTo={(what) => handleSwitch(what)} />
@@ -39,7 +37,12 @@ function App() {
       )}
       {current === "events" && (
         <Fade>
-          <EventSlider onEnd={() => handleSwitch("hadith")} />
+          <EventSlider onEnd={() => handleSwitch("izr")} />
+        </Fade>
+      )}
+      {current === "izr" && (
+        <Fade>
+          <Image src="https://izr-cloud.online/media/gallery_images/IZR_Flyer_Wide_1.png" />
         </Fade>
       )}
       {current === "hadith" && (
