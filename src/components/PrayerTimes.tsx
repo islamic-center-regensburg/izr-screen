@@ -177,12 +177,12 @@ const PrayerTimes = ({ GoTo }: props) => {
     let ar = ""
     let de = ""
 
-    if (iqama !== 0 && iqama >= 10) {
+    if (iqama !== 0 && iqama <= 10) {
       ar = `الإقامة ${iqama} دقائق بعد الأذان`
       de = `Iqama ${iqama} min nach Adhan`
-
+      
     }
-    else if (iqama !== 0 && iqama <= 10) {
+    else if (iqama !== 0 && iqama >= 10) {
       ar = `الإقامة ${iqama} دقيقة بعد الأذان`
       de = `Iqama ${iqama} min nach Adhan`
     }
@@ -194,7 +194,7 @@ const PrayerTimes = ({ GoTo }: props) => {
 
 
     switch (prayer) {
-      case "Fajr": console.log("returning two empty strings"); return ["Iqama 30 min vor Shuruq", "الإقامة قبل الشروق بـ 30 دقيقة"];
+      // case "Fajr": console.log("returning two empty strings"); return ["Iqama 30 min vor Shuruq", "الإقامة قبل الشروق بـ 30 دقيقة"];
       case "Shuruq": console.log("returning two empty strings"); return [" ", " "];
       default: return [ar, de];
     }

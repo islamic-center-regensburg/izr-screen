@@ -137,7 +137,6 @@ export const GetIqamaTimes = (fake: boolean = false) => {
   FetchIqamaTimes()
   const iqamas = LoadItem("iqama").value;
   iqamas["shuruq"] = 0;
-  iqamas["fajr"] = 0;
   return iqamas
 }
 

@@ -7,8 +7,8 @@ import HadithSlider from "./HadithSlider";
 import Settings from "./components/Settings";
 
 function App() {
-  const [current, setCurrent] = useState("events");
-  // const [current, setCurrent] = useState("prayer");
+  // const [current, setCurrent] = useState("events");
+  const [current, setCurrent] = useState("prayer");
 
   const handleSwitch = (what: string) => {
     setCurrent(what);
