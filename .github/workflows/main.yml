@@ -13,6 +13,6 @@ jobs:
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.PARENT_PAT }}" \
+            -H "Authorization: Bearer ${{ secrets.PAT }}" \
             https://api.github.com/repos/medaminbl97/izr-server/dispatches \
             -d '{"event_type":"update-submodule","client_payload":{"submodule":"screen"}}'
