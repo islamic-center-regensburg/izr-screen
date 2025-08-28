@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useEffect, useState } from "react";
-import { colors } from "../config";
 import { VStack } from "@chakra-ui/react";
 import IText from "./IText";
 

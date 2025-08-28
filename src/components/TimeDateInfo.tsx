@@ -1,8 +1,6 @@
-import { HStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import IText from "./IText";
 import DigitalClock from "./DigitalClock";
-import { colors } from "../config";
 
 interface props {
   data: string[];

@@ -64,6 +64,7 @@ function EventSlider({ onEnd }: Props) {
   const handleSlideChange = () => setFocusLang("de");
 
   return (
+    // @ts-expect-error
     <Slide interval={15000} onEnd={onEnd} onChange={handleSlideChange}>
       {events.map((event, index) => (
         <div
