@@ -1,11 +1,10 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { izr_server } from "../config";
 import "react-slideshow-image/dist/styles.css";
 import Slide from "./Slide";
-import { HStack, Image } from "@chakra-ui/react";
 
 interface Props {
   onEnd: () => void;
@@ -16,73 +15,101 @@ interface Event {
   en: string;
   ar: string;
 }
+
+const LANGS = ["de", "en", "ar"] as const;
+type Lang = (typeof LANGS)[number];
+
 function EventSlider({ onEnd }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
+  const [focusLang, setFocusLang] = useState<Lang>("de");
+  const focusTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get<{ events: { flyer: string; flyer_ar: string; flyer_en: string }[] }>(
-          izr_server + "/getEvents/all"
-        );
-
-        // Correct mapping of events
+        const response = await axios.get<{
+          events: { flyer: string; flyer_ar: string; flyer_en: string }[];
+        }>(izr_server + "/getEvents/all");
         const eventUrls: Event[] = response.data.events.map((event) => ({
           de: event.flyer,
           en: event.flyer_en,
           ar: event.flyer_ar,
         }));
-
-        console.log(eventUrls);
         setEvents(eventUrls);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     };
-
     fetchEvents();
   }, []);
 
+  // Rotate focus among de -> en -> ar
+  useEffect(() => {
+    const rotate = () => {
+      setFocusLang((prev) => {
+        const i = LANGS.indexOf(prev);
+        return LANGS[(i + 1) % LANGS.length];
+      });
+    };
+    focusTimerRef.current = window.setInterval(rotate, 5000); // every 3s
+    return () => {
+      if (focusTimerRef.current) window.clearInterval(focusTimerRef.current);
+    };
+  }, []);
+
+  // Helper to compute width % per panel based on current focus
+  const widthFor = (lang: Lang) => (lang === focusLang ? "50%" : "25%");
+
+  // (Optional) when slide changes, reset focus to 'de'
+  const handleSlideChange = () => setFocusLang("de");
 
   return (
-    <Slide interval={10000} onEnd={onEnd}>
+    <Slide interval={15000} onEnd={onEnd} onChange={handleSlideChange}>
       {events.map((event, index) => (
-        < HStack overflow={"hidden"} padding={1} key={index}>
-          <Image
-            width={"33%"}
-            src={event.de}
-            alt={`Event ${index + 1}`}
-            style={{
-              borderRadius: "20px",
-              boxShadow: "0px 0px 10px 4px lightgrey",
-              border: "5px solid darkgreen"
-            }}
-          />
-          <Image
-            width={"33%"}
-            key={index}
-            src={event.en}
-            alt={`Event ${index + 1}`}
-            style={{
-              borderRadius: "20px",
-              boxShadow: "0px 0px 10px 4px lightgrey",
-              border: "5px solid darkgreen"
-            }}
-          />
-          <Image
-            width={"33%"}
-            src={event.ar}
-            alt={`Event ${index + 1}`}
-            style={{
-              borderRadius: "20px",
-              boxShadow: "0px 0px 10px 4px lightgrey",
-              border: "5px solid darkgreen"
-            }}
-          />
-        </HStack>
-      ))
-      }
-    </Slide >
+        <div
+          key={index}
+          className="w-screen h-screen bg-white flex items-center justify-center gap-5"
+        >
+          <div className="flex h-full w-full justify-center items-center gap-5 p-10">
+            {/* DE */}
+            <div
+              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              style={{ width: widthFor("de") }}
+            >
+              <img
+                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                src={event.de}
+                alt={`Event ${index + 1} (DE)`}
+              />
+            </div>
+
+            {/* EN */}
+            <div
+              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              style={{ width: widthFor("en") }}
+            >
+              <img
+                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                src={event.en}
+                alt={`Event ${index + 1} (EN)`}
+              />
+            </div>
+
+            {/* AR */}
+            <div
+              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              style={{ width: widthFor("ar") }}
+            >
+              <img
+                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                src={event.ar}
+                alt={`Event ${index + 1} (AR)`}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </Slide>
   );
 }
 

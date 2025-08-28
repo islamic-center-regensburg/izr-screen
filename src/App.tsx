@@ -7,8 +7,8 @@ import HadithSlider from "./HadithSlider";
 import Settings from "./components/Settings";
 
 function App() {
-  // const [current, setCurrent] = useState("events");
-  const [current, setCurrent] = useState("prayer");
+  const [current, setCurrent] = useState("events");
+  // const [current, setCurrent] = useState("prayer");
 
   const handleSwitch = (what: string) => {
     setCurrent(what);
@@ -37,7 +37,7 @@ function App() {
       )}
       {current === "events" && (
         <Fade>
-          <EventSlider onEnd={() => handleSwitch("izr")} />
+          <EventSlider onEnd={() => handleSwitch("prayer")} />
         </Fade>
       )}
       {current === "izr" && (
@@ -50,9 +50,7 @@ function App() {
           <HadithSlider onEnd={() => setCurrent("prayer")} />
         </Fade>
       )}
-      {current === "settings" && (
-        <Settings GoTo={(what) => setCurrent(what)} />
-      )}
+      {current === "settings" && <Settings GoTo={(what) => setCurrent(what)} />}
     </>
   );
 }
