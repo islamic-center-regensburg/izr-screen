@@ -24,8 +24,8 @@ function TimeDateInfo({ data }: props) {
   }, [data]);
   return (
     <div
-      className="flex flex-row justify-between items-center w-full h-full px-4 rounded-2xl"
-      style={{ backgroundColor: colors.primary }}
+      className="flex flex-row justify-between items-center w-full h-full rounded-2xl px-10"
+      style={{ backgroundColor: "rgb(255,255,255,0.1)" }}
     >
       {today &&
         today.map((d, index) => (
@@ -38,11 +38,12 @@ function TimeDateInfo({ data }: props) {
               fontWeight: "bold",
               direction: index === 2 ? "rtl" : "ltr",
             }}
+            lang={index === 2 ? "ar" : "de"}
           >
             {d}
           </IText>
         ))}
-      <div style={{ padding: 5, width: "30%" }}>
+      <div>
         <DigitalClock />
       </div>
     </div>

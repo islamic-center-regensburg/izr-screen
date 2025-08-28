@@ -6,7 +6,6 @@ import andy from "./imgs/andy.png";
 import izr from "./imgs/izr.png";
 import { IoSettingsOutline } from "react-icons/io5";
 
-
 interface props {
   GoTo: (what: string) => void;
 }
@@ -15,14 +14,14 @@ export function IZR({ GoTo }: props) {
   return (
     <HStack
       style={{
-        background: "white",
+        background: "rgb(255,255,255,0.1)",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
         borderRadius: "1rem",
         width: "100%",
         justifyContent: "space-between",
-        padding: 10
+        padding: 10,
+        color: "white",
       }}
-
     >
       <HStack>
         <Image src={logo} boxSize="7vw" objectFit="contain"></Image>
@@ -36,7 +35,7 @@ export function IZR({ GoTo }: props) {
           <IText
             style={{
               fontSize: "1.5vw",
-              color: "black",
+
               transition: "ease 2s",
               textAlign: "left",
               fontWeight: "bold",
@@ -47,7 +46,7 @@ export function IZR({ GoTo }: props) {
           <IText
             style={{
               fontSize: "2vw",
-              color: "black",
+
               transition: "ease 2s",
               textAlign: "center",
               fontWeight: "bold",
@@ -61,7 +60,7 @@ export function IZR({ GoTo }: props) {
         <IText
           style={{
             fontSize: "2vw",
-            color: "black",
+
             transition: "ease 2s",
             textAlign: "left",
             fontWeight: "bold",
@@ -72,7 +71,7 @@ export function IZR({ GoTo }: props) {
         <IText
           style={{
             fontSize: "2vw",
-            color: "black",
+
             transition: "ease 2s",
             textAlign: "left",
             fontWeight: "bold",
@@ -85,7 +84,7 @@ export function IZR({ GoTo }: props) {
         <IText
           style={{
             fontSize: "1vw",
-            color: "black",
+
             transition: "ease 2s",
             textAlign: "left",
             fontWeight: "bold",
@@ -95,9 +94,12 @@ export function IZR({ GoTo }: props) {
         </IText>
         <Image boxSize="5vw" objectFit="contain" src={ios}></Image>
         <Image boxSize="5vw" objectFit="contain" src={andy}></Image>
-        <IoSettingsOutline onClick={() => GoTo("settings")} size={"2vw"} cursor={"pointer"} />
+        <IoSettingsOutline
+          onClick={() => GoTo("settings")}
+          size={"2vw"}
+          cursor={"pointer"}
+        />
       </HStack>
-
     </HStack>
   );
 }

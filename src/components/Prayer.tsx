@@ -41,7 +41,8 @@ const Prayer = ({
     justifyContent: "center",
     alignItems: "center",
     // backgroundColor: highlight ? colors.primary : colors.sec,
-    background: highlight ? colors.grad : colors.grad_sec,
+    background: highlight ? "rgb(255,255,255,0.8)" : "rgb(255,255,255,0.1)",
+    // background: highlight ? colors.grad : colors.grad_sec,
     borderRadius: "1rem",
     // border: "2px solid lightgrey",
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
@@ -187,7 +188,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -199,7 +200,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -218,7 +219,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -230,7 +231,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
             }}
             lang="de"
@@ -241,7 +242,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -261,7 +262,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -273,7 +274,7 @@ const Prayer = ({
             style={{
               fontSize: "3vw",
               fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
+              color: highlight ? "#132a13" : "white",
               transition: "ease 2s",
               textAlign: "center",
             }}
@@ -286,7 +287,7 @@ const Prayer = ({
                 style={{
                   fontSize: "1vw",
                   fontWeight: "bold",
-                  color: highlight ? "white" : "#132a13",
+                  color: highlight ? "#132a13" : "white",
                   transition: "ease 2s",
                   direction: "rtl",
                   textAlign: "center",
@@ -299,7 +300,7 @@ const Prayer = ({
                 style={{
                   fontSize: "1vw",
                   fontWeight: "bold",
-                  color: highlight ? "white" : "#132a13",
+                  color: highlight ? "#132a13" : "white",
                   transition: "ease 2s",
                   direction: "rtl",
                   textAlign: "center",
@@ -324,7 +325,7 @@ const Prayer = ({
                 style={{
                   fontSize: "3vw",
                   fontWeight: "bold",
-                  color: highlight ? "white" : "#132a13",
+                  color: highlight ? "#132a13" : "white",
                   transition: "ease 2s",
                 }}
                 lang="ar"
@@ -339,7 +340,7 @@ const Prayer = ({
                   style={{
                     fontSize: "3vw",
                     fontWeight: "bold",
-                    color: highlight ? "white" : "#132a13",
+                    color: highlight ? "#132a13" : "white",
                     transition: "ease 2s",
                   }}
                   lang="de"
@@ -357,7 +358,7 @@ const Prayer = ({
               style={{
                 fontSize: "1.5vw",
                 fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
+                color: highlight ? "#132a13" : "white",
                 transition: "ease 2s",
                 direction: "ltr",
                 textAlign: "center",
@@ -381,7 +382,7 @@ const Prayer = ({
               style={{
                 fontSize: "1.5vw",
                 fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
+                color: highlight ? "#132a13" : "white",
                 transition: "ease 2s",
                 direction: "rtl",
                 textAlign: "center",

@@ -9,6 +9,8 @@ import {
 import { IZR } from "./IZR";
 import TimeDateInfo from "./TimeDateInfo";
 
+import shiny from "/Shiny Overlay.svg";
+
 interface props {
   GoTo: (what: string) => void;
 }
@@ -122,7 +124,7 @@ const PrayerTimes = ({ GoTo }: props) => {
     {
       de: "Maghrib",
       key: "Maghrib",
-      ar: "الأزان",
+      ar: "المغرب",
       time: TodayPrayerTimes?.Maghrib,
       iqama: iqamaTimes.maghrib,
     },
@@ -188,7 +190,10 @@ const PrayerTimes = ({ GoTo }: props) => {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center p-2 box-border">
+    <div
+      style={{ backgroundImage: `url(${shiny})` }}
+      className="h-screen w-screen flex items-center justify-center p-2 box-border bg-[url('../../public/Shiny Overlay.svg')] bg-cover"
+    >
       <div
         className="
           grid gap-[10px] h-full w-full rounded-2xl
