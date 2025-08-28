@@ -10,7 +10,7 @@ interface props {
   time: string;
   next: string;
   iqama: number;
-  comments?: string[]
+  comments?: string[];
   GetNextPrayerTimes: () => void;
   reloadPrayerTimes: () => void;
   GoTo: (what: string) => void;
@@ -47,8 +47,6 @@ const Prayer = ({
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
     transition: "ease 2s",
     padding: "0.5rem",
-
-
   };
   const prayerData = highlight
     ? [prayer_de, time, prayer_ar, remainingTime]
@@ -68,9 +66,9 @@ const Prayer = ({
     const timeUntilNextDay = nextDay.getTime() - now.getTime();
     console.log(
       "this function is triggered and the time until next day is " +
-      timeUntilNextDay / 60 / 60 / 1000 +
-      " hours  and minutes : " +
-      timeUntilNextDay / 60 / 100
+        timeUntilNextDay / 60 / 60 / 1000 +
+        " hours  and minutes : " +
+        timeUntilNextDay / 60 / 100
     );
     setTimeout(() => {
       reloadPrayerTimes();
@@ -193,6 +191,7 @@ const Prayer = ({
               transition: "ease 2s",
               textAlign: "center",
             }}
+            lang="ar"
           >
             آذان صلاة {prayer_ar}
           </IText>
@@ -223,6 +222,7 @@ const Prayer = ({
               transition: "ease 2s",
               textAlign: "center",
             }}
+            lang="ar"
           >
             الإقامة بعد
           </IText>
@@ -233,6 +233,7 @@ const Prayer = ({
               color: highlight ? "white" : "#132a13",
               transition: "ease 2s",
             }}
+            lang="de"
           >
             {highlight && remainingTime}
           </IText>
@@ -264,6 +265,7 @@ const Prayer = ({
               transition: "ease 2s",
               textAlign: "center",
             }}
+            lang="ar"
           >
             إقامة صلاة {prayer_ar}
           </IText>
@@ -278,24 +280,35 @@ const Prayer = ({
           >
             {prayer_de} Iqamah
           </IText>
-          {comments && <VStack>
-            <IText style={{
-              fontSize: "1vw",
-              fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
-              transition: "ease 2s",
-              direction: "rtl",
-              textAlign: "center"
-            }} >{comments[0]}</IText>
-            <IText style={{
-              fontSize: "1vw",
-              fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
-              transition: "ease 2s",
-              direction: "rtl",
-              textAlign: "center"
-            }}>{comments[1]}</IText>
-          </VStack>}
+          {comments && (
+            <VStack>
+              <IText
+                style={{
+                  fontSize: "1vw",
+                  fontWeight: "bold",
+                  color: highlight ? "white" : "#132a13",
+                  transition: "ease 2s",
+                  direction: "rtl",
+                  textAlign: "center",
+                }}
+                lang="ar"
+              >
+                {comments[0]}
+              </IText>
+              <IText
+                style={{
+                  fontSize: "1vw",
+                  fontWeight: "bold",
+                  color: highlight ? "white" : "#132a13",
+                  transition: "ease 2s",
+                  direction: "rtl",
+                  textAlign: "center",
+                }}
+              >
+                {comments[1]}
+              </IText>
+            </VStack>
+          )}
         </VStack>
       </div>
     );
@@ -303,21 +316,10 @@ const Prayer = ({
 
   return (
     <div style={containerStyle}>
-      <VStack width={"100%"}>
+      <div className="flex flex-col justify-center items-center flex-1 gap-5">
         {prayerData.map((data, index) =>
           index !== 3 ? (
-            <IText
-              style={{
-                fontSize: "3vw",
-                fontWeight: "bold",
-                color: highlight ? "white" : "#132a13",
-                transition: "ease 2s",
-              }}
-            >
-              {data}
-            </IText>
-          ) : (
-            currentState !== "prayer" && (
+            <div className="flex-1">
               <IText
                 style={{
                   fontSize: "3vw",
@@ -325,57 +327,78 @@ const Prayer = ({
                   color: highlight ? "white" : "#132a13",
                   transition: "ease 2s",
                 }}
+                lang="ar"
               >
                 {data}
               </IText>
+            </div>
+          ) : (
+            currentState !== "prayer" && (
+              <div className="flex-1">
+                <IText
+                  style={{
+                    fontSize: "3vw",
+                    fontWeight: "bold",
+                    color: highlight ? "white" : "#132a13",
+                    transition: "ease 2s",
+                  }}
+                  lang="de"
+                >
+                  {data}
+                </IText>
+              </div>
             )
           )
         )}
-        <VStack justifyContent={"space-between"} width={"100%"}>
-          <IText
-            style={{
-              fontSize: "1.5vw",
-              fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
-              transition: "ease 2s",
-              direction: "ltr",
-              textAlign: "center"
-            }}
-          >
-            {comments![0]}
-          </IText>
-          <IText
-            style={{
-              fontSize: "1.5vw",
-              fontWeight: "bold",
-              color: highlight ? "white" : "#132a13",
-              transition: "ease 2s",
-              direction: "rtl",
-              textAlign: "center"
-            }}
-          >
-            {comments![1]}
-          </IText>
-        </VStack>
-        {/* {comments && <VStack>
-          <IText style={{
-            fontSize: "1vw",
-            fontWeight: "bold",
-            color: highlight ? "white" : "#132a13",
-            transition: "ease 2s",
-            direction: "rtl",
-            textAlign: "center"
-          }}>{comments[0]}</IText>
-          <IText style={{
-            fontSize: "1vw",
-            fontWeight: "bold",
-            color: highlight ? "white" : "#132a13",
-            transition: "ease 2s",
-            direction: "rtl",
-            textAlign: "center"
-          }}>{comments[1]}</IText>
-        </VStack>} */}
-      </VStack>
+
+        <div className="flex-1">
+          {comments && (
+            <IText
+              style={{
+                fontSize: "1.5vw",
+                fontWeight: "bold",
+                color: highlight ? "white" : "#132a13",
+                transition: "ease 2s",
+                direction: "ltr",
+                textAlign: "center",
+              }}
+              lang="ar"
+            >
+              {comments[0] ? (
+                comments[0]!
+              ) : (
+                <>
+                  <br />
+                  <br />
+                </>
+              )}
+            </IText>
+          )}
+        </div>
+        <div className="flex-1">
+          {comments && (
+            <IText
+              style={{
+                fontSize: "1.5vw",
+                fontWeight: "bold",
+                color: highlight ? "white" : "#132a13",
+                transition: "ease 2s",
+                direction: "rtl",
+                textAlign: "center",
+              }}
+            >
+              {comments[1] ? (
+                comments[1]!
+              ) : (
+                <>
+                  <br />
+                  <br />
+                </>
+              )}
+            </IText>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

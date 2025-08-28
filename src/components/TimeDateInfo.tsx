@@ -23,16 +23,9 @@ function TimeDateInfo({ data }: props) {
     setToday([germanDate, ...data]);
   }, [data]);
   return (
-    <HStack
-      justifyContent={"space-around"}
-      alignItems={"center"}
-      // height={"100%"}
-      style={{
-        background: colors.grad,
-        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
-        borderRadius: "1rem",
-      }}
-      
+    <div
+      className="flex flex-row justify-between items-center w-full h-full px-4 rounded-2xl"
+      style={{ backgroundColor: colors.primary }}
     >
       {today &&
         today.map((d, index) => (
@@ -52,7 +45,7 @@ function TimeDateInfo({ data }: props) {
       <div style={{ padding: 5, width: "30%" }}>
         <DigitalClock />
       </div>
-    </HStack>
+    </div>
   );
 }
 

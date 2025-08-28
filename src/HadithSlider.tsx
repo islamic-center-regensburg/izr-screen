@@ -68,6 +68,7 @@ function HadithSlider({ onEnd }: props) {
                 padding: "5vw",
                 borderRadius: "5vw",
               }}
+              lang={hadith.data === Hadith[0].data ? "ar" : "de"}
             >
               {hadith.hadith}
               <br />

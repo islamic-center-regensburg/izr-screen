@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Grid, GridItem } from "@chakra-ui/react";
 import Prayer from "./Prayer";
 import {
   DayPrayerTimes,
@@ -18,9 +17,12 @@ const PrayerTimes = ({ GoTo }: props) => {
   const [TodayPrayerTimes, setTodayPrayerTimes] =
     useState<DayPrayerTimes | null>(null);
   const [NextPrayer, setNextPrayer] = useState<string | null>(null);
+
+  // gridTemplateColumns is driven by which prayer is next
   const [PrayersLayout, setPrayersLayout] = useState<string>(
     "1fr 1fr 1fr 1fr 1fr 1fr"
   );
+
   const [iqamaTimes, setIqamaTime] = useState({
     asr: 15,
     dhuhr: 15,
@@ -31,16 +33,14 @@ const PrayerTimes = ({ GoTo }: props) => {
     tarawih: 0,
     shuruq: 0,
   });
-  useEffect(() => { }, []);
+
   const FetchTodayPrayerTimes = async () => {
     const ptimes: DayPrayerTimes =
-      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
+      (await FetchCurrentDayPrayerTimes()) as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
     const iqamas = GetIqamaTimes();
-    console.log("log");
     setIqamaTime(iqamas);
-    console.log("Fetching");
   };
 
   useEffect(() => {
@@ -48,19 +48,18 @@ const PrayerTimes = ({ GoTo }: props) => {
   }, []);
 
   useEffect(() => {
-    setInterval(async () => {
+    const id = setInterval(async () => {
       const today = new Date();
       const time = today.getHours();
       if (time === 0) {
         await FetchTodayPrayerTimes();
       }
     }, 5 * 60 * 5000);
+    return () => clearInterval(id);
   }, []);
 
   const HandleGetNextPrayerTimes = (ptimes: DayPrayerTimes) => {
     const next = getNextPrayerTime(ptimes);
-    console.log("Handling PrayerTimes", next);
-
     switch (next.prayer) {
       case "Fajr":
         setPrayersLayout("1.5fr 1fr 1fr 1fr 1fr 1fr");
@@ -69,9 +68,7 @@ const PrayerTimes = ({ GoTo }: props) => {
         setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr 1fr");
         break;
       case "Dhuhr":
-        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr 1fr");
-        break;
-      case "Jumaa":  // Optional: could use same layout as Dhuhr or a unique one
+      case "Jumaa":
         setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr 1fr");
         break;
       case "Asr":
@@ -88,23 +85,14 @@ const PrayerTimes = ({ GoTo }: props) => {
     setNextPrayer(next.prayer);
     if (next.prayer === "none") {
       setTimeout(() => {
-        console.log("next is none")
-        GoTo("events")
+        GoTo("events");
       }, 2 * 60 * 1000);
     }
   };
 
-  // useEffect(() => {
-  //   // TodayPrayerTimes && HandleGetNextPrayerTimes(TodayPrayerTimes);
-  //   setNextPrayer("Fajr");
-  //   setPrayersLayout("2fr 1fr 1fr 1fr 1fr");
-  // }, [NextPrayer]);
-
   const HandleNextDay = async () => {
-    console.log("hnalding next day");
-
     const ptimes: DayPrayerTimes =
-      await FetchCurrentDayPrayerTimes() as DayPrayerTimes;
+      (await FetchCurrentDayPrayerTimes()) as DayPrayerTimes;
     HandleGetNextPrayerTimes(ptimes);
     setTodayPrayerTimes(ptimes);
   };
@@ -124,7 +112,6 @@ const PrayerTimes = ({ GoTo }: props) => {
       key: "Shuruq",
       iqama: iqamaTimes.shuruq,
     },
-
     {
       de: "Asr",
       key: "Asr",
@@ -135,7 +122,7 @@ const PrayerTimes = ({ GoTo }: props) => {
     {
       de: "Maghrib",
       key: "Maghrib",
-      ar: "المغرب",
+      ar: "الأزان",
       time: TodayPrayerTimes?.Maghrib,
       iqama: iqamaTimes.maghrib,
     },
@@ -145,91 +132,77 @@ const PrayerTimes = ({ GoTo }: props) => {
       ar: "العشاء",
       time: TodayPrayerTimes?.Isha,
       iqama: iqamaTimes.isha,
-      // iqama: 0,
     },
   ];
 
   const prayers =
     new Date().getDay() === 5
       ? [
-        ...prayer_times,
-        {
-          de: "Jumaa",
-          key: "Dhuhr",
-          ar: "الجمعة",
-          time: TodayPrayerTimes?.Jumaa,
-          iqama: iqamaTimes.jumaa,
-        },
-      ]
+          ...prayer_times,
+          {
+            de: "Jumaa",
+            key: "Dhuhr",
+            ar: "الجمعة",
+            time: TodayPrayerTimes?.Jumaa,
+            iqama: iqamaTimes.jumaa,
+          },
+        ]
       : [
-        ...prayer_times,
-        {
-          de: "Dhuhr",
-          key: "Dhuhr",
-          ar: "الظهر",
-          time: TodayPrayerTimes?.Dhuhr,
-          iqama: iqamaTimes.dhuhr,
-        },
-      ];
+          ...prayer_times,
+          {
+            de: "Dhuhr",
+            key: "Dhuhr",
+            ar: "الظهر",
+            time: TodayPrayerTimes?.Dhuhr,
+            iqama: iqamaTimes.dhuhr,
+          },
+        ];
 
+  // Ensure the display order is: Fajr, Shuruq, Dhuhr/Jumaa, Asr, Maghrib, Isha
+  const orderedKeys = ["Fajr", "Shuruq", "Dhuhr", "Asr", "Maghrib", "Isha"];
+  const orderedPrayers = orderedKeys
+    .map((k) => prayers.find((p) => p.key === k))
+    .filter(Boolean) as typeof prayers;
 
   const getComments = (prayer: string, iqama: number) => {
-    let ar = ""
-    let de = ""
+    let ar = "";
+    let de = "";
 
     if (iqama !== 0 && iqama <= 10) {
-      ar = `الإقامة ${iqama} دقائق بعد الأذان`
-      de = `Iqama ${iqama} min nach Adhan`
-      
+      ar = `الإقامة ${iqama} دقائق بعد الأذان`;
+      de = `Iqama ${iqama} min nach Adhan`;
+    } else if (iqama !== 0 && iqama >= 10) {
+      ar = `الإقامة ${iqama} دقيقة بعد الأذان`;
+      de = `Iqama ${iqama} min nach Adhan`;
+    } else if (iqama === 0) {
+      ar = "الإقامة بعد الأذان";
+      de = "Iqama direkt nach Adhan";
     }
-    else if (iqama !== 0 && iqama >= 10) {
-      ar = `الإقامة ${iqama} دقيقة بعد الأذان`
-      de = `Iqama ${iqama} min nach Adhan`
-    }
-    else if (iqama === 0) {
-      ar = "الإقامة بعد الأذان"
-      de = "Iqama direkt nach Adhan"
-    }
-
-
 
     switch (prayer) {
-      // case "Fajr": console.log("returning two empty strings"); return ["Iqama 30 min vor Shuruq", "الإقامة قبل الشروق بـ 30 دقيقة"];
-      case "Shuruq": console.log("returning two empty strings"); return [" ", " "];
-      default: return [ar, de];
+      case "Shuruq":
+        return ["", ""];
+      default:
+        return [ar, de];
     }
-  }
+  };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100vw",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0.5rem",
-        boxSizing: "border-box",
-      }}
-    >
-      <Grid
-        templateAreas={`
-          "Fajr Shuruq Dhuhr Asr Maghrib Isha"
-          "header header header header header header"
-          "footer footer footer footer footer footer"`}
-        gridTemplateRows={"8fr 1fr 1fr"}
-        gridTemplateColumns={PrayersLayout}
-        gap="10px"
-        // backgroundColor={colors.primary}
-        borderRadius={"1rem"}
-        // margin={"1rem"}
-        height={"100%"}
-        width={"100%"}
-
-        transition={"ease 1s"}
+    <div className="h-screen w-screen flex items-center justify-center p-2 box-border">
+      <div
+        className="
+          grid gap-[10px] h-full w-full rounded-2xl
+          grid-rows-[8fr_1fr_1fr]
+          transition-[grid-template-columns] duration-1000 ease-in-out
+        "
+        style={{ gridTemplateColumns: PrayersLayout }}
       >
-        {prayers.map((prayer) => (
-          <GridItem key={prayer.de} area={prayer.key} transition={"ease 2s"}>
+        {/* Row 1: six prayer cells */}
+        {orderedPrayers.map((prayer) => (
+          <div
+            key={prayer.key}
+            className="transition-all duration-1000 ease-in-out"
+          >
             <Prayer
               reloadPrayerTimes={HandleNextDay}
               prayer_ar={prayer.ar}
@@ -242,21 +215,25 @@ const PrayerTimes = ({ GoTo }: props) => {
                 HandleGetNextPrayerTimes(TodayPrayerTimes!)
               }
               GoTo={(what) => GoTo(what)}
-            ></Prayer>
-          </GridItem>
+            />
+          </div>
         ))}
-        <GridItem area={"footer"}>
-          <IZR GoTo={GoTo} />
-        </GridItem>
-        <GridItem area={"header"}>
+
+        {/* Row 2: header spanning all columns */}
+        <div className="col-span-6 flex items-center justify-center">
           {TodayPrayerTimes && (
             <TimeDateInfo
               data={[TodayPrayerTimes["Hijri"], TodayPrayerTimes["Hijri_ar"]]}
             />
           )}
-        </GridItem>
-      </Grid>
-    </div >
+        </div>
+
+        {/* Row 3: footer spanning all columns */}
+        <div className="col-span-6">
+          <IZR GoTo={GoTo} />
+        </div>
+      </div>
+    </div>
   );
 };
 
