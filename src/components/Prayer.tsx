@@ -327,7 +327,7 @@ const Prayer = ({
                   color: highlight ? "#132a13" : "white",
                   transition: "ease 2s",
                 }}
-                lang="ar"
+                lang={index === 2 ? "ar" : "de"}
               >
                 {data}
               </IText>
@@ -342,7 +342,7 @@ const Prayer = ({
                     color: highlight ? "#132a13" : "white",
                     transition: "ease 2s",
                   }}
-                  lang="de"
+                  lang="ar"
                 >
                   {data}
                 </IText>
