@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { VStack } from "@chakra-ui/react";
 import IText from "./IText";
-
 interface props {
   prayer_de: string;
   prayer_ar: string;
@@ -40,7 +39,7 @@ const Prayer = ({
     justifyContent: "center",
     alignItems: "center",
     // backgroundColor: highlight ? colors.primary : colors.sec,
-    background: highlight ? "rgb(255,255,255,0.8)" : "rgb(255,255,255,0.1)",
+    background: highlight ? "rgb(255,255,255,1)" : "rgb(255,255,255,0.1)",
     // background: highlight ? colors.grad : colors.grad_sec,
     borderRadius: "1rem",
     // border: "2px solid lightgrey",
@@ -316,7 +315,7 @@ const Prayer = ({
 
   return (
     <div style={containerStyle}>
-      <div className="flex flex-col justify-center items-center flex-1 gap-5">
+      <div className="flex flex-col justify-center items-center flex-1 gap-2">
         {prayerData.map((data, index) =>
           index !== 3 ? (
             <div className="flex-1">
@@ -334,7 +333,7 @@ const Prayer = ({
             </div>
           ) : (
             currentState !== "prayer" && (
-              <div className="flex-1">
+              <div className="flex-1 animate-pulse">
                 <IText
                   style={{
                     fontSize: "3vw",
@@ -342,7 +341,7 @@ const Prayer = ({
                     color: highlight ? "#132a13" : "white",
                     transition: "ease 2s",
                   }}
-                  lang="ar"
+                  lang="de"
                 >
                   {data}
                 </IText>

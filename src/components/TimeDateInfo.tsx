@@ -27,21 +27,23 @@ function TimeDateInfo({ data }: props) {
     >
       {today &&
         today.map((d, index) => (
-          <IText
-            style={{
-              fontSize: "1.5vw",
-              color: "white",
-              transition: "ease 2s",
-              textAlign: "left",
-              fontWeight: "bold",
-              direction: index === 2 ? "rtl" : "ltr",
-            }}
-            lang={index === 2 ? "ar" : "de"}
-          >
-            {d}
-          </IText>
+          <div className="flex-1">
+            <IText
+              style={{
+                fontSize: "1.5vw",
+                color: "white",
+                transition: "ease 2s",
+                textAlign: "left",
+                fontWeight: "bold",
+                direction: index === 2 ? "rtl" : "ltr",
+              }}
+              lang={index === 2 ? "ar" : "de"}
+            >
+              {d}
+            </IText>
+          </div>
         ))}
-      <div>
+      <div className="flex-1">
         <DigitalClock />
       </div>
     </div>
