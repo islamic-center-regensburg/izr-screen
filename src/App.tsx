@@ -37,7 +37,7 @@ function App() {
       )}
       {current === "events" && (
         <Fade>
-          <EventSlider onEnd={() => handleSwitch("prayer")} />
+          <EventSlider onEnd={() => handleSwitch("events")} />
         </Fade>
       )}
       {current === "izr" && (

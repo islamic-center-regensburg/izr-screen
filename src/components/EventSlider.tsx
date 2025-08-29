@@ -47,6 +47,7 @@ function EventSlider({ onEnd }: Props) {
   useEffect(() => {
     const rotate = () => {
       setFocusLang((prev) => {
+        if (prev === "ar") return "ar";
         const i = LANGS.indexOf(prev);
         return LANGS[(i + 1) % LANGS.length];
       });
@@ -74,11 +75,11 @@ function EventSlider({ onEnd }: Props) {
           <div className="flex h-full w-full justify-center items-center gap-5 p-10">
             {/* DE */}
             <div
-              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              className="relative max-h-screen transition-all duration-700 ease-in-out flex-none mx-auto"
               style={{ width: widthFor("de") }}
             >
               <img
-                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                className="max-h-screen w-auto object-cover rounded-2xl shadow-lg"
                 src={event.de}
                 alt={`Event ${index + 1} (DE)`}
               />
@@ -86,11 +87,11 @@ function EventSlider({ onEnd }: Props) {
 
             {/* EN */}
             <div
-              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              className="relative max-h-screen transition-all duration-700 ease-in-out flex-none mx-auto"
               style={{ width: widthFor("en") }}
             >
               <img
-                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                className="max-h-screen w-auto object-cover rounded-2xl shadow-lg"
                 src={event.en}
                 alt={`Event ${index + 1} (EN)`}
               />
@@ -98,11 +99,11 @@ function EventSlider({ onEnd }: Props) {
 
             {/* AR */}
             <div
-              className="relative h-full transition-all duration-700 ease-in-out flex-none mx-auto"
+              className="relative max-h-screen border-2 border-e-red-400 transition-all duration-700 ease-in-out flex-none mx-auto"
               style={{ width: widthFor("ar") }}
             >
               <img
-                className="h-full w-full object-cover rounded-2xl shadow-lg"
+                className="max-h-screen w-auto object-cover rounded-2xl shadow-lg"
                 src={event.ar}
                 alt={`Event ${index + 1} (AR)`}
               />
