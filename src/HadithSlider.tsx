@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "react-slideshow-image/dist/styles.css";
-import { colors, izr_server } from "./config";
+import { izr_server } from "./config";
 import IText from "./components/IText";
 import Slide from "./components/Slide";
 import shiny from "/Wave.svg";
