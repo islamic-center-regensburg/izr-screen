@@ -39,11 +39,10 @@ const Prayer = ({
     justifyContent: "center",
     alignItems: "center",
     // backgroundColor: highlight ? colors.primary : colors.sec,
-    background: highlight ? "rgb(255,255,255,1)" : "rgb(255,255,255,0.1)",
+    background: highlight ? "rgb(255,255,255,0.8)" : "rgb(255,255,255,0.1)",
     // background: highlight ? colors.grad : colors.grad_sec,
     borderRadius: "1rem",
     // border: "2px solid lightgrey",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
     transition: "ease 2s",
     padding: "0.5rem",
   };

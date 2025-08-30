@@ -9,7 +9,7 @@ import {
 import { IZR } from "./IZR";
 import TimeDateInfo from "./TimeDateInfo";
 
-import shiny from "/Shiny Overlay.svg";
+import shiny from "/Wave.svg";
 
 interface props {
   GoTo: (what: string) => void;

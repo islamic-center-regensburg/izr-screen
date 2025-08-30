@@ -4,7 +4,7 @@ import "react-slideshow-image/dist/styles.css";
 import { colors, izr_server } from "./config";
 import IText from "./components/IText";
 import Slide from "./components/Slide";
-
+import shiny from "/Wave.svg";
 interface props {
   onEnd: () => void;
 }
@@ -43,40 +43,44 @@ function HadithSlider({ onEnd }: props) {
   }, []);
 
   return (
-    <Slide interval={20000} onEnd={onEnd}>
-      {Hadith &&
-        Hadith.map((hadith) => (
-          <div
-            className=""
-            style={{
-              height: "100vh",
-              // width: "100vw",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "1vw",
-            }}
-          >
-            <IText
+    <div
+      style={{ backgroundImage: `url(${shiny})` }}
+      className="h-screen w-full bg-cover font-bold"
+    >
+      <Slide interval={20000} onEnd={onEnd}>
+        {Hadith &&
+          Hadith.map((hadith) => (
+            <div
+              className=""
               style={{
-                fontSize: "3vw",
-                textAlign: "center",
-                direction: "rtl",
-                color: "white",
-                fontWeight: "500",
-                background: colors.grad,
-                padding: "5vw",
-                borderRadius: "5vw",
+                height: "100vh",
+                // width: "100vw",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "1vw",
               }}
-              lang={hadith.data === Hadith[0].data ? "ar" : "de"}
             >
-              {hadith.hadith}
-              <br />
-              {hadith.data}
-            </IText>
-          </div>
-        ))}
-    </Slide>
+              <IText
+                style={{
+                  fontSize: "3vw",
+                  textAlign: "center",
+                  direction: "rtl",
+                  color: "white",
+                  background: "rgb(255,255,255,0.1)",
+                  padding: "5vw",
+                  borderRadius: "5vw",
+                }}
+                lang={hadith.data === Hadith[0].data ? "ar" : "de"}
+              >
+                {hadith.hadith}
+                <br />
+                {hadith.data}
+              </IText>
+            </div>
+          ))}
+      </Slide>
+    </div>
   );
 }
 
