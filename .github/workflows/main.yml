@@ -48,7 +48,7 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/izr-screen:${{ steps.vars.outputs.version }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/izr-screen:${{ steps.vars.outputs.version }} ./deploy
           docker tag ${{ secrets.DOCKER_USERNAME }}/izr-screen:${{ steps.vars.outputs.version }} ${{ secrets.DOCKER_USERNAME }}/izr-screen:latest
 
       # Push Docker image
