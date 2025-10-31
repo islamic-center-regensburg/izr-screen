@@ -43,7 +43,6 @@ const Prayer = ({
     // background: highlight ? colors.grad : colors.grad_sec,
     borderRadius: "1rem",
     // border: "2px solid lightgrey",
-    transition: "ease 2s",
     padding: "0.5rem",
   };
   const prayerData = highlight
@@ -332,7 +331,7 @@ const Prayer = ({
             </div>
           ) : (
             currentState !== "prayer" && (
-              <div className="flex-1 animate-pulse">
+              <div className="flex-1">
                 <IText
                   style={{
                     fontSize: "3vw",

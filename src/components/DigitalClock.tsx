@@ -1,33 +1,47 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import IText from "./IText";
 
 const DigitalClock = () => {
   const [time, setTime] = useState(new Date());
+  const intervalRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const timerID = setInterval(() => tick(), 1000);
-    return () => clearInterval(timerID); // Cleanup the interval on component unmount
-  }, []);
+    const scheduleNextUpdate = () => {
+      const now = new Date();
+      const msUntilNextMinute = (60 - now.getSeconds()) * 1000;
 
-  const tick = () => {
-    setTime(new Date());
-  };
+      // Update once right now to avoid lag
+      setTime(now);
+
+      // After reaching the next full minute, update every 60s
+      timeoutRef.current = setTimeout(() => {
+        setTime(new Date());
+        intervalRef.current = setInterval(() => setTime(new Date()), 60 * 1000);
+      }, msUntilNextMinute);
+    };
+
+    scheduleNextUpdate();
+
+    // Cleanup
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const formatTime = (date: Date) => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    const seconds = date.getSeconds().toString().padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
+    return `${hours}:${minutes}`;
   };
 
   return (
     <div
       style={{
-        // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
         borderRadius: "1rem",
         width: "100%",
         height: "100%",
-        // background: colors.grad,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
