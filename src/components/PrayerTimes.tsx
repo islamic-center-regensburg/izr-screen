@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Prayer from "./Prayer";
 import {
   DayPrayerTimes,
@@ -11,21 +11,17 @@ import TimeDateInfo from "./TimeDateInfo";
 
 import shiny from "/Wave.svg";
 
-interface props {
+interface Props {
   GoTo: (what: string) => void;
 }
 
-const PrayerTimes = ({ GoTo }: props) => {
-  const [TodayPrayerTimes, setTodayPrayerTimes] =
+const PrayerTimes = ({ GoTo }: Props) => {
+  const [todayPrayerTimes, setTodayPrayerTimes] =
     useState<DayPrayerTimes | null>(null);
-  const [NextPrayer, setNextPrayer] = useState<string | null>(null);
+  const [nextPrayer, setNextPrayer] = useState<string | null>(null);
+  const [prayersLayout, setPrayersLayout] = useState("1fr 1fr 1fr 1fr 1fr 1fr");
 
-  // gridTemplateColumns is driven by which prayer is next
-  const [PrayersLayout, setPrayersLayout] = useState<string>(
-    "1fr 1fr 1fr 1fr 1fr 1fr"
-  );
-
-  const [iqamaTimes, setIqamaTime] = useState({
+  const [iqamaTimes, setIqamaTimes] = useState({
     asr: 15,
     dhuhr: 15,
     fajr: 15,
@@ -36,163 +32,136 @@ const PrayerTimes = ({ GoTo }: props) => {
     shuruq: 0,
   });
 
-  const FetchTodayPrayerTimes = async () => {
-    const ptimes: DayPrayerTimes =
-      (await FetchCurrentDayPrayerTimes()) as DayPrayerTimes;
-    HandleGetNextPrayerTimes(ptimes);
+  // ============ Daten laden ============
+  const handleGetNextPrayerTimes = useCallback(
+    (ptimes: DayPrayerTimes) => {
+      const next = getNextPrayerTime(ptimes);
+      setNextPrayer(next.prayer);
+
+      const layoutMap: Record<string, string> = {
+        Fajr: "1.5fr 1fr 1fr 1fr 1fr 1fr",
+        Shuruq: "1fr 1.5fr 1fr 1fr 1fr 1fr",
+        Dhuhr: "1fr 1fr 1.5fr 1fr 1fr 1fr",
+        Jumaa: "1fr 1fr 1.5fr 1fr 1fr 1fr",
+        Asr: "1fr 1fr 1fr 1.5fr 1fr 1fr",
+        Maghrib: "1fr 1fr 1fr 1fr 1.5fr 1fr",
+        Isha: "1fr 1fr 1fr 1fr 1fr 1.5fr",
+      };
+      setPrayersLayout(layoutMap[next.prayer] ?? "1fr 1fr 1fr 1fr 1fr 1fr");
+
+      if (next.prayer === "none") {
+        setTimeout(() => GoTo("events"), 2 * 60 * 1000);
+      }
+    },
+    [GoTo]
+  );
+
+  const fetchTodayPrayerTimes = useCallback(async () => {
+    const ptimes = (await FetchCurrentDayPrayerTimes()) as DayPrayerTimes;
     setTodayPrayerTimes(ptimes);
-    const iqamas = GetIqamaTimes();
-    setIqamaTime(iqamas);
-  };
+    handleGetNextPrayerTimes(ptimes);
+    setIqamaTimes(GetIqamaTimes());
+  }, [handleGetNextPrayerTimes]);
 
   useEffect(() => {
-    FetchTodayPrayerTimes();
-  }, []);
+    fetchTodayPrayerTimes();
+  }, [fetchTodayPrayerTimes]);
 
+  // Reload um Mitternacht
   useEffect(() => {
     const id = setInterval(async () => {
-      const today = new Date();
-      const time = today.getHours();
-      if (time === 0) {
-        await FetchTodayPrayerTimes();
+      const now = new Date();
+      if (now.getHours() === 0 && now.getMinutes() < 5) {
+        await fetchTodayPrayerTimes();
       }
-    }, 5 * 60 * 5000);
+    }, 5 * 60 * 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [fetchTodayPrayerTimes]);
 
-  const HandleGetNextPrayerTimes = (ptimes: DayPrayerTimes) => {
-    const next = getNextPrayerTime(ptimes);
-    switch (next.prayer) {
-      case "Fajr":
-        setPrayersLayout("1.5fr 1fr 1fr 1fr 1fr 1fr");
-        break;
-      case "Shuruq":
-        setPrayersLayout("1fr 1.5fr 1fr 1fr 1fr 1fr");
-        break;
-      case "Dhuhr":
-      case "Jumaa":
-        setPrayersLayout("1fr 1fr 1.5fr 1fr 1fr 1fr");
-        break;
-      case "Asr":
-        setPrayersLayout("1fr 1fr 1fr 1.5fr 1fr 1fr");
-        break;
-      case "Maghrib":
-        setPrayersLayout("1fr 1fr 1fr 1fr 1.5fr 1fr");
-        break;
-      case "Isha":
-        setPrayersLayout("1fr 1fr 1fr 1fr 1fr 1.5fr");
-        break;
-    }
+  // ========= Hilfsfunktionen ==========
+  const getComments = useCallback(
+    (prayer: string, iqama: number): [string, string] => {
+      if (prayer === "Shuruq") return ["", ""];
+      if (iqama === 0) return ["الإقامة بعد الأذان", "Iqama direkt nach Adhan"];
+      const ar = `الإقامة ${iqama} دقيقة بعد الأذان`;
+      const de = `Iqama ${iqama} min nach Adhan`;
+      return [ar, de];
+    },
+    []
+  );
 
-    setNextPrayer(next.prayer);
-    if (next.prayer === "none") {
-      setTimeout(() => {
-        GoTo("events");
-      }, 2 * 60 * 1000);
-    }
-  };
-
-  const HandleNextDay = async () => {
-    const ptimes: DayPrayerTimes =
-      (await FetchCurrentDayPrayerTimes()) as DayPrayerTimes;
-    HandleGetNextPrayerTimes(ptimes);
-    setTodayPrayerTimes(ptimes);
-  };
-
-  const prayer_times = [
-    {
-      de: "Fajr",
-      ar: "الفجر",
-      time: TodayPrayerTimes?.Fajr,
-      key: "Fajr",
-      iqama: iqamaTimes.fajr,
-    },
-    {
-      de: "Shuruq",
-      ar: "شروق",
-      time: TodayPrayerTimes?.Shuruq,
-      key: "Shuruq",
-      iqama: iqamaTimes.shuruq,
-    },
-    {
-      de: "Asr",
-      key: "Asr",
-      ar: "العصر",
-      time: TodayPrayerTimes?.Asr,
-      iqama: iqamaTimes.asr,
-    },
-    {
-      de: "Maghrib",
-      key: "Maghrib",
-      ar: "المغرب",
-      time: TodayPrayerTimes?.Maghrib,
-      iqama: iqamaTimes.maghrib,
-    },
-    {
-      de: "Isha",
-      key: "Isha",
-      ar: "العشاء",
-      time: TodayPrayerTimes?.Isha,
-      iqama: iqamaTimes.isha,
-    },
-  ];
-
-  const prayers =
-    new Date().getDay() === 5
-      ? [
-          ...prayer_times,
-          {
+  // ========= Memoisierte Daten ==========
+  const prayers = useMemo(() => {
+    if (!todayPrayerTimes) return [];
+    const base = [
+      {
+        de: "Fajr",
+        ar: "الفجر",
+        time: todayPrayerTimes.Fajr,
+        key: "Fajr",
+        iqama: iqamaTimes.fajr,
+      },
+      {
+        de: "Shuruq",
+        ar: "شروق",
+        time: todayPrayerTimes.Shuruq,
+        key: "Shuruq",
+        iqama: iqamaTimes.shuruq,
+      },
+      {
+        de: "Asr",
+        ar: "العصر",
+        time: todayPrayerTimes.Asr,
+        key: "Asr",
+        iqama: iqamaTimes.asr,
+      },
+      {
+        de: "Maghrib",
+        ar: "المغرب",
+        time: todayPrayerTimes.Maghrib,
+        key: "Maghrib",
+        iqama: iqamaTimes.maghrib,
+      },
+      {
+        de: "Isha",
+        ar: "العشاء",
+        time: todayPrayerTimes.Isha,
+        key: "Isha",
+        iqama: iqamaTimes.isha,
+      },
+    ];
+    const dhuhrOrJumaa =
+      new Date().getDay() === 5
+        ? {
             de: "Jumaa",
-            key: "Dhuhr",
             ar: "الجمعة",
-            time: TodayPrayerTimes?.Jumaa,
-            iqama: iqamaTimes.jumaa,
-          },
-        ]
-      : [
-          ...prayer_times,
-          {
-            de: "Dhuhr",
+            time: todayPrayerTimes.Jumaa,
             key: "Dhuhr",
+            iqama: iqamaTimes.jumaa,
+          }
+        : {
+            de: "Dhuhr",
             ar: "الظهر",
-            time: TodayPrayerTimes?.Dhuhr,
+            time: todayPrayerTimes.Dhuhr,
+            key: "Dhuhr",
             iqama: iqamaTimes.dhuhr,
-          },
-        ];
+          };
 
-  // Ensure the display order is: Fajr, Shuruq, Dhuhr/Jumaa, Asr, Maghrib, Isha
-  const orderedKeys = ["Fajr", "Shuruq", "Dhuhr", "Asr", "Maghrib", "Isha"];
-  const orderedPrayers = orderedKeys
-    .map((k) => prayers.find((p) => p.key === k))
-    .filter(Boolean) as typeof prayers;
+    return [...base, dhuhrOrJumaa];
+  }, [todayPrayerTimes, iqamaTimes]);
 
-  const getComments = (prayer: string, iqama: number) => {
-    let ar = "";
-    let de = "";
+  const orderedPrayers = useMemo(() => {
+    const order = ["Fajr", "Shuruq", "Dhuhr", "Asr", "Maghrib", "Isha"];
+    return order
+      .map((k) => prayers.find((p) => p.key === k))
+      .filter(Boolean) as typeof prayers;
+  }, [prayers]);
 
-    if (iqama !== 0 && iqama <= 10) {
-      ar = `الإقامة ${iqama} دقائق بعد الأذان`;
-      de = `Iqama ${iqama} min nach Adhan`;
-    } else if (iqama !== 0 && iqama >= 10) {
-      ar = `الإقامة ${iqama} دقيقة بعد الأذان`;
-      de = `Iqama ${iqama} min nach Adhan`;
-    } else if (iqama === 0) {
-      ar = "الإقامة بعد الأذان";
-      de = "Iqama direkt nach Adhan";
-    }
-
-    switch (prayer) {
-      case "Shuruq":
-        return ["", ""];
-      default:
-        return [ar, de];
-    }
-  };
-
+  // ========= Render ==========
   return (
     <div
       style={{ backgroundImage: `url(${shiny})` }}
-      className="h-screen w-screen flex items-center justify-center p-2 box-border bg-[url('../../public/Shiny Overlay.svg')] bg-cover"
+      className="h-screen w-screen flex items-center justify-center p-2 box-border bg-cover"
     >
       <div
         className="
@@ -200,40 +169,37 @@ const PrayerTimes = ({ GoTo }: props) => {
           grid-rows-[8fr_1fr_1fr]
           transition-[grid-template-columns] duration-1000 ease-in-out
         "
-        style={{ gridTemplateColumns: PrayersLayout }}
+        style={{ gridTemplateColumns: prayersLayout }}
       >
-        {/* Row 1: six prayer cells */}
-        {orderedPrayers.map((prayer) => (
-          <div
-            key={prayer.key}
-            className="transition-all duration-1000 ease-in-out"
-          >
+        {/* Row 1: prayers */}
+        {orderedPrayers.map((p) => (
+          <div key={p.key} className="transition-all duration-1000 ease-in-out">
             <Prayer
-              reloadPrayerTimes={HandleNextDay}
-              prayer_ar={prayer.ar}
-              prayer_de={prayer.de}
-              time={prayer.time!}
-              next={NextPrayer!}
-              iqama={prayer.iqama}
-              comments={getComments(prayer.de, prayer.iqama)}
+              reloadPrayerTimes={fetchTodayPrayerTimes}
+              prayer_ar={p.ar}
+              prayer_de={p.de}
+              time={p.time!}
+              next={nextPrayer!}
+              iqama={p.iqama}
+              comments={getComments(p.de, p.iqama)}
               GetNextPrayerTimes={() =>
-                HandleGetNextPrayerTimes(TodayPrayerTimes!)
+                handleGetNextPrayerTimes(todayPrayerTimes!)
               }
-              GoTo={(what) => GoTo(what)}
+              GoTo={GoTo}
             />
           </div>
         ))}
 
-        {/* Row 2: header spanning all columns */}
+        {/* Row 2: date info */}
         <div className="col-span-6 flex items-center justify-center">
-          {TodayPrayerTimes && (
+          {todayPrayerTimes && (
             <TimeDateInfo
-              data={[TodayPrayerTimes["Hijri"], TodayPrayerTimes["Hijri_ar"]]}
+              data={[todayPrayerTimes["Hijri"], todayPrayerTimes["Hijri_ar"]]}
             />
           )}
         </div>
 
-        {/* Row 3: footer spanning all columns */}
+        {/* Row 3: footer */}
         <div className="col-span-6">
           <IZR GoTo={GoTo} />
         </div>
