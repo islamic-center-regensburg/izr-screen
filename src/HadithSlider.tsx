@@ -59,8 +59,7 @@ function HadithSlider({ onEnd }: props) {
                 justifyContent: "center",
                 alignItems: "center",
                 padding: "1vw",
-              }}
-            >
+              }}            >
               <IText
                 style={{
                   fontSize: "3vw",

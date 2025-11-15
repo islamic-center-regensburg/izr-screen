@@ -58,25 +58,26 @@ function transformArrayToObject(array: DayPrayerTimes[]) {
 }
 
 export const FetchAndStorePrayerTimes = async () => {
-  alert("Fetching prayer times... Please wait unitl you are notified !");
-
   let wholeYearPrayerTimes: DayPrayerTimes[] = [];
-  await axios
-    .post<DayPrayerTimes[]>(izr_server + "/prayer-times", {
+
+  try {
+    const resp = await axios.post<DayPrayerTimes[]>(izr_server + "/prayer-times", {
       method: "izr",
       value: new Date().getFullYear(),
       period: "annual",
-    })
-    .then((resp) => {
-      wholeYearPrayerTimes = resp.data;
-      alert("Prayer times successfully fetched and stored! Click on Reload !");
-    })
-    .catch(() => alert("Error: Prayer times could not be fetched."));
+    });
+
+    wholeYearPrayerTimes = resp.data;
+  } catch (err) {
+    console.error("Error fetching prayer times", err);
+    return false;
+  }
+
   const tranformedPrayerTimes = transformArrayToObject(wholeYearPrayerTimes);
-  console.log("prayer times of the while year");
-  console.log(tranformedPrayerTimes);
   StoreItem("yearPrayerTimes", { value: tranformedPrayerTimes });
+  return true;
 };
+
 
 /* this function loads the prayer time from json file and if the current day is not found it loads and stores the prayer the new current year  */
 
