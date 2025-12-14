@@ -40,6 +40,7 @@ function EventSlider({ onEnd }: Props) {
           ar: event.flyer_ar,
         }));
         setEvents(eventUrls);
+        if (eventUrls.length == 0) onEnd()
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -92,6 +93,8 @@ function EventSlider({ onEnd }: Props) {
   useEffect(() => {
     setFocusLang("de");
   }, [eventIndex]);
+
+
 
   const widthFor = (lang: Lang) => (lang === focusLang ? "50%" : "25%");
 
