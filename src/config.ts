@@ -2,7 +2,8 @@ export const  izr_fonts = {
     default : "El Messiri"
 }
 
-export const izr_server = "https://izr-cloud.online"
+export const izr_server =
+  import.meta.env.VITE_IZR_SERVER ?? "http://localhost:8000";
 
 export const colors = {
     primary: "#132a13",
