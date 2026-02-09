@@ -14,7 +14,7 @@ export const getPrayerIqamaForMosqueQueryOptions = (mosqueId: string) => {
 				path: { mosque_id: mosqueId },
 			});
 			if (response.error) {
-				toast.error("Failed to fetch prayer iqama times");
+				toast.error("Iqama-Zeiten konnten nicht abgerufen werden");
 				console.log(response.error.detail);
 			}
 			return response.data;
@@ -24,7 +24,7 @@ export const getPrayerIqamaForMosqueQueryOptions = (mosqueId: string) => {
 };
 
 export const getPrayerIqamaQueryOptions = (
-	query: GetAllPrayerIqamasData["query"],
+	query: Partial<GetAllPrayerIqamasData["query"]>,
 ) => {
 	return {
 		queryKey: PRAYER_IQAMA_QUERY_KEYS.all(
@@ -35,11 +35,11 @@ export const getPrayerIqamaQueryOptions = (
 				query: query as GetAllPrayerIqamasData["query"],
 			});
 			if (response.error) {
-				toast.error("Failed to fetch prayer iqama times");
+				toast.error("Iqama-Zeiten konnten nicht abgerufen werden");
 				console.log(response.error.detail);
 			}
 			return response.data;
 		},
-		enabled: !!query,
+		enabled: !!query && Object.keys(query).length > 0,
 	};
 };

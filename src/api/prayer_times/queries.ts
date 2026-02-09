@@ -19,13 +19,17 @@ export const getPrayerTimesQueryOptions = ({
 					query: query as GetPrayerTimesData["query"],
 				});
 				if (!response.data) {
-					toast.error("No prayer times data returned. Please try again later.");
-					throw new Error("No prayer times data returned");
+					toast.error(
+						"Keine Gebetzeitdaten zurückgegeben. Bitte versuchen Sie es später erneut.",
+					);
+					throw new Error("Keine Gebetzeitdaten zurückgegeben");
 				}
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching prayer times:", error);
-				toast.error("Failed to fetch prayer times. Please try again later.");
+				console.error("Fehler beim Abrufen von Gebetszeiten:", error);
+				toast.error(
+					"Gebetszeiten konnten nicht abgerufen werden. Bitte versuchen Sie es später erneut.",
+				);
 				throw error;
 			}
 		},
@@ -53,13 +57,17 @@ export const getPrayerTimesForMosqueQueryOptions = ({
 					path: { mosque_id },
 				});
 				if (!response.data) {
-					toast.error("No prayer times data returned. Please try again later.");
-					throw new Error("No prayer times data returned");
+					toast.error(
+						"Keine Gebetzeitdaten zurückgegeben. Bitte versuchen Sie es später erneut.",
+					);
+					throw new Error("Keine Gebetzeitdaten zurückgegeben");
 				}
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching prayer times:", error);
-				toast.error("Failed to fetch prayer times. Please try again later.");
+				console.error("Fehler beim Abrufen von Gebetszeiten:", error);
+				toast.error(
+					"Gebetszeiten konnten nicht abgerufen werden. Bitte versuchen Sie es später erneut.",
+				);
 				throw error;
 			}
 		},

@@ -17,13 +17,17 @@ export const getMosquesQueryOptions = ({
 			try {
 				const response = await getAllMosques(query ? { query } : undefined);
 				if (!response.data) {
-					toast.error("No mosques data returned. Please try again later.");
-					throw new Error("No mosques data returned");
+					toast.error(
+						"Keine Moschee-Daten zurückgegeben. Bitte versuchen Sie es später erneut.",
+					);
+					throw new Error("Keine Moschee-Daten zurückgegeben");
 				}
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching mosques:", error);
-				toast.error("Failed to fetch mosques. Please try again later.");
+				console.error("Fehler beim Abrufen von Moscheen:", error);
+				toast.error(
+					"Moscheen konnten nicht abgerufen werden. Bitte versuchen Sie es später erneut.",
+				);
 				throw error;
 			}
 		},
@@ -39,13 +43,17 @@ export const getMosqueByIdQueryOptions = (id: string) => {
 					path: { mosque_id: id },
 				});
 				if (!response.data) {
-					toast.error("No mosque data returned. Please try again later.");
-					throw new Error("No mosque data returned");
+					toast.error(
+						"Keine Moschee-Daten zurückgegeben. Bitte versuchen Sie es später erneut.",
+					);
+					throw new Error("Keine Moschee-Daten zurückgegeben");
 				}
 				return response.data;
 			} catch (error) {
-				console.error(`Error fetching mosque with id ${id}:`, error);
-				toast.error("Failed to fetch mosque details. Please try again later.");
+				console.error(`Fehler beim Abrufen der Moschee mit ID ${id}:`, error);
+				toast.error(
+					"Moscheedetails konnten nicht abgerufen werden. Bitte versuchen Sie es später erneut.",
+				);
 				throw error;
 			}
 		},

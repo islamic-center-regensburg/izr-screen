@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { PrayerName } from "@/api/gen";
 import { getPrayerIqamaQueryOptions } from "@/api/prayer_iqama/queries";
-import { PRAYER_NAME_MAPPING } from "./constants";
+import { PRAYER_NAME_MAPPING } from "../constants";
 
 interface PrayerProps {
 	prayerName: PrayerName;
@@ -51,12 +51,12 @@ function Prayer({ prayerName, prayerTime }: PrayerProps) {
 				</p>
 			</div>
 			<div className="mt-[1vh] flex flex-col items-center gap-[0.5vh]">
-				<p className="text-[1vw] text-muted-foreground">Prayer Time</p>
+				<p className="text-[1vw] text-muted-foreground">Gebetszeit</p>
 				<p className="text-[2.5vw] font-bold">{prayerTime || "-"}</p>
 			</div>
 			{iqamaTime && (
 				<div className="flex flex-col items-center gap-[0.5vh]">
-					<p className="text-[1vw] text-muted-foreground">Iqama Time</p>
+					<p className="text-[1vw] text-muted-foreground">Iqama-Zeit</p>
 					<p className="text-[2.5vw] font-bold text-primary">{iqamaTime}</p>
 				</div>
 			)}
