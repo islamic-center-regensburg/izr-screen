@@ -6,17 +6,13 @@
 
 body {
   @apply m-0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+  font-family: 'Bricolage', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: clamp(16px, 1.5vw, 24px);
 }
 
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
 
 :root {
   --background: oklch(1 0 0);
@@ -135,4 +131,26 @@ code {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Bricolage';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype-variations');
+}
+@font-face {
+  font-family: 'Naveid';
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+  src: url('fonts/Naveid_Arabic/naveid-arabic-demo.extra-bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Naveid';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('fonts/Naveid_Arabic/naveid-arabic-demo.regular.otf') format('opentype');
 }
