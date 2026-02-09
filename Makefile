@@ -12,7 +12,7 @@ build:
 	VITE_API_BASE_URL=$(VITE_API_BASE_URL) npm run build
 	mkdir -p deploy
 	cp -r dist/* deploy/
-	cp -r .nginx/* deploy/
+	cp -r docker/* deploy/
 
 docker: build
 	@echo "▶ Building Docker image $(IMAGE_NAME):$(IMAGE_TAG)"
