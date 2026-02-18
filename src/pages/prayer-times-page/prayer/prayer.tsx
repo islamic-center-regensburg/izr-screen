@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import type { PrayerName } from "@/api/gen";
-import { getPrayerIqamaQueryOptions } from "@/api/prayer_iqama/queries";
+import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { PRAYER_NAME_MAPPING } from "../constants";
 
 interface PrayerProps {
@@ -9,27 +8,21 @@ interface PrayerProps {
 }
 
 function Prayer({ prayerName, prayerTime }: PrayerProps) {
-	const { data: prayerIqamaData } = useQuery(
-		getPrayerIqamaQueryOptions({
-			prayer_name: prayerName,
-		}),
-	);
-	const prayer_iqama = prayerIqamaData?.data[0];
-	prayer_iqama?.mode;
+	const { prayerIqama } = usePrayerIqama(prayerName);
 	const getIqamaTime = (): string | null => {
-		if (!prayer_iqama) return null;
+		if (!prayerIqama) return null;
 
-		if (prayer_iqama.mode === "fixed" && prayer_iqama?.fixed_time) {
-			return prayer_iqama.fixed_time;
+		if (prayerIqama.mode === "fixed" && prayerIqama?.fixed_time) {
+			return prayerIqama.fixed_time;
 		}
 
 		if (
-			prayer_iqama.mode === "offset" &&
+			prayerIqama.mode === "offset" &&
 			prayerTime &&
-			prayer_iqama.offset_minutes
+			prayerIqama.offset_minutes
 		) {
 			const [hours, minutes] = prayerTime.split(":").map(Number);
-			const totalMinutes = hours * 60 + minutes + prayer_iqama.offset_minutes;
+			const totalMinutes = hours * 60 + minutes + prayerIqama.offset_minutes;
 			const iqamaHours = Math.floor(totalMinutes / 60);
 			const iqamaMinutes = totalMinutes % 60;
 			return `${String(iqamaHours).padStart(2, "0")}:${String(iqamaMinutes).padStart(2, "0")}`;

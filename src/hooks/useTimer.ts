@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { nowTime } from "@/utils/time-utils";
 
 interface UseTimerOptions {
 	targetTime: string; // "HH:MM" format
@@ -25,7 +26,7 @@ export function useTimer({
 		if (!isActive) return;
 
 		const calculateTime = () => {
-			const now = new Date();
+			const now = nowTime({});
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
 			const currentSeconds = now.getSeconds();
 

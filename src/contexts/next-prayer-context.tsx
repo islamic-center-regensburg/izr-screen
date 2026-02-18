@@ -6,6 +6,7 @@ import {
 	useState,
 } from "react";
 import type { PrayerName } from "@/api/gen";
+import { nowTime } from "@/utils/time-utils";
 
 interface NextPrayerContextValue {
 	nextPrayerName: PrayerName | null;
@@ -41,7 +42,7 @@ export function NextPrayerProvider({
 		const updateNextPrayer = () => {
 			if (!prayerTimes) return;
 
-			const now = new Date();
+			const now = nowTime({});
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
 			let nextPrayerIdx = -1;
@@ -60,10 +61,13 @@ export function NextPrayerProvider({
 				}
 			}
 
-			// If no prayer found today, next is fajr tomorrow
+			// If no prayer found today, do not highlight any next prayer
 			if (nextPrayerIdx === -1) {
-				nextPrayerIdx = 0;
-				nextTime = prayerTimes.fajr;
+				setNextPrayer({
+					nextPrayerName: null,
+					nextPrayerTime: null,
+				});
+				return;
 			}
 
 			const nextPrayerName = PRAYER_ORDER[nextPrayerIdx];

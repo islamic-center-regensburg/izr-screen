@@ -1,7 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { createContext, type ReactNode, useContext } from "react";
-import type { MosqueOut } from "@/api/gen";
-import { getMosquesQueryOptions } from "@/api/mosque/queries";
+import {
+	createContext,
+	type ReactNode,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
+import type { MosqueOut, PaginatedResponseMosqueOut } from "@/api/gen";
+import { getAllMosques } from "@/api/gen";
 
 interface MosqueContextValue {
 	mosque: MosqueOut | undefined;
@@ -18,18 +25,42 @@ interface MosqueProviderProps {
 }
 
 export function MosqueProvider({ children, mosque_name }: MosqueProviderProps) {
-	const {
-		data: mosques,
-		isLoading,
-		error,
-		refetch,
-	} = useQuery(getMosquesQueryOptions({ query: { name: mosque_name } }));
+	const [mosques, setMosques] = useState<PaginatedResponseMosqueOut | null>(
+		null,
+	);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<Error | null>(null);
 
-	const mosque = mosques ? mosques.data[0] : undefined;
+	const fetchMosques = useCallback(async () => {
+		setIsLoading(true);
+		setError(null);
+		try {
+			const response = await getAllMosques({ query: { name: mosque_name } });
+			if (!response.data) {
+				throw new Error("Keine Moschee-Daten zurückgegeben");
+			}
+			setMosques(response.data);
+		} catch (fetchError) {
+			setError(fetchError as Error);
+			setMosques(null);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [mosque_name]);
+
+	useEffect(() => {
+		void fetchMosques();
+	}, [fetchMosques]);
+
+	const mosque = useMemo(() => {
+		return mosques?.data[0];
+	}, [mosques]);
+
+	const refetch = useCallback(() => {
+		void fetchMosques();
+	}, [fetchMosques]);
 	return (
-		<MosqueContext.Provider
-			value={{ mosque, isLoading, error: error as Error | null, refetch }}
-		>
+		<MosqueContext.Provider value={{ mosque, isLoading, error, refetch }}>
 			{children}
 		</MosqueContext.Provider>
 	);

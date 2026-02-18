@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { PrayerName } from "@/api/gen";
-import { getPrayerIqamaQueryOptions } from "@/api/prayer_iqama/queries";
 import { useNextPrayer } from "@/contexts";
+import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
 import PrayerNames from "./PrayerNames";
 import PrayerTimeDisplay from "./PrayerTimeDisplay";
@@ -17,34 +16,28 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	const nextPrayer = useNextPrayer();
 	const [prayerReached, setPrayerReached] = useState(false);
 
-	const { data: prayerIqamaData } = useQuery(
-		getPrayerIqamaQueryOptions({
-			prayer_name: prayerName,
-		}),
-	);
-
-	const prayer_iqama = prayerIqamaData?.data[0];
+	const { prayerIqama } = usePrayerIqama(prayerName);
 	const isNextPrayer = nextPrayer.nextPrayerName === prayerName;
 
 	const getIqamaTime = (): string | null => {
-		if (!prayer_iqama) return null;
+		if (!prayerIqama) return null;
 
 		// Helper to format time without seconds (HH:MM:SS -> HH:MM)
 		const formatTimeWithoutSeconds = (time: string): string => {
 			return time.split(":").slice(0, 2).join(":");
 		};
 
-		if (prayer_iqama.mode === "fixed" && prayer_iqama?.fixed_time) {
-			return formatTimeWithoutSeconds(prayer_iqama.fixed_time);
+		if (prayerIqama.mode === "fixed" && prayerIqama?.fixed_time) {
+			return formatTimeWithoutSeconds(prayerIqama.fixed_time);
 		}
 
 		if (
-			prayer_iqama.mode === "offset" &&
+			prayerIqama.mode === "offset" &&
 			prayerTime &&
-			prayer_iqama.offset_minutes
+			prayerIqama.offset_minutes
 		) {
 			const [hours, minutes] = prayerTime.split(":").map(Number);
-			const totalMinutes = hours * 60 + minutes + prayer_iqama.offset_minutes;
+			const totalMinutes = hours * 60 + minutes + prayerIqama.offset_minutes;
 			const iqamaHours = Math.floor(totalMinutes / 60);
 			const iqamaMinutes = totalMinutes % 60;
 			return `${String(iqamaHours).padStart(2, "0")}:${String(iqamaMinutes).padStart(2, "0")}`;
@@ -70,7 +63,11 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		isActive: isNextPrayer && !!iqamaTime && prayerReached,
 	});
 
-	const shouldShowIqamaTimer = isNextPrayer && prayerReached && iqamaTime;
+	const shouldShowIqamaTimer =
+		isNextPrayer &&
+		prayerReached &&
+		iqamaTime &&
+		iqamaTimer.timeRemaining !== "00:00:00";
 	// Blink when within 5 minutes (300 seconds) before the time0
 	const isBlinkingPrayer =
 		isNextPrayer && !prayerReached && prayerTimer.secondsRemaining <= 300;
