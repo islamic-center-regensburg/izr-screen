@@ -15,7 +15,7 @@ function PrayerTimer({
 			className={`mt-[1vh] flex flex-col items-center justify-center rounded-lg p-[0.8vw]`}
 		>
 			<p
-				className={`text-[1vw] font-semibold ${
+				className={`text-[1.5vw] font-bold ${
 					isActive ? "text-white" : "text-primary"
 				}`}
 			>

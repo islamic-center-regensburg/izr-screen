@@ -1,5 +1,4 @@
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { NextPrayerProvider, useMosque } from "@/contexts";
 import Footer from "./footer";
 import Header from "./header";
@@ -16,18 +15,6 @@ function PrayerTimesPage() {
 	}
 
 	const { mosque } = useMosque();
-
-	// Reload page every 2 hours
-	useEffect(() => {
-		const reloadInterval = setInterval(
-			() => {
-				window.location.reload();
-			},
-			2 * 60 * 60 * 1000,
-		); // 2 hours in milliseconds
-
-		return () => clearInterval(reloadInterval);
-	}, []);
 
 	return (
 		<NextPrayerProvider prayerTimes={todayPrayerTimes}>

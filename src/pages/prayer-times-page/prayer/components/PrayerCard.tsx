@@ -94,13 +94,13 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 				<div className="flex flex-col items-center gap-[1.5vh]">
 					<PrayerTimeDisplay
-						label="Gebetszeit"
+						label="Adhan"
 						time={prayerTime ?? "--:--"}
 						isActive={isActivePrayer}
 					/>
 					{iqamaTime && (
 						<PrayerTimeDisplay
-							label="Iqama-Zeit"
+							label="Iqama"
 							time={iqamaTime}
 							isActive={isActivePrayer}
 						/>
