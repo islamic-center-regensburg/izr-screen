@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PrayerName } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
 import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
+import { nowTime } from "@/utils/time-utils";
 import PrayerNames from "./PrayerNames";
 import PrayerTimeDisplay from "./PrayerTimeDisplay";
 import PrayerTimer from "./PrayerTimer";
@@ -19,16 +20,17 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	const { prayerIqama } = usePrayerIqama(prayerName);
 	const isNextPrayer = nextPrayer.nextPrayerName === prayerName;
 
+	const toHHMM = (time: string) => time.split(":").slice(0, 2).join(":");
+	const toMinutes = (time: string) => {
+		const [hours, minutes] = time.split(":").slice(0, 2).map(Number);
+		return hours * 60 + minutes;
+	};
+
 	const getIqamaTime = (): string | null => {
 		if (!prayerIqama) return null;
 
-		// Helper to format time without seconds (HH:MM:SS -> HH:MM)
-		const formatTimeWithoutSeconds = (time: string): string => {
-			return time.split(":").slice(0, 2).join(":");
-		};
-
 		if (prayerIqama.mode === "fixed" && prayerIqama?.fixed_time) {
-			return formatTimeWithoutSeconds(prayerIqama.fixed_time);
+			return toHHMM(prayerIqama.fixed_time);
 		}
 
 		if (
@@ -47,10 +49,43 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	};
 
 	const iqamaTime = getIqamaTime();
+	const normalizedPrayerTime = prayerTime ? toHHMM(prayerTime) : null;
+
+	const isInIqamaWindow = useMemo(() => {
+		if (!normalizedPrayerTime || !iqamaTime) return false;
+
+		const now = nowTime({});
+		const currentMinutes = now.getHours() * 60 + now.getMinutes();
+		const prayerMinutes = toMinutes(normalizedPrayerTime);
+		const iqamaMinutes = toMinutes(iqamaTime);
+
+		return currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes;
+	}, [normalizedPrayerTime, iqamaTime]);
+
+	useEffect(() => {
+		if (!normalizedPrayerTime) {
+			setPrayerReached(false);
+			return;
+		}
+
+		const now = nowTime({});
+		const currentMinutes = now.getHours() * 60 + now.getMinutes();
+		const prayerMinutes = toMinutes(normalizedPrayerTime);
+
+		if (!iqamaTime) {
+			setPrayerReached(currentMinutes >= prayerMinutes);
+			return;
+		}
+
+		const iqamaMinutes = toMinutes(iqamaTime);
+		setPrayerReached(
+			currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes,
+		);
+	}, [normalizedPrayerTime, iqamaTime]);
 
 	// Timer for prayer time
 	const prayerTimer = useTimer({
-		targetTime: prayerTime || "00:00",
+		targetTime: normalizedPrayerTime || "00:00",
 		onReached: () => {
 			setPrayerReached(true);
 		},
@@ -63,15 +98,15 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		onReached: () => {
 			window.location.reload();
 		},
-		isActive: isNextPrayer && !!iqamaTime && prayerReached,
+		isActive: (isNextPrayer || isInIqamaWindow) && !!iqamaTime && prayerReached,
 	});
 
 	const shouldShowIqamaTimer =
-		isNextPrayer &&
+		(isNextPrayer || isInIqamaWindow) &&
 		prayerReached &&
 		iqamaTime &&
 		iqamaTimer.timeRemaining !== "00:00:00";
-	const isActivePrayer = isNextPrayer;
+	const isActivePrayer = isNextPrayer || isInIqamaWindow;
 	// Blink when within 5 minutes (300 seconds) before the time0
 	const isBlinkingPrayer =
 		isNextPrayer && !prayerReached && prayerTimer.secondsRemaining <= 300;
@@ -111,7 +146,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				{isNextPrayer && !prayerReached && prayerTime && (
 					<PrayerTimer
 						timeRemaining={prayerTimer.timeRemaining}
-						label="Bis zum Gebet"
+						label="Bis Adhan"
 						isBlink={isBlinkingPrayer}
 						isActive={isActivePrayer}
 					/>
@@ -121,7 +156,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				{shouldShowIqamaTimer && (
 					<PrayerTimer
 						timeRemaining={iqamaTimer.timeRemaining}
-						label="Bis zur Iqama"
+						label="Bis Iqama"
 						isBlink={isBlinkingIqama ?? false}
 						isActive={isActivePrayer}
 					/>

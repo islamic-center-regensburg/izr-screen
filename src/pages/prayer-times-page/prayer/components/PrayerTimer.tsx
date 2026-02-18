@@ -12,7 +12,11 @@ function PrayerTimer({
 }: PrayerTimerProps) {
 	return (
 		<div
-			className={`mt-[1vh] flex flex-col items-center justify-center rounded-lg p-[0.8vw]`}
+			className={`mt-[1vh] flex flex-col items-center justify-center rounded-lg border p-[0.8vw] backdrop-blur-sm w-1/1 ${
+				isActive
+					? "border-white/10 bg-white/10"
+					: "border-primary/10 bg-primary/5"
+			}`}
 		>
 			<p
 				className={`text-[1.5vw] font-bold ${

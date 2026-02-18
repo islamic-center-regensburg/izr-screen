@@ -3,8 +3,9 @@ interface NowProps {
 	baseTime?: Date;
 }
 
-export const nowTime = ({ offsetMinutes = 0, baseTime }: NowProps): Date => {
-	const now = baseTime ?? new Date();
+// export const nowTime = ({ offsetMinutes = 0, baseTime }: NowProps): Date => {
+export const nowTime = ({ offsetMinutes = 0 }: NowProps): Date => {
+	const now = new Date();
 	if (!Number.isFinite(offsetMinutes) || offsetMinutes === 0) {
 		return new Date(now.getTime());
 	}
