@@ -71,6 +71,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		prayerReached &&
 		iqamaTime &&
 		iqamaTimer.timeRemaining !== "00:00:00";
+	const isActivePrayer = isNextPrayer;
 	// Blink when within 5 minutes (300 seconds) before the time0
 	const isBlinkingPrayer =
 		isNextPrayer && !prayerReached && prayerTimer.secondsRemaining <= 300;
@@ -80,36 +81,58 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 	return (
 		<div
-			className={`flex h-full flex-col items-center justify-center gap-[1vh] rounded-xl border border-muted p-[1.5vw] shadow-md transition-all ${
-				isNextPrayer && prayerReached ? "bg-muted/40" : ""
+			className={`relative flex h-full flex-col items-center justify-center gap-[1vh] overflow-hidden rounded-xl border border-muted p-[1.5vw] shadow-md transition-all ${
+				isActivePrayer ? "bg-[#1a3a2e] text-white" : ""
 			} ${
 				isBlinkingPrayer || isBlinkingIqama
 					? "animate-pulse ring-2 ring-primary"
 					: ""
 			}`}
 		>
-			<PrayerNames prayerName={prayerName} />
+			<div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-[1vh]">
+				<PrayerNames prayerName={prayerName} isActive={isActivePrayer} />
 
-			<div className="flex flex-col items-center gap-[1.5vh]">
-				<PrayerTimeDisplay label="Gebetszeit" time={prayerTime ?? "--:--"} />
-				{iqamaTime && <PrayerTimeDisplay label="Iqama-Zeit" time={iqamaTime} />}
+				<div className="flex flex-col items-center gap-[1.5vh]">
+					<PrayerTimeDisplay
+						label="Gebetszeit"
+						time={prayerTime ?? "--:--"}
+						isActive={isActivePrayer}
+					/>
+					{iqamaTime && (
+						<PrayerTimeDisplay
+							label="Iqama-Zeit"
+							time={iqamaTime}
+							isActive={isActivePrayer}
+						/>
+					)}
+				</div>
+
+				{/* Prayer Timer */}
+				{isNextPrayer && !prayerReached && prayerTime && (
+					<PrayerTimer
+						timeRemaining={prayerTimer.timeRemaining}
+						label="Bis zum Gebet"
+						isBlink={isBlinkingPrayer}
+						isActive={isActivePrayer}
+					/>
+				)}
+
+				{/* Iqama Timer */}
+				{shouldShowIqamaTimer && (
+					<PrayerTimer
+						timeRemaining={iqamaTimer.timeRemaining}
+						label="Bis zur Iqama"
+						isBlink={isBlinkingIqama ?? false}
+						isActive={isActivePrayer}
+					/>
+				)}
 			</div>
 
-			{/* Prayer Timer */}
-			{isNextPrayer && !prayerReached && prayerTime && (
-				<PrayerTimer
-					timeRemaining={prayerTimer.timeRemaining}
-					label="Bis zum Gebet"
-					isBlink={isBlinkingPrayer}
-				/>
-			)}
-
-			{/* Iqama Timer */}
-			{shouldShowIqamaTimer && (
-				<PrayerTimer
-					timeRemaining={iqamaTimer.timeRemaining}
-					label="Bis zur Iqama"
-					isBlink={isBlinkingIqama ?? false}
+			{isActivePrayer && (
+				<img
+					src="/ramadan.png"
+					alt="Ramadan"
+					className="absolute bottom-[1vh] left-1/2 z-0 h-auto w-1/1 -translate-x-1/2 opacity-65"
 				/>
 			)}
 		</div>

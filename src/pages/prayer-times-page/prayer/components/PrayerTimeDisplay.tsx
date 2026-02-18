@@ -2,12 +2,14 @@ interface PrayerTimeDisplayProps {
 	label: string;
 	time: string | null;
 	isBlink?: boolean;
+	isActive?: boolean;
 }
 
 function PrayerTimeDisplay({
 	label,
 	time,
 	isBlink = false,
+	isActive = false,
 }: PrayerTimeDisplayProps) {
 	return (
 		<div
@@ -15,8 +17,14 @@ function PrayerTimeDisplay({
 				isBlink ? "animate-pulse" : ""
 			}`}
 		>
-			<p className="text-[1vw] text-muted-foreground">{label}</p>
-			<p className="text-[2.5vw] font-bold">{time || "-"}</p>
+			<p
+				className={`text-[1.5vw] ${isActive ? "text-white" : "text-muted-foreground"}`}
+			>
+				{label}
+			</p>
+			<p className={`text-[3.5vw] font-bold ${isActive ? "text-white" : ""}`}>
+				{time || "-"}
+			</p>
 		</div>
 	);
 }
