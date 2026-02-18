@@ -60,6 +60,9 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	// Timer for iqama time (only show after prayer time reached)
 	const iqamaTimer = useTimer({
 		targetTime: iqamaTime || "00:00",
+		onReached: () => {
+			window.location.reload();
+		},
 		isActive: isNextPrayer && !!iqamaTime && prayerReached,
 	});
 
@@ -78,6 +81,8 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	return (
 		<div
 			className={`flex h-full flex-col items-center justify-center gap-[1vh] rounded-xl border border-muted p-[1.5vw] shadow-md transition-all ${
+				isNextPrayer && prayerReached ? "bg-muted/40" : ""
+			} ${
 				isBlinkingPrayer || isBlinkingIqama
 					? "animate-pulse ring-2 ring-primary"
 					: ""
