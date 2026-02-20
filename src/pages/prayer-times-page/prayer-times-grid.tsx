@@ -17,7 +17,7 @@ function PrayerTimesGrid({ prayerTimes }: PrayerTimesGridProps) {
 
 	return (
 		<div className="flex-1 overflow-auto">
-			<div className="grid h-full grid-cols-[repeat(auto-fit,minmax(15vw,1fr))] grid-rows-1 gap-[1vw] p-[1vw]">
+			<div className="grid h-full grid-cols-[repeat(auto-fit,minmax(15vw,1fr))] grid-rows-1 gap-[1vw] ">
 				{prayerOrder.map((prayerName) => {
 					let prayerTime =
 						prayerTimes?.[prayerName as keyof typeof prayerTimes];
@@ -25,8 +25,8 @@ function PrayerTimesGrid({ prayerTimes }: PrayerTimesGridProps) {
 					// Override jumah time to 13:30 on Friday
 					// if (isFriday && prayerName === "dhuhr") {
 					if (isFriday && prayerName === "dhuhr") {
-						prayerTime = "13:30";
 						prayerName = "jumah"; // Update the prayer name to jumah
+						prayerTime = undefined;
 					}
 
 					return (

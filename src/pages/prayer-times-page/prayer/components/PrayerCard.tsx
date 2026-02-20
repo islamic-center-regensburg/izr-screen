@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import type { PrayerName } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
@@ -14,11 +15,14 @@ interface PrayerCardProps {
 }
 
 function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
+	const navigate = useNavigate();
 	const nextPrayer = useNextPrayer();
 	const [prayerReached, setPrayerReached] = useState(false);
 
 	const { prayerIqama } = usePrayerIqama(prayerName);
-	const isNextPrayer = nextPrayer.nextPrayerName === prayerName;
+	const isNextPrayer =
+		nextPrayer.nextPrayerName === prayerName ||
+		(prayerName === "jumah" && nextPrayer.nextPrayerName === "dhuhr");
 
 	const toHHMM = (time: string) => time.split(":").slice(0, 2).join(":");
 	const toMinutes = (time: string) => {
@@ -50,27 +54,30 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 	const iqamaTime = getIqamaTime();
 	const normalizedPrayerTime = prayerTime ? toHHMM(prayerTime) : null;
+	const effectivePrayerTime =
+		normalizedPrayerTime ||
+		(prayerIqama?.mode === "fixed" && iqamaTime ? iqamaTime : null);
 
 	const isInIqamaWindow = useMemo(() => {
-		if (!normalizedPrayerTime || !iqamaTime) return false;
+		if (!effectivePrayerTime || !iqamaTime) return false;
 
 		const now = nowTime({});
 		const currentMinutes = now.getHours() * 60 + now.getMinutes();
-		const prayerMinutes = toMinutes(normalizedPrayerTime);
+		const prayerMinutes = toMinutes(effectivePrayerTime);
 		const iqamaMinutes = toMinutes(iqamaTime);
 
 		return currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes;
-	}, [normalizedPrayerTime, iqamaTime]);
+	}, [effectivePrayerTime, iqamaTime]);
 
 	useEffect(() => {
-		if (!normalizedPrayerTime) {
+		if (!effectivePrayerTime) {
 			setPrayerReached(false);
 			return;
 		}
 
 		const now = nowTime({});
 		const currentMinutes = now.getHours() * 60 + now.getMinutes();
-		const prayerMinutes = toMinutes(normalizedPrayerTime);
+		const prayerMinutes = toMinutes(effectivePrayerTime);
 
 		if (!iqamaTime) {
 			setPrayerReached(currentMinutes >= prayerMinutes);
@@ -81,22 +88,25 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		setPrayerReached(
 			currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes,
 		);
-	}, [normalizedPrayerTime, iqamaTime]);
+	}, [effectivePrayerTime, iqamaTime]);
 
 	// Timer for prayer time
 	const prayerTimer = useTimer({
-		targetTime: normalizedPrayerTime || "00:00",
+		targetTime: effectivePrayerTime || "00:00",
 		onReached: () => {
 			setPrayerReached(true);
 		},
-		isActive: isNextPrayer && !!prayerTime && !prayerReached,
+		isActive: isNextPrayer && !!effectivePrayerTime && !prayerReached,
 	});
 
 	// Timer for iqama time (only show after prayer time reached)
 	const iqamaTimer = useTimer({
 		targetTime: iqamaTime || "00:00",
 		onReached: () => {
-			window.location.reload();
+			navigate({
+				to: "/no-phone/$countdown",
+				params: { countdown: prayerName === "jumah" ? "15" : "7" },
+			});
 		},
 		isActive: (isNextPrayer || isInIqamaWindow) && !!iqamaTime && prayerReached,
 	});
@@ -130,7 +140,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				<div className="flex flex-col items-center gap-[1.5vh]">
 					<PrayerTimeDisplay
 						label="Adhan"
-						time={prayerTime ?? "--:--"}
+						time={effectivePrayerTime ?? "--:--"}
 						isActive={isActivePrayer}
 					/>
 					{iqamaTime && (
@@ -143,7 +153,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				</div>
 
 				{/* Prayer Timer */}
-				{isNextPrayer && !prayerReached && prayerTime && (
+				{isNextPrayer && !prayerReached && effectivePrayerTime && (
 					<PrayerTimer
 						timeRemaining={prayerTimer.timeRemaining}
 						label="Bis Adhan"
@@ -167,7 +177,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				<img
 					src="/ramadan.png"
 					alt="Ramadan"
-					className="absolute bottom-[1vh] left-1/2 z-0 h-auto w-1/1 -translate-x-1/2 opacity-65"
+					className="absolute top-[1vh] left-1/2 z-0 h-auto w-1/1 -translate-x-1/2 opacity-50"
 				/>
 			)}
 		</div>
