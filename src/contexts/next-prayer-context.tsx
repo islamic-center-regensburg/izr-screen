@@ -27,7 +27,21 @@ interface NextPrayerProviderProps {
 	prayerTimes: Record<string, string> | null;
 }
 
-const PRAYER_ORDER: PrayerName[] = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
+const WEEKDAY_PRAYER_ORDER: PrayerName[] = [
+	"fajr",
+	"dhuhr",
+	"asr",
+	"maghrib",
+	"isha",
+];
+
+const FRIDAY_PRAYER_ORDER: PrayerName[] = [
+	"fajr",
+	"jumah",
+	"asr",
+	"maghrib",
+	"isha",
+];
 
 function timeStringToMinutes(timeStr: string): number {
 	const [hours, minutes] = timeStr.split(":").slice(0, 2).map(Number);
@@ -36,6 +50,22 @@ function timeStringToMinutes(timeStr: string): number {
 
 function toHHMM(timeStr: string): string {
 	return timeStr.split(":").slice(0, 2).join(":");
+}
+
+function getPrayerOrder(isFriday: boolean): PrayerName[] {
+	return isFriday ? FRIDAY_PRAYER_ORDER : WEEKDAY_PRAYER_ORDER;
+}
+
+function getPrayerTimeForName(
+	prayerTimes: Record<string, string>,
+	prayerName: PrayerName,
+	isFriday: boolean,
+): string | undefined {
+	if (isFriday && prayerName === "jumah") {
+		return prayerTimes.jumah ?? prayerTimes.dhuhr;
+	}
+
+	return prayerTimes[prayerName];
 }
 
 export function NextPrayerProvider({
@@ -83,11 +113,17 @@ export function NextPrayerProvider({
 
 	const iqamaTimesByPrayer = useMemo(() => {
 		if (!prayerTimes) return {} as Partial<Record<PrayerName, string>>;
+		const isFriday = nowTime({}).getDay() === 5;
+		const prayerOrder = getPrayerOrder(isFriday);
 
 		const times: Partial<Record<PrayerName, string>> = {};
-		for (const prayerName of PRAYER_ORDER) {
+		for (const prayerName of prayerOrder) {
 			const iqama = iqamaByPrayer[prayerName];
-			const prayerTimeStr = prayerTimes[prayerName];
+			const prayerTimeStr = getPrayerTimeForName(
+				prayerTimes,
+				prayerName,
+				isFriday,
+			);
 
 			if (!iqama || !prayerTimeStr) continue;
 
@@ -114,12 +150,18 @@ export function NextPrayerProvider({
 			if (!prayerTimes) return;
 
 			const now = nowTime({});
+			const isFriday = now.getDay() === 5;
+			const prayerOrder = getPrayerOrder(isFriday);
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
 			// If we are between Adhan and Iqama for any prayer,
 			// keep that prayer active instead of switching to the next one.
-			for (const prayerName of PRAYER_ORDER) {
-				const prayerTimeStr = prayerTimes[prayerName];
+			for (const prayerName of prayerOrder) {
+				const prayerTimeStr = getPrayerTimeForName(
+					prayerTimes,
+					prayerName,
+					isFriday,
+				);
 				const iqamaTimeStr = iqamaTimesByPrayer[prayerName];
 
 				if (!prayerTimeStr || !iqamaTimeStr) continue;
@@ -140,13 +182,17 @@ export function NextPrayerProvider({
 			let nextTime = null;
 
 			// Find next prayer
-			for (const prayerName of PRAYER_ORDER) {
-				const prayerTimeStr = prayerTimes[prayerName];
+			for (const prayerName of prayerOrder) {
+				const prayerTimeStr = getPrayerTimeForName(
+					prayerTimes,
+					prayerName,
+					isFriday,
+				);
 				if (!prayerTimeStr) continue;
 
 				const prayerMinutes = timeStringToMinutes(prayerTimeStr);
 				if (prayerMinutes > currentMinutes) {
-					nextPrayerIdx = PRAYER_ORDER.indexOf(prayerName);
+					nextPrayerIdx = prayerOrder.indexOf(prayerName);
 					nextTime = prayerTimeStr;
 					break;
 				}
@@ -161,7 +207,7 @@ export function NextPrayerProvider({
 				return;
 			}
 
-			const nextPrayerName = PRAYER_ORDER[nextPrayerIdx];
+			const nextPrayerName = prayerOrder[nextPrayerIdx];
 
 			setNextPrayer({
 				nextPrayerName,
