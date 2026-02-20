@@ -41,6 +41,10 @@ function MockTimeDashboard() {
 		setMockNowState(null);
 	};
 
+	if (import.meta.env.VITE_ENABLE_MOCK_TIME_DASHBOARD !== true) {
+		return null;
+	}
+
 	return (
 		<div className="fixed right-4 bottom-4 z-50 flex w-90 flex-col gap-3 rounded-lg border border-border bg-card p-3 text-card-foreground shadow-md">
 			<div className="text-sm font-semibold">Mock Time</div>
