@@ -43,6 +43,8 @@ const FRIDAY_PRAYER_ORDER: PrayerName[] = [
 	"isha",
 ];
 
+const NEXT_PRAYER_SWITCH_DELAY_SECONDS = 2;
+
 function timeStringToMinutes(timeStr: string): number {
 	const [hours, minutes] = timeStr.split(":").slice(0, 2).map(Number);
 	return hours * 60 + minutes;
@@ -153,6 +155,7 @@ export function NextPrayerProvider({
 			const isFriday = now.getDay() === 5;
 			const prayerOrder = getPrayerOrder(isFriday);
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
+			const currentSeconds = now.getSeconds();
 
 			// If we are between Adhan and Iqama for any prayer,
 			// keep that prayer active instead of switching to the next one.
@@ -169,7 +172,13 @@ export function NextPrayerProvider({
 				const prayerMinutes = timeStringToMinutes(prayerTimeStr);
 				const iqamaMinutes = timeStringToMinutes(iqamaTimeStr);
 
-				if (currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes) {
+				const isBetweenAdhanAndIqama =
+					currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes;
+				const isIqamaGraceWindow =
+					currentMinutes === iqamaMinutes &&
+					currentSeconds < NEXT_PRAYER_SWITCH_DELAY_SECONDS;
+
+				if (isBetweenAdhanAndIqama || isIqamaGraceWindow) {
 					setNextPrayer({
 						nextPrayerName: prayerName,
 						nextPrayerTime: iqamaTimeStr,

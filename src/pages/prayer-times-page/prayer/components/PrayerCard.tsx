@@ -101,8 +101,9 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 	// Timer for iqama time (only show after prayer time reached)
 	const iqamaTimer = useTimer({
-		targetTime: iqamaTime || "00:00",
+		targetTime: iqamaTime || "00:00:00",
 		onReached: () => {
+			console.log("Iqama reached for", prayerName);
 			navigate({
 				to: "/no-phone/$countdown",
 				params: { countdown: prayerName === "jumah" ? "15" : "7" },
@@ -128,11 +129,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		<div
 			className={`relative flex h-full flex-col items-center justify-center gap-[1vh] overflow-hidden rounded-xl border border-muted p-[1.5vw] shadow-md transition-all ${
 				isActivePrayer ? "bg-[#1a3a2e] text-white" : ""
-			} ${
-				isBlinkingPrayer || isBlinkingIqama
-					? "animate-pulse ring-2 ring-primary"
-					: ""
-			}`}
+			} ${isBlinkingPrayer || isBlinkingIqama ? "animate-pulse" : ""}`}
 		>
 			<div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-[1vh]">
 				<PrayerNames prayerName={prayerName} isActive={isActivePrayer} />
@@ -177,6 +174,9 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 				<img
 					src="/ramadan.png"
 					alt="Ramadan"
+					loading="eager"
+					fetchPriority="high"
+					decoding="async"
 					className="absolute top-[1vh] left-1/2 z-0 h-auto w-1/1 -translate-x-1/2 opacity-50"
 				/>
 			)}

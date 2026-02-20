@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nowTime } from "@/utils/time-utils";
 
 interface UseTimerOptions {
@@ -21,47 +21,56 @@ export function useTimer({
 	const [timeRemaining, setTimeRemaining] = useState<string>("00:00:00");
 	const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
 	const [isExpired, setIsExpired] = useState<boolean>(false);
+	const hasReachedRef = useRef(false);
 
 	useEffect(() => {
-		if (!isActive) return;
+		if (!isActive) {
+			hasReachedRef.current = false;
+			return;
+		}
+
+		hasReachedRef.current = false;
 
 		const calculateTime = () => {
 			const now = nowTime({});
-			const currentMinutes = now.getHours() * 60 + now.getMinutes();
-			const currentSeconds = now.getSeconds();
+			const nowMs =
+				now.getHours() * 3600000 +
+				now.getMinutes() * 60000 +
+				now.getSeconds() * 1000 +
+				now.getMilliseconds();
 
 			const [targetHours, targetMinutes] = targetTime.split(":").map(Number);
-			const targetTotalMinutes = targetHours * 60 + targetMinutes;
+			const targetMs = targetHours * 3600000 + targetMinutes * 60000;
+			const diffMs = targetMs - nowMs;
 
-			const diff =
-				targetTotalMinutes * 60 - (currentMinutes * 60 + currentSeconds);
-
-			// If time has passed, it's expired
-			if (diff < 0) {
+			if (diffMs <= 0) {
 				setIsExpired(true);
 				setTimeRemaining("00:00:00");
 				setSecondsRemaining(0);
+
+				if (!hasReachedRef.current && onReached) {
+					hasReachedRef.current = true;
+					onReached();
+				}
+
 				return;
 			}
 
-			setIsExpired(false);
-			setSecondsRemaining(diff);
+			const diffSeconds = Math.ceil(diffMs / 1000);
 
-			const hours = Math.floor(diff / 3600);
-			const minutes = Math.floor((diff % 3600) / 60);
-			const seconds = diff % 60;
+			setIsExpired(false);
+			setSecondsRemaining(diffSeconds);
+
+			const hours = Math.floor(diffSeconds / 3600);
+			const minutes = Math.floor((diffSeconds % 3600) / 60);
+			const seconds = diffSeconds % 60;
 			setTimeRemaining(
 				`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`,
 			);
-
-			// Call callback when time is reached
-			if (diff === 0 && onReached) {
-				onReached();
-			}
 		};
 
 		calculateTime();
-		const interval = setInterval(calculateTime, 1000);
+		const interval = setInterval(calculateTime, 250);
 
 		return () => clearInterval(interval);
 	}, [targetTime, onReached, isActive]);
