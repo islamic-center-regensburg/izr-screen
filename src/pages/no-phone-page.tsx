@@ -9,7 +9,7 @@ function NoPhonePage() {
 	useEffect(() => {
 		const timeoutId = setTimeout(
 			() => {
-				navigate({ to: "/" });
+				navigate({ to: "/izr" });
 			},
 			(countdown ? parseInt(countdown, 10) : 10) * 60 * 1000,
 		);
