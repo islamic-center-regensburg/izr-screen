@@ -1,18 +1,18 @@
 # ===== configurable variables =====
-VITE_IZR_SERVER ?= http://localhost:8000
+VITE_API_BASE_URL ?= http://localhost:8000
 IMAGE_NAME      ?= izr-screen
-IMAGE_TAG       ?= local-2
+IMAGE_TAG       ?= local
 
 # ===== targets =====
 .PHONY: build docker clean
 
 build:
-	@echo "▶ Building React app with VITE_IZR_SERVER=$(VITE_IZR_SERVER)"
+	@echo "▶ Building React app with VITE_API_BASE_URL=$(VITE_API_BASE_URL)"
 	rm -rf dist deploy
-	VITE_IZR_SERVER=$(VITE_IZR_SERVER) npm run build
+	VITE_API_BASE_URL=$(VITE_API_BASE_URL) npm run build
 	mkdir -p deploy
 	cp -r dist/* deploy/
-	cp -r .nginx/* deploy/
+	cp -r docker/* deploy/
 
 docker: build
 	@echo "▶ Building Docker image $(IMAGE_NAME):$(IMAGE_TAG)"

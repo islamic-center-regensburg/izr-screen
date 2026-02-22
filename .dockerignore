@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+dist
+deploy
+
+# IDE
+.vscode
+.idea
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+docker/
+
+# Development
+temp
+.tanstack
+
+# Misc
+*.log
+.DS_Store
+README.md
+Makefile

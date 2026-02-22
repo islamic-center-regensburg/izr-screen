@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: local-biome-check
+        name: Biome Check
+        entry: npx biome check --write --max-diagnostics=200 --diagnostic-level=error
+        language: system
+        types: [text]
+        files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?|css|svelte|vue|astro|graphql|gql)$"
+        exclude: "^(public/.*\\.json|src/styles\\.css|src/api/gen/.*|src/routeTree\\.gen\\.ts)$"
+        pass_filenames: true
+        stages: [pre-commit]
+      
+      - id: tsc-typecheck
+        name: TypeScript Type Check
+        entry: npx tsc --noEmit
+        language: system
+        types: [text]
+        files: "\\.(ts|tsx)$"
+        pass_filenames: false
+        stages: [pre-commit]
