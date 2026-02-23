@@ -27,13 +27,7 @@ function PrayerTimesPage() {
 
 				<PrayerTimesGrid prayerTimes={todayPrayerTimes} />
 
-				<Footer
-					address={mosque?.address}
-					city={mosque?.city}
-					country={mosque?.country}
-					latitude={mosque?.latitude}
-					longitude={mosque?.longitude}
-				/>
+				<Footer address={mosque?.address} />
 			</div>
 		</NextPrayerProvider>
 	);
