@@ -20,7 +20,6 @@ function PrayerTimesPage() {
 		<NextPrayerProvider prayerTimes={todayPrayerTimes}>
 			<div className="flex h-screen w-screen flex-col bg-background p-[2vw]">
 				<Header
-					mosqueName={mosque?.name}
 					date={todayPrayerTimes?.gregorian_date}
 					date_hijri={todayPrayerTimes?.hijri_date}
 				/>

@@ -19,7 +19,7 @@ function TickingHour() {
 	const seconds = pad(now.getSeconds());
 
 	return (
-		<span className="absolute right-0 mx-5 bg-primary text-white font-black p-2 rounded-2xl min-w-28 text-[2vw]">
+		<span className="text-[3vw] font-bold">
 			{hours}:{minutes}:{seconds}
 		</span>
 	);
