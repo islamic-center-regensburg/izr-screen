@@ -7,17 +7,17 @@ interface HeaderProps {
 
 function Header({ date, date_hijri }: HeaderProps) {
 	return (
-		<header className="mb-[1.5vh] flex rounded-xl bg-[#1a3a2e] px-[1.5vw] py-[1vh] text-white">
+		<header className="mb-[1.5vh] flex rounded-4xl px-[1.5vw] py-[1vh] glass-bg shadow-md">
 			{/* Dates on the left */}
-			<div className="flex flex-2 items-center justify-center gap-[1vw] whitespace-nowrap text-[1.5vw] text-white font-bold">
+			<div className="flex flex-2 items-center justify-center gap-[1vw] whitespace-nowrap text-[1.5vw] font-bold">
 				Greg. {date && <p>{date}</p>}
 				Hij. {date_hijri && <p>{date_hijri}</p>}
 			</div>
 			<div className="flex flex-col flex-1 justify-center items-center">
 				<img
-					src="/IZR_BRANDING.png"
+					src="/IZR_LOGO_ROUND_WHITE_BG.png"
 					alt="Mosque Logo"
-					className="h-auto w-[15vw]"
+					className="h-auto w-[5vw]"
 				/>
 			</div>
 			{/* Mosque name in the center */}

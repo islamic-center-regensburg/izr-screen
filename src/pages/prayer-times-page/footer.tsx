@@ -6,7 +6,7 @@ interface FooterProps {
 
 function Footer({ address }: FooterProps) {
 	return (
-		<footer className="mt-[1.5vh] p-[1vh] text-center  text-[1.2vw] text-white bg-primary rounded-[1vw]">
+		<footer className="mt-[1.5vh] p-[1vh] text-center  text-[1.2vw] glass-bg shadow-md rounded-[1vw]">
 			<div className="flex flex-wrap items-center justify-center gap-[1vw]">
 				<div className="flex items-center gap-[0.5vw]">
 					<MapPin size="1.2vw" />

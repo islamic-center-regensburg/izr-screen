@@ -15,18 +15,16 @@ function PrayerNames({
 	return (
 		<div className="text-center">
 			<h2
-				className={`text-[4vw] font-semibold ${isActive ? "text-white" : ""}`}
+				className={`text-[2.5vw] font-semibold ${isActive ? "text-white" : ""}`}
 			>
 				{PRAYER_NAME_MAPPING[prayerName].de}
 			</h2>
 			{showArabic && (
-				<p
-					className={`text-[3vw] font-['Naveid'] ${
-						isActive ? "text-white" : "text-muted-foreground"
-					}`}
+				<h2
+					className={`text-[2.5vw] font-bold ${isActive ? "text-white" : ""}`}
 				>
 					{PRAYER_NAME_MAPPING[prayerName].ar}
-				</p>
+				</h2>
 			)}
 		</div>
 	);

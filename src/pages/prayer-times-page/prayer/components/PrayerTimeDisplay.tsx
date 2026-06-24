@@ -1,3 +1,5 @@
+import { IQAMA_ADHAN_NAME_MAPPING } from "../../constants";
+
 interface PrayerTimeDisplayProps {
 	label: string;
 	time: string | null;
@@ -18,11 +20,12 @@ function PrayerTimeDisplay({
 			}`}
 		>
 			<p
-				className={`text-[1.5vw] ${isActive ? "text-white" : "text-muted-foreground"}`}
+				className={`text-[1.2vw] ${isActive ? "text-white" : "text-muted-foreground"}`}
 			>
-				{label}
+				{IQAMA_ADHAN_NAME_MAPPING[label].de} /{" "}
+				{IQAMA_ADHAN_NAME_MAPPING[label].ar}
 			</p>
-			<p className={`text-[3.5vw] font-bold ${isActive ? "text-white" : ""}`}>
+			<p className={`text-[3vw] font-bold ${isActive ? "text-white" : ""}`}>
 				{time || "-"}
 			</p>
 		</div>
