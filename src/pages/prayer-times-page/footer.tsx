@@ -1,16 +1,12 @@
-import { Crosshair, Globe, MapPin, Phone } from "lucide-react";
+import { Globe, Landmark, MapPin, Phone } from "lucide-react";
 
 interface FooterProps {
 	address?: string;
-	city?: string;
-	country?: string;
-	latitude?: number;
-	longitude?: number;
 }
 
-function Footer({ address, city, country, latitude, longitude }: FooterProps) {
+function Footer({ address }: FooterProps) {
 	return (
-		<footer className="mt-[1.5vh] pt-[1vh] text-center text-[1.2vw] text-muted-foreground">
+		<footer className="mt-[1.5vh] p-[1vh] text-center  text-[1.2vw] glass-bg shadow-md rounded-[1vw]">
 			<div className="flex flex-wrap items-center justify-center gap-[1vw]">
 				<div className="flex items-center gap-[0.5vw]">
 					<MapPin size="1.2vw" />
@@ -18,20 +14,8 @@ function Footer({ address, city, country, latitude, longitude }: FooterProps) {
 				</div>
 				<span>•</span>
 				<div className="flex items-center gap-[0.5vw]">
-					<Globe size="1.2vw" />
-					<span>
-						{city}, {country}
-					</span>
-				</div>
-				<span>•</span>
-				<div className="flex items-center gap-[0.5vw]">
-					<Crosshair size="1.2vw" />
-					<span>Lat: {latitude?.toFixed(4)}</span>
-				</div>
-				<span>•</span>
-				<div className="flex items-center gap-[0.5vw]">
-					<Crosshair size="1.2vw" />
-					<span>Lon: {longitude?.toFixed(4)}</span>
+					<Landmark size="1.2vw" />
+					<span>IBAN: DE30 7505 0000 0026 7651 56</span>
 				</div>
 				<span>•</span>
 				<div className="flex items-center gap-[0.5vw]">

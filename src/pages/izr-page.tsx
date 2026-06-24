@@ -7,7 +7,7 @@ function IZRPage() {
 
 	useEffect(() => {
 		if (secondsLeft <= 0) {
-			navigate({ to: "/ramadan" });
+			navigate({ to: "/" });
 			return;
 		}
 

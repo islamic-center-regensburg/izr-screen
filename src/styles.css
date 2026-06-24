@@ -6,11 +6,31 @@
 
 body {
   @apply m-0;
-  font-family: 'Bricolage', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Thmanyah', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: clamp(16px, 1.5vw, 24px);
+}
+
+.time-ltr {
+  direction: ltr;
+  unicode-bidi: plaintext;
+  text-align: left;
+  font-family: 'Thmanyah', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Remove or simplify these since Thmanyah handles both scripts */
+html:lang(ar) .title-content {
+  font-family: 'Thmanyah', sans-serif;
+}
+
+html:lang(ar) .markdown-content {
+  direction: rtl;
+  text-align: start;
+  font-family: 'Thmanyah', sans-serif;
 }
 
 
@@ -131,26 +151,89 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  h1, h2, h3, h4, h5, h6{
+    font-family: 'ThmanyahSerif', serif;
+    font-feature-settings: 'ss01' on;
+
+  }
+  .tatweel {
+    font-feature-settings: 'ss01' on;
+  }
+  .glass-bg {
+    @apply border border-border/40 bg-transparent backdrop-blur-md
+  }
 }
 
+
 @font-face {
-  font-family: 'Bricolage';
+  font-family: 'Thmanyah';
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 300;
   font-display: swap;
-  src: url('../fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype-variations');
+  src: url('../fonts/Thmanyah/thmanyahsans/otf/thmanyahsans-Light.otf') format('opentype');
 }
 @font-face {
-  font-family: 'Naveid';
+  font-family: 'Thmanyah';
   font-style: normal;
-  font-weight: bold;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Naveid_Arabic/naveid-arabic-demo.extra-bold.otf') format('opentype');
+  src: url('../fonts/Thmanyah/thmanyahsans/otf/thmanyahsans-Regular.otf') format('opentype');
 }
 @font-face {
-  font-family: 'Naveid';
+  font-family: 'Thmanyah';
   font-style: normal;
-  font-weight: normal;
+  font-weight: 500;
   font-display: swap;
-  src: url('../fonts/Naveid_Arabic/naveid-arabic-demo.regular.otf') format('opentype');
+  src: url('../fonts/Thmanyah/thmanyahsans/otf/thmanyahsans-Medium.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Thmanyah';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahsans/otf/thmanyahsans-Bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Thmanyah';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahsans/otf/thmanyahsans-Black.otf') format('opentype');
+}
+
+/* Thmanyah Serif Display Font Faces */
+@font-face {
+  font-family: 'ThmanyahSerif';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Light.otf') format('opentype');
+}
+@font-face {
+  font-family: 'ThmanyahSerif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Regular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'ThmanyahSerif';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Medium.otf') format('opentype');
+}
+@font-face {
+  font-family: 'ThmanyahSerif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'ThmanyahSerif';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../fonts/Thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Black.otf') format('opentype');
 }

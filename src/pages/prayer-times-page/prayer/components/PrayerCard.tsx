@@ -4,6 +4,7 @@ import type { PrayerName } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
 import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
+import { cn } from "@/lib/utils";
 import { nowTime } from "@/utils/time-utils";
 import PrayerNames from "./PrayerNames";
 import PrayerTimeDisplay from "./PrayerTimeDisplay";
@@ -127,22 +128,24 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 	return (
 		<div
-			className={`relative flex h-full flex-col items-center justify-center gap-[1vh] overflow-hidden rounded-xl border border-muted p-[1.5vw] shadow-md transition-all ${
-				isActivePrayer ? "bg-[#1a3a2e] text-white" : ""
-			} ${isBlinkingPrayer || isBlinkingIqama ? "animate-pulse" : ""}`}
+			className={cn(
+				"relative flex h-full flex-col items-center justify-center gap-[1vh] overflow-hidden rounded-4xl p-[1.5vw] shadow-md transition-all glass-bg",
+				isActivePrayer ? "bg-[rgba(26,58,46,1)] text-white" : "",
+				isBlinkingPrayer || isBlinkingIqama ? "animate-pulse" : "",
+			)}
 		>
 			<div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-[1vh]">
 				<PrayerNames prayerName={prayerName} isActive={isActivePrayer} />
 
 				<div className="flex flex-col items-center gap-[1.5vh]">
 					<PrayerTimeDisplay
-						label="Adhan"
+						label="adhan"
 						time={effectivePrayerTime ?? "--:--"}
 						isActive={isActivePrayer}
 					/>
 					{iqamaTime && (
 						<PrayerTimeDisplay
-							label="Iqama"
+							label="iqama"
 							time={iqamaTime}
 							isActive={isActivePrayer}
 						/>
@@ -169,17 +172,6 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 					/>
 				)}
 			</div>
-
-			{isActivePrayer && (
-				<img
-					src="/ramadan.png"
-					alt="Ramadan"
-					loading="eager"
-					fetchPriority="high"
-					decoding="async"
-					className="absolute top-[1vh] left-1/2 z-0 h-auto w-1/1 -translate-x-1/2 opacity-50"
-				/>
-			)}
 		</div>
 	);
 }

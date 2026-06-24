@@ -18,22 +18,15 @@ function PrayerTimesPage() {
 
 	return (
 		<NextPrayerProvider prayerTimes={todayPrayerTimes}>
-			<div className="flex h-screen w-screen flex-col bg-background p-[2vw]">
+			<div className="flex h-screen w-screen flex-col bg-transparent p-[2vw]">
 				<Header
-					mosqueName={mosque?.name}
 					date={todayPrayerTimes?.gregorian_date}
 					date_hijri={todayPrayerTimes?.hijri_date}
 				/>
 
 				<PrayerTimesGrid prayerTimes={todayPrayerTimes} />
 
-				<Footer
-					address={mosque?.address}
-					city={mosque?.city}
-					country={mosque?.country}
-					latitude={mosque?.latitude}
-					longitude={mosque?.longitude}
-				/>
+				<Footer address={mosque?.address} />
 			</div>
 		</NextPrayerProvider>
 	);

@@ -39,9 +39,8 @@ function Prayer({ prayerName, prayerTime }: PrayerProps) {
 				<h2 className="text-[2vw] font-semibold">
 					{PRAYER_NAME_MAPPING[prayerName].de}
 				</h2>
-				<p className="text-[1.8vw] text-muted-foreground font-['Naveid']">
-					{PRAYER_NAME_MAPPING[prayerName].ar}
-				</p>
+				<h2 className="text-[1.8vw]">{PRAYER_NAME_MAPPING[prayerName].ar} </h2>
+				HAllo
 			</div>
 			<div className="mt-[1vh] flex flex-col items-center gap-[0.5vh]">
 				<p className="text-[1vw] text-muted-foreground">Adhan</p>
