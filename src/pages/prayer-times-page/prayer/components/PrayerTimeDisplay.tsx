@@ -14,20 +14,14 @@ function PrayerTimeDisplay({
 	isActive = false,
 }: PrayerTimeDisplayProps) {
 	return (
-		<div
-			className={`flex flex-col items-center gap-[0.5vh] ${
-				isBlink ? "animate-pulse" : ""
-			}`}
-		>
-			<p
-				className={`text-[1.2vw] ${isActive ? "text-white" : "text-muted-foreground"}`}
-			>
+		<div className={`prayer-time${isBlink ? " animate-pulse" : ""}`}>
+			<span className={isActive ? "prayer-time__label--active" : ""}>
 				{IQAMA_ADHAN_NAME_MAPPING[label].de} /{" "}
 				{IQAMA_ADHAN_NAME_MAPPING[label].ar}
-			</p>
-			<p className={`text-[3vw] font-bold ${isActive ? "text-white" : ""}`}>
+			</span>
+			<strong className={isActive ? "prayer-time__value--active" : ""}>
 				{time || "-"}
-			</p>
+			</strong>
 		</div>
 	);
 }

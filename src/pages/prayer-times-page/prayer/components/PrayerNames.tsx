@@ -13,18 +13,12 @@ function PrayerNames({
 	isActive = false,
 }: PrayerNameProps) {
 	return (
-		<div className="text-center">
-			<h2
-				className={`text-[2.5vw] font-semibold ${isActive ? "text-white" : ""}`}
-			>
-				{PRAYER_NAME_MAPPING[prayerName].de}
-			</h2>
+		<div className={`prayer-name${isActive ? " prayer-name--active" : ""}`}>
+			<h2>{PRAYER_NAME_MAPPING[prayerName].de}</h2>
 			{showArabic && (
-				<h2
-					className={`text-[2.5vw] font-bold ${isActive ? "text-white" : ""}`}
-				>
+				<p className="prayer-name__arabic" lang="ar" dir="rtl">
 					{PRAYER_NAME_MAPPING[prayerName].ar}
-				</h2>
+				</p>
 			)}
 		</div>
 	);

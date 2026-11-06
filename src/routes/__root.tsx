@@ -4,6 +4,7 @@ import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import Bg from "@/components/bg";
 import MockTimeDashboard from "@/components/mock-time-dashboard";
+import { ScreenConfigProvider } from "@/contexts/screen-config-context";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
 interface MyRouterContext {
@@ -12,7 +13,7 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	component: () => (
-		<>
+		<ScreenConfigProvider>
 			<Bg>
 				<Outlet />
 			</Bg>
@@ -30,6 +31,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 					TanStackQueryDevtools,
 				]}
 			/>
-		</>
+		</ScreenConfigProvider>
 	),
 });

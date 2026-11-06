@@ -1,12 +1,15 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { PhoneOff } from "lucide-react";
 import { useEffect } from "react";
+import { useScreenConfig } from "@/contexts/screen-config-context";
 
 function NoPhonePage() {
 	const navigate = useNavigate();
+	const { isManual } = useScreenConfig();
 	const { countdown } = useParams({ from: "/no-phone/$countdown" });
 
 	useEffect(() => {
+		if (isManual) return;
 		const timeoutId = setTimeout(
 			() => {
 				navigate({ to: "/izr" });
@@ -15,7 +18,7 @@ function NoPhonePage() {
 		);
 
 		return () => clearTimeout(timeoutId);
-	}, [navigate, countdown]);
+	}, [navigate, countdown, isManual]);
 
 	return (
 		<div className="w-screen h-screen flex items-center justify-center">

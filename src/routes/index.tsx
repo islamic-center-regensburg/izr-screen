@@ -6,7 +6,6 @@ import PrayerTimesPage from "@/pages/prayer-times-page/prayer-times-page";
 export const Route = createFileRoute("/")({
 	loader: async ({ context }) => {
 		try {
-			// Zuerst die Moschee-Daten abrufen, um die mosque_id zu erhalten
 			const mosqueQueryOptions = getMosquesQueryOptions({
 				query: { name: "Islamisches Zentrum Regensburg" },
 			});

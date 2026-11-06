@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import type { PrayerName } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
+import { useScreenConfig } from "@/contexts/screen-config-context";
 import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,7 @@ interface PrayerCardProps {
 
 function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	const navigate = useNavigate();
+	const { isManual } = useScreenConfig();
 	const nextPrayer = useNextPrayer();
 	const [prayerReached, setPrayerReached] = useState(false);
 
@@ -104,6 +106,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	const iqamaTimer = useTimer({
 		targetTime: iqamaTime || "00:00:00",
 		onReached: () => {
+			if (isManual) return;
 			console.log("Iqama reached for", prayerName);
 			navigate({
 				to: "/no-phone/$countdown",
@@ -129,15 +132,16 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	return (
 		<div
 			className={cn(
-				"relative flex h-full flex-col items-center justify-center gap-[1vh] overflow-hidden rounded-4xl p-[1.5vw] shadow-md transition-all glass-bg",
-				isActivePrayer ? "bg-[rgba(26,58,46,1)] text-white" : "",
+				"prayer-card",
+				isActivePrayer ? "prayer-card--active" : "",
 				isBlinkingPrayer || isBlinkingIqama ? "animate-pulse" : "",
 			)}
+			aria-current={isNextPrayer ? "true" : undefined}
 		>
-			<div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-[1vh]">
+			<div className="prayer-card__content">
 				<PrayerNames prayerName={prayerName} isActive={isActivePrayer} />
 
-				<div className="flex flex-col items-center gap-[1.5vh]">
+				<div className="prayer-card__times">
 					<PrayerTimeDisplay
 						label="adhan"
 						time={effectivePrayerTime ?? "--:--"}
@@ -152,7 +156,6 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 					)}
 				</div>
 
-				{/* Prayer Timer */}
 				{isNextPrayer && !prayerReached && effectivePrayerTime && (
 					<PrayerTimer
 						timeRemaining={prayerTimer.timeRemaining}
@@ -162,7 +165,6 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 					/>
 				)}
 
-				{/* Iqama Timer */}
 				{shouldShowIqamaTimer && (
 					<PrayerTimer
 						timeRemaining={iqamaTimer.timeRemaining}
