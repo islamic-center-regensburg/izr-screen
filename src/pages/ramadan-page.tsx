@@ -1,11 +1,14 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useScreenConfig } from "@/contexts/screen-config-context";
 
 function RamadanPage() {
 	const navigate = useNavigate();
+	const { isManual } = useScreenConfig();
 	const [secondsLeft, setSecondsLeft] = useState(10);
 
 	useEffect(() => {
+		if (isManual) return;
 		if (secondsLeft <= 0) {
 			navigate({ to: "/" });
 			return;
@@ -16,7 +19,7 @@ function RamadanPage() {
 		}, 1000);
 
 		return () => clearInterval(intervalId);
-	}, [secondsLeft, navigate]);
+	}, [secondsLeft, navigate, isManual]);
 	return (
 		<div className="relative h-screen w-screen overflow-hidden bg-linear-to-br from-primary to-primary">
 			<img

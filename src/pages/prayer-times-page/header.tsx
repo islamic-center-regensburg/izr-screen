@@ -7,24 +7,26 @@ interface HeaderProps {
 
 function Header({ date, date_hijri }: HeaderProps) {
 	return (
-		<header className="mb-[1.5vh] flex rounded-4xl px-[1.5vw] py-[1vh] glass-bg shadow-md">
-			{/* Dates on the left */}
-			<div className="flex flex-2 items-center justify-center gap-[1vw] whitespace-nowrap text-[1.5vw] font-bold">
-				Greg. {date && <p>{date}</p>}
-				Hij. {date_hijri && <p>{date_hijri}</p>}
+		<header className="prayer-header">
+			<div className="prayer-header__date">
+				<span className="prayer-eyebrow">Gregorianisches Datum</span>
+				<strong>{date || "—"}</strong>
+				<span className="prayer-header__hijri">Hijri {date_hijri || "—"}</span>
 			</div>
-			<div className="flex flex-col flex-1 justify-center items-center">
+			<div className="prayer-header__brand">
 				<img
 					src="/IZR_LOGO_ROUND_WHITE_BG.png"
-					alt="Mosque Logo"
-					className="h-auto w-[5vw]"
+					alt="Islamisches Zentrum Regensburg"
 				/>
+				<div>
+					<span className="prayer-eyebrow">Islamisches Zentrum</span>
+					<h1>Regensburg</h1>
+				</div>
 			</div>
-			{/* Mosque name in the center */}
-			<div className="flex flex-2 text-center items-center justify-center">
+			<div className="prayer-header__clock">
+				<span className="prayer-header__live" aria-hidden="true" />
 				<TickingHour />
 			</div>
-			{/* Logo on the right */}
 		</header>
 	);
 }

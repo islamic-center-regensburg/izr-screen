@@ -19,9 +19,9 @@ function TickingHour() {
 	const seconds = pad(now.getSeconds());
 
 	return (
-		<span className="text-[3vw] font-bold">
+		<time className="prayer-clock" dateTime={now.toTimeString().slice(0, 8)}>
 			{hours}:{minutes}:{seconds}
-		</span>
+		</time>
 	);
 }
 

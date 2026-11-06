@@ -16,8 +16,8 @@ function PrayerTimesGrid({ prayerTimes }: PrayerTimesGridProps) {
 		: PRAYER_ORDER;
 
 	return (
-		<div className="flex-1 overflow-auto">
-			<div className="grid h-full grid-cols-[repeat(auto-fit,minmax(15vw,1fr))] grid-rows-1 gap-[1vw] ">
+		<section className="prayer-grid" aria-label="Prayer times">
+			<div className="prayer-grid__cards">
 				{prayerOrder.map((prayerName) => {
 					let prayerTime =
 						prayerTimes?.[prayerName as keyof typeof prayerTimes];
@@ -38,7 +38,7 @@ function PrayerTimesGrid({ prayerTimes }: PrayerTimesGridProps) {
 					);
 				})}
 			</div>
-		</div>
+		</section>
 	);
 }
 

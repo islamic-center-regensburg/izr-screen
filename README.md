@@ -17,6 +17,55 @@ To build this application for production:
 npm run build
 ```
 
+## Remote screen control
+
+The app reads the public Directus singleton at
+`https://api.iz-regensburg.de/cms/public/items/izr_screen_cfg` immediately and
+every **2 seconds**, including while the tab is in the background. Override the
+endpoint at build time with `VITE_SCREEN_CONFIG_URL` if needed. Directus must
+allow browser requests from the screen app's origin (CORS). Only this config
+should be publicly readable; writes must require authenticated admin access.
+
+The singleton's `data` object has the following fields:
+
+| Field | Values |
+| --- | --- |
+| `id` | String ID |
+| `mode` | `automatic` or `manual` |
+| `manual_view` | `prayer_times`, `izr`, `ramadan`, or `dashboard` |
+| `dashboard_url` | Absolute HTTP(S) dashboard URL |
+| `dashboard_enabled` | Include dashboard visits in automatic mode |
+| `dashboard_interval_minutes` | Positive integer; interval between visit starts |
+| `dashboard_duration_seconds` | Positive integer; time on the dashboard |
+| `manual_expires_at` | Nullable timestamp; use a timezone/UTC for unambiguous expiry |
+| `date_updated` | Nullable Directus update timestamp |
+
+Automatic mode preserves the prayer-times, Iqama, no-phone, and branding flow.
+Dashboard visits start after the configured interval, only from the prayer-times
+page. They wait through the Adhan-to-Iqama window and when a visit would overlap
+the next prayer (plus a 60-second safety margin).
+
+Manual mode holds the selected view and suppresses timed route changes.
+An expired manual override resumes automatic mode locally without changing
+Directus. `dashboard_enabled` only affects automatic visits; manually selecting
+the dashboard always opens it.
+
+Dashboard navigation adds `fullscreen=true`, `callback=<screen app root URL>`,
+and `time=<dashboard_duration_seconds>`. The dashboard is responsible for
+redirecting back; it also handles its own German/Arabic/English cycling.
+Manual visits are shortened if necessary to return by `manual_expires_at`.
+After a manual dashboard visit, the app shows prayer times for **2 seconds**,
+then opens the dashboard again if the latest config still selects manual
+dashboard mode. Changing the view/mode or reaching the manual expiry cancels
+the pending visit. The same delay applies on initial load or refresh.
+
+**While the external dashboard is open, this app is unloaded and cannot poll
+Directus or interrupt the dashboard.** Config fetching resumes on return.
+The last valid config is retained (also across reloads in the same tab) if
+Directus fails, with a visible error indicator and continued polling. Without
+a previously loaded config, the app continues in automatic mode. Invalid
+responses are reported rather than replacing the last valid config.
+
 ## Testing
 
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
