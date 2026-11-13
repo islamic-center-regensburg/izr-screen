@@ -28,7 +28,7 @@ export function buildDashboardUrl(
 			),
 		);
 	}
-	url.searchParams.set("fullscreen", "true");
+	url.searchParams.set("fullscreen", "false");
 	url.searchParams.set("callback", callback);
 	url.searchParams.set("time", String(duration));
 	return url.toString();
