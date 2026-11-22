@@ -1,12 +1,22 @@
 // @vitest-environment jsdom
 
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { PrayerTimesOut } from "@/api/gen";
+import PrayerTimesGrid from "../../prayer-times-grid";
 import PrayerCard from "./PrayerCard";
 
 const state = vi.hoisted(() => ({
 	isManual: false,
 	navigate: vi.fn(),
+	nextPrayerName: "dhuhr",
+	fixedTime: "12:05",
+	iqamas: [] as Array<{
+		prayer: string;
+		weekday: string;
+		type: string;
+		fixed_time: string;
+	}>,
 }));
 
 vi.mock("@tanstack/react-router", () => ({
@@ -19,14 +29,15 @@ vi.mock("@/contexts/screen-config-context", () => ({
 
 vi.mock("@/contexts", () => ({
 	useNextPrayer: () => ({
-		nextPrayerName: "dhuhr",
-		nextPrayerTime: "12:05",
+		nextPrayerName: state.nextPrayerName,
+		nextPrayerTime: state.fixedTime,
 	}),
 }));
 
 vi.mock("@/hooks/usePrayerIqama", () => ({
 	default: () => ({
-		prayerIqama: { mode: "fixed", fixed_time: "12:05" },
+		prayerIqama: { mode: "fixed", fixed_time: state.fixedTime },
+		data: state.iqamas,
 	}),
 }));
 
@@ -36,9 +47,69 @@ vi.mock("@/utils/time-utils", () => ({
 
 beforeEach(() => {
 	vi.useFakeTimers();
-	vi.setSystemTime(new Date(2026, 10, 6, 12, 5));
+	vi.setSystemTime(new Date(2026, 10, 5, 12, 5));
 	state.isManual = false;
 	state.navigate.mockReset();
+	state.nextPrayerName = "dhuhr";
+	state.fixedTime = "12:05";
+	state.iqamas = [];
+});
+
+it("always shows six prayers and Friday iqamas, without a second navigation owner", () => {
+	vi.setSystemTime(new Date(2026, 10, 6, 12, 5));
+	state.nextPrayerName = "jumah";
+	state.iqamas = [
+		{
+			prayer: "jumuah",
+			weekday: "friday",
+			type: "fixed",
+			fixed_time: "12:05:00",
+		},
+		{
+			prayer: "jumuah",
+			weekday: "friday",
+			type: "fixed",
+			fixed_time: "13:00:00",
+		},
+	];
+	const times = { dhuhr: "12:00", jumah: "" } as unknown as PrayerTimesOut;
+	const view = render(<PrayerTimesGrid prayerTimes={times} />);
+	expect(
+		view.container.querySelectorAll(".prayer-grid__cards .prayer-card"),
+	).toHaveLength(6);
+	expect(state.navigate).toHaveBeenCalledTimes(1);
+	expect(screen.getAllByText("13:00")).toHaveLength(2);
+	state.nextPrayerName = "asr";
+	state.fixedTime = "15:00";
+	view.rerender(<PrayerTimesGrid prayerTimes={times} />);
+	expect(view.container.querySelector(".prayer-featured h2")?.textContent).toBe(
+		"Asr",
+	);
+	state.nextPrayerName = null as unknown as string;
+	view.rerender(<PrayerTimesGrid prayerTimes={times} />);
+	expect(screen.getByText("Kein weiteres Gebet heute")).toBeTruthy();
+});
+
+it("displays Friday Jumuah iqamas on weekdays without triggering Jumuah navigation", () => {
+	vi.setSystemTime(new Date(2026, 10, 5, 12, 5));
+	state.nextPrayerName = "dhuhr";
+	state.iqamas = [
+		{
+			prayer: "jumuah",
+			weekday: "friday",
+			type: "fixed",
+			fixed_time: "13:00:00",
+		},
+	];
+	render(
+		<PrayerTimesGrid prayerTimes={{ dhuhr: "12:00" } as PrayerTimesOut} />,
+	);
+	expect(screen.getByText("13:00")).toBeTruthy();
+	expect(state.navigate).toHaveBeenCalledTimes(1);
+	expect(state.navigate).toHaveBeenCalledWith({
+		to: "/no-phone/$countdown",
+		params: { countdown: "7" },
+	});
 });
 
 afterEach(() => {
@@ -73,5 +144,54 @@ describe("Iqama navigation", () => {
 			to: "/no-phone/$countdown",
 			params: { countdown: "7" },
 		});
+	});
+
+	it("counts down to fixed Jumuah iqama without inventing an adhan", () => {
+		vi.setSystemTime(new Date(2026, 10, 6, 12, 4, 58));
+		state.nextPrayerName = "jumah";
+		render(<PrayerCard prayerName="jumah" />);
+		expect(screen.queryByText("--:--")).toBeNull();
+		expect(screen.getByText("12:05")).toBeTruthy();
+		expect(screen.getByText("Jumuah 1 / الجمعة 1")).toBeTruthy();
+		expect(screen.getByText("Bis Iqama")).toBeTruthy();
+		act(() => vi.advanceTimersByTime(2000));
+		expect(state.navigate).toHaveBeenCalledWith({
+			to: "/no-phone/$countdown",
+			params: { countdown: "15" },
+		});
+	});
+
+	it("numbers Jumuah services chronologically instead of labelling them iqama", () => {
+		state.iqamas = [
+			{
+				prayer: "jumuah",
+				weekday: "friday",
+				type: "fixed",
+				fixed_time: "13:00:00",
+			},
+			{
+				prayer: "jumuah",
+				weekday: "friday",
+				type: "fixed",
+				fixed_time: "12:30:00",
+			},
+		];
+		const { container } = render(<PrayerCard prayerName="jumah" />);
+		const rows = container.querySelectorAll(".prayer-time");
+		expect(rows).toHaveLength(2);
+		expect(rows[0].textContent).toBe("Jumuah 1 / الجمعة 112:30");
+		expect(rows[1].textContent).toBe("Jumuah 2 / الجمعة 213:00");
+	});
+
+	it("keeps the current prayer highlighted without pulsing", () => {
+		vi.setSystemTime(new Date(2026, 10, 5, 12, 4, 58));
+		const { container } = render(
+			<PrayerCard prayerName="dhuhr" prayerTime="12:05" />,
+		);
+		expect(container.querySelector(".prayer-card--active")).toBeTruthy();
+		expect(container.querySelector(".animate-pulse")).toBeNull();
+		act(() => vi.advanceTimersByTime(1000));
+		expect(container.querySelector(".prayer-card--active")).toBeTruthy();
+		expect(container.querySelector(".animate-pulse")).toBeNull();
 	});
 });

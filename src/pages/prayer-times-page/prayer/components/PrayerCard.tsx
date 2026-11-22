@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PrayerName } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
 import { useScreenConfig } from "@/contexts/screen-config-context";
@@ -7,6 +7,7 @@ import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
 import { cn } from "@/lib/utils";
 import { nowTime } from "@/utils/time-utils";
+import { displayIqamas } from "./iqama-display";
 import PrayerNames from "./PrayerNames";
 import PrayerTimeDisplay from "./PrayerTimeDisplay";
 import PrayerTimer from "./PrayerTimer";
@@ -22,10 +23,12 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	const nextPrayer = useNextPrayer();
 	const [prayerReached, setPrayerReached] = useState(false);
 
-	const { prayerIqama } = usePrayerIqama(prayerName);
-	const isNextPrayer =
-		nextPrayer.nextPrayerName === prayerName ||
-		(prayerName === "jumah" && nextPrayer.nextPrayerName === "dhuhr");
+	const { prayerIqama, data: iqamas = [] } = usePrayerIqama(prayerName);
+	const ownsToday =
+		prayerName === "jumah"
+			? nowTime({}).getDay() === 5
+			: prayerName !== "dhuhr" || nowTime({}).getDay() !== 5;
+	const isNextPrayer = ownsToday && nextPrayer.nextPrayerName === prayerName;
 
 	const toHHMM = (time: string) => time.split(":").slice(0, 2).join(":");
 	const toMinutes = (time: string) => {
@@ -43,7 +46,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		if (
 			prayerIqama.mode === "offset" &&
 			prayerTime &&
-			prayerIqama.offset_minutes
+			prayerIqama.offset_minutes != null
 		) {
 			const [hours, minutes] = prayerTime.split(":").map(Number);
 			const totalMinutes = hours * 60 + minutes + prayerIqama.offset_minutes;
@@ -57,12 +60,20 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 
 	const iqamaTime = getIqamaTime();
 	const normalizedPrayerTime = prayerTime ? toHHMM(prayerTime) : null;
-	const effectivePrayerTime =
-		normalizedPrayerTime ||
-		(prayerIqama?.mode === "fixed" && iqamaTime ? iqamaTime : null);
+	const effectivePrayerTime = normalizedPrayerTime;
+	const fixedIqamaOnly =
+		!effectivePrayerTime && prayerIqama?.mode === "fixed" && !!iqamaTime;
+	const onIqamaReached = useCallback(() => {
+		if (isManual) return;
+		navigate({
+			to: "/no-phone/$countdown",
+			params: { countdown: prayerName === "jumah" ? "15" : "7" },
+		});
+	}, [isManual, navigate, prayerName]);
+	const onPrayerReached = useCallback(() => setPrayerReached(true), []);
 
 	const isInIqamaWindow = useMemo(() => {
-		if (!effectivePrayerTime || !iqamaTime) return false;
+		if (!ownsToday || !effectivePrayerTime || !iqamaTime) return false;
 
 		const now = nowTime({});
 		const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -70,7 +81,7 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		const iqamaMinutes = toMinutes(iqamaTime);
 
 		return currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes;
-	}, [effectivePrayerTime, iqamaTime]);
+	}, [effectivePrayerTime, iqamaTime, ownsToday]);
 
 	useEffect(() => {
 		if (!effectivePrayerTime) {
@@ -96,71 +107,63 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 	// Timer for prayer time
 	const prayerTimer = useTimer({
 		targetTime: effectivePrayerTime || "00:00",
-		onReached: () => {
-			setPrayerReached(true);
-		},
+		onReached: onPrayerReached,
 		isActive: isNextPrayer && !!effectivePrayerTime && !prayerReached,
 	});
 
 	// Timer for iqama time (only show after prayer time reached)
 	const iqamaTimer = useTimer({
 		targetTime: iqamaTime || "00:00:00",
-		onReached: () => {
-			if (isManual) return;
-			console.log("Iqama reached for", prayerName);
-			navigate({
-				to: "/no-phone/$countdown",
-				params: { countdown: prayerName === "jumah" ? "15" : "7" },
-			});
-		},
-		isActive: (isNextPrayer || isInIqamaWindow) && !!iqamaTime && prayerReached,
+		onReached: onIqamaReached,
+		isActive:
+			(isNextPrayer || isInIqamaWindow) &&
+			!!iqamaTime &&
+			(prayerReached || fixedIqamaOnly),
 	});
 
 	const shouldShowIqamaTimer =
 		(isNextPrayer || isInIqamaWindow) &&
-		prayerReached &&
+		(prayerReached || fixedIqamaOnly) &&
 		iqamaTime &&
 		iqamaTimer.timeRemaining !== "00:00:00";
 	const isActivePrayer = isNextPrayer || isInIqamaWindow;
-	// Blink when within 5 minutes (300 seconds) before the time0
-	const isBlinkingPrayer =
-		isNextPrayer && !prayerReached && prayerTimer.secondsRemaining <= 300;
-	const isBlinkingIqama = shouldShowIqamaTimer
-		? iqamaTimer.secondsRemaining <= 300
-		: false;
 
 	return (
 		<div
-			className={cn(
-				"prayer-card",
-				isActivePrayer ? "prayer-card--active" : "",
-				isBlinkingPrayer || isBlinkingIqama ? "animate-pulse" : "",
-			)}
+			className={cn("prayer-card", isActivePrayer ? "prayer-card--active" : "")}
 			aria-current={isNextPrayer ? "true" : undefined}
 		>
 			<div className="prayer-card__content">
 				<PrayerNames prayerName={prayerName} isActive={isActivePrayer} />
 
 				<div className="prayer-card__times">
-					<PrayerTimeDisplay
-						label="adhan"
-						time={effectivePrayerTime ?? "--:--"}
-						isActive={isActivePrayer}
-					/>
-					{iqamaTime && (
+					{(prayerName !== "jumah" || effectivePrayerTime) && (
 						<PrayerTimeDisplay
-							label="iqama"
-							time={iqamaTime}
+							label="adhan"
+							time={effectivePrayerTime ?? "--:--"}
 							isActive={isActivePrayer}
 						/>
 					)}
+					{(iqamas.length
+						? displayIqamas(iqamas, prayerName, prayerTime)
+						: iqamaTime
+							? [iqamaTime]
+							: []
+					).map((time, index) => (
+						<PrayerTimeDisplay
+							key={`${prayerName}-${time}`}
+							label="iqama"
+							jumuahNumber={prayerName === "jumah" ? index + 1 : undefined}
+							time={time}
+							isActive={isActivePrayer}
+						/>
+					))}
 				</div>
 
 				{isNextPrayer && !prayerReached && effectivePrayerTime && (
 					<PrayerTimer
 						timeRemaining={prayerTimer.timeRemaining}
 						label="Bis Adhan"
-						isBlink={isBlinkingPrayer}
 						isActive={isActivePrayer}
 					/>
 				)}
@@ -169,7 +172,6 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 					<PrayerTimer
 						timeRemaining={iqamaTimer.timeRemaining}
 						label="Bis Iqama"
-						isBlink={isBlinkingIqama ?? false}
 						isActive={isActivePrayer}
 					/>
 				)}

@@ -1,16 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import {
 	createContext,
 	type ReactNode,
 	useContext,
 	useEffect,
-	useMemo,
 	useState,
 } from "react";
-import {
-	getAllPrayerIqamas,
-	type PrayerIqamaOut,
-	type PrayerName,
-} from "@/api/gen";
+import type { CmsIqama } from "@/api/collections/iqama-times/queries";
+import type { PrayerName } from "@/api/gen";
+import { iqamaQueryOptions, selectIqama } from "@/api/iqama";
 import { nowTime } from "@/utils/time-utils";
 
 interface NextPrayerContextValue {
@@ -44,6 +42,7 @@ const FRIDAY_PRAYER_ORDER: PrayerName[] = [
 ];
 
 const NEXT_PRAYER_SWITCH_DELAY_SECONDS = 2;
+const EMPTY_IQAMAS: CmsIqama[] = [];
 
 function timeStringToMinutes(timeStr: string): number {
 	const [hours, minutes] = timeStr.split(":").slice(0, 2).map(Number);
@@ -64,7 +63,7 @@ function getPrayerTimeForName(
 	isFriday: boolean,
 ): string | undefined {
 	if (isFriday && prayerName === "jumah") {
-		return prayerTimes.jumah ?? prayerTimes.dhuhr;
+		return prayerTimes.jumah || undefined;
 	}
 
 	return prayerTimes[prayerName];
@@ -74,78 +73,11 @@ export function NextPrayerProvider({
 	children,
 	prayerTimes,
 }: NextPrayerProviderProps) {
-	const [iqamaByPrayer, setIqamaByPrayer] = useState<
-		Partial<Record<PrayerName, PrayerIqamaOut>>
-	>({});
-
+	const { data: iqamas = EMPTY_IQAMAS } = useQuery(iqamaQueryOptions());
 	const [nextPrayer, setNextPrayer] = useState<NextPrayerContextValue>({
 		nextPrayerName: null,
 		nextPrayerTime: null,
 	});
-
-	useEffect(() => {
-		let isMounted = true;
-
-		const fetchIqamas = async () => {
-			try {
-				const response = await getAllPrayerIqamas();
-				const iqamas = response.data?.data ?? [];
-
-				if (!isMounted) return;
-
-				const nextIqamaMap: Partial<Record<PrayerName, PrayerIqamaOut>> = {};
-				for (const iqama of iqamas) {
-					nextIqamaMap[iqama.prayer_name] = iqama;
-				}
-
-				setIqamaByPrayer(nextIqamaMap);
-			} catch {
-				if (isMounted) {
-					setIqamaByPrayer({});
-				}
-			}
-		};
-
-		void fetchIqamas();
-
-		return () => {
-			isMounted = false;
-		};
-	}, []);
-
-	const iqamaTimesByPrayer = useMemo(() => {
-		if (!prayerTimes) return {} as Partial<Record<PrayerName, string>>;
-		const isFriday = nowTime({}).getDay() === 5;
-		const prayerOrder = getPrayerOrder(isFriday);
-
-		const times: Partial<Record<PrayerName, string>> = {};
-		for (const prayerName of prayerOrder) {
-			const iqama = iqamaByPrayer[prayerName];
-			const prayerTimeStr = getPrayerTimeForName(
-				prayerTimes,
-				prayerName,
-				isFriday,
-			);
-
-			if (!iqama || !prayerTimeStr) continue;
-
-			if (iqama.mode === "fixed" && iqama.fixed_time) {
-				times[prayerName] = toHHMM(iqama.fixed_time);
-				continue;
-			}
-
-			if (iqama.mode === "offset" && iqama.offset_minutes) {
-				const prayerMinutes = timeStringToMinutes(prayerTimeStr);
-				const iqamaMinutes = prayerMinutes + iqama.offset_minutes;
-				const iqamaHours = Math.floor(iqamaMinutes / 60);
-				const iqamaMins = iqamaMinutes % 60;
-				times[prayerName] =
-					`${String(iqamaHours).padStart(2, "0")}:${String(iqamaMins).padStart(2, "0")}`;
-			}
-		}
-
-		return times;
-	}, [prayerTimes, iqamaByPrayer]);
 
 	useEffect(() => {
 		const updateNextPrayer = () => {
@@ -156,6 +88,28 @@ export function NextPrayerProvider({
 			const prayerOrder = getPrayerOrder(isFriday);
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
 			const currentSeconds = now.getSeconds();
+			const iqamaTimesByPrayer: Partial<Record<PrayerName, string>> = {};
+			for (const prayerName of prayerOrder) {
+				const iqama = selectIqama(iqamas, prayerName, now);
+				const prayerTime = getPrayerTimeForName(
+					prayerTimes,
+					prayerName,
+					isFriday,
+				);
+				if (iqama?.type === "fixed" && iqama.fixed_time) {
+					iqamaTimesByPrayer[prayerName] = toHHMM(iqama.fixed_time);
+				} else if (
+					iqama?.type === "offset" &&
+					iqama.offset_minutes != null &&
+					prayerTime
+				) {
+					const minutes =
+						(timeStringToMinutes(prayerTime) + iqama.offset_minutes + 1440) %
+						1440;
+					iqamaTimesByPrayer[prayerName] =
+						`${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+				}
+			}
 
 			// If we are between Adhan and Iqama for any prayer,
 			// keep that prayer active instead of switching to the next one.
@@ -167,13 +121,17 @@ export function NextPrayerProvider({
 				);
 				const iqamaTimeStr = iqamaTimesByPrayer[prayerName];
 
-				if (!prayerTimeStr || !iqamaTimeStr) continue;
+				if (!iqamaTimeStr) continue;
 
-				const prayerMinutes = timeStringToMinutes(prayerTimeStr);
+				const prayerMinutes = prayerTimeStr
+					? timeStringToMinutes(prayerTimeStr)
+					: null;
 				const iqamaMinutes = timeStringToMinutes(iqamaTimeStr);
 
 				const isBetweenAdhanAndIqama =
-					currentMinutes >= prayerMinutes && currentMinutes < iqamaMinutes;
+					prayerMinutes !== null &&
+					currentMinutes >= prayerMinutes &&
+					currentMinutes < iqamaMinutes;
 				const isIqamaGraceWindow =
 					currentMinutes === iqamaMinutes &&
 					currentSeconds < NEXT_PRAYER_SWITCH_DELAY_SECONDS;
@@ -192,11 +150,9 @@ export function NextPrayerProvider({
 
 			// Find next prayer
 			for (const prayerName of prayerOrder) {
-				const prayerTimeStr = getPrayerTimeForName(
-					prayerTimes,
-					prayerName,
-					isFriday,
-				);
+				const prayerTimeStr =
+					getPrayerTimeForName(prayerTimes, prayerName, isFriday) ||
+					iqamaTimesByPrayer[prayerName];
 				if (!prayerTimeStr) continue;
 
 				const prayerMinutes = timeStringToMinutes(prayerTimeStr);
@@ -228,7 +184,7 @@ export function NextPrayerProvider({
 		const interval = setInterval(updateNextPrayer, 1000);
 
 		return () => clearInterval(interval);
-	}, [prayerTimes, iqamaTimesByPrayer]);
+	}, [prayerTimes, iqamas]);
 
 	return (
 		<NextPrayerContext.Provider value={nextPrayer}>

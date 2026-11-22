@@ -1,40 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getMosquesQueryOptions } from "@/api/mosque/queries";
-import { getPrayerTimesForMosqueQueryOptions } from "@/api/prayer_times/queries";
+import { prayerTimesDetailQueryOptions as prayerTimesQueryOptions } from "@/api/collections/prayer-times/queries";
+import { screenConfigQueryOptions as screenSettingsQueryOptions } from "@/api/collections/screen-config/queries";
 import PrayerTimesPage from "@/pages/prayer-times-page/prayer-times-page";
+import { calendarDate } from "@/utils/calendar-date";
 
 export const Route = createFileRoute("/")({
 	loader: async ({ context }) => {
 		try {
-			const mosqueQueryOptions = getMosquesQueryOptions({
-				query: { name: "Islamisches Zentrum Regensburg" },
-			});
-			const mosqueData =
-				await context.queryClient.fetchQuery(mosqueQueryOptions);
-			const mosque_id = mosqueData?.data?.[0]?.id;
-
-			if (!mosque_id) {
-				console.error("Moschee nicht gefunden");
-				return { prayerTimes: null };
-			}
-
-			// Gebetszeiten für heute abrufen
-			const prayerTimesQueryOptions = getPrayerTimesForMosqueQueryOptions({
-				mosque_id,
-				query: {
-					year: new Date().getFullYear(),
-					month: new Date().getMonth() + 1,
-					day: new Date().getDate(),
-					source: "stored",
-				},
-			});
-			const prayerTimesData = await context.queryClient.fetchQuery(
-				prayerTimesQueryOptions,
+			const settings = await context.queryClient.fetchQuery(
+				screenSettingsQueryOptions(),
 			);
-			return { prayerTimes: prayerTimesData ? prayerTimesData[0] : null };
+			const date = calendarDate(settings?.timezone || "Europe/Berlin");
+			const row = await context.queryClient.fetchQuery(
+				prayerTimesQueryOptions(date),
+			);
+			if (!row) return { prayerTimes: null, settings };
+			return {
+				prayerTimes: {
+					fajr: row.fajr,
+					shuruq: row.sunrise,
+					dhuhr: row.dhuhr,
+					jumah: row.jumuah ?? "",
+					asr: row.asr,
+					maghrib: row.maghrib,
+					isha: row.isha,
+					gregorian_date: row.date,
+					hijri_date: row.hijri,
+				},
+				settings,
+			};
 		} catch (error) {
 			console.error("Fehler beim Laden der Gebetszeiten:", error);
-			return { prayerTimes: null };
+			return { prayerTimes: null, settings: undefined };
 		}
 	},
 	component: PrayerTimesPage,
