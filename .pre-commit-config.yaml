@@ -7,7 +7,7 @@ repos:
         language: system
         types: [text]
         files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?|css|svelte|vue|astro|graphql|gql)$"
-        exclude: "^(public/.*\\.json|src/styles\\.css|src/api/gen/.*|src/routeTree\\.gen\\.ts)$"
+        exclude: "^(public/.*\\.json|src/styles\\.css|src/api/gen/.*|src/api/generated/.*|src/routeTree\\.gen\\.ts)$"
         pass_filenames: true
         stages: [pre-commit]
       

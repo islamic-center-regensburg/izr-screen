@@ -73,8 +73,36 @@ export const getMockNow = (): Date | null => {
 	return new Date(state.baseMs + elapsedMs);
 };
 
+let displayTimezone: string | undefined;
+export const setDisplayTimezone = (timezone: string | undefined) => {
+	displayTimezone = timezone;
+};
+
 export const nowTime = ({ offsetMinutes = 0, baseTime }: NowProps): Date => {
-	const baseNow = baseTime ?? getMockNow() ?? new Date();
+	let baseNow = baseTime ?? getMockNow() ?? new Date();
+	if (displayTimezone) {
+		const parts = new Intl.DateTimeFormat("en-GB", {
+			timeZone: displayTimezone,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hourCycle: "h23",
+		}).formatToParts(baseNow);
+		const part = (name: string) =>
+			Number(parts.find((p) => p.type === name)?.value);
+		baseNow = new Date(
+			part("year"),
+			part("month") - 1,
+			part("day"),
+			part("hour"),
+			part("minute"),
+			part("second"),
+			baseNow.getMilliseconds(),
+		);
+	}
 
 	if (!Number.isFinite(offsetMinutes) || offsetMinutes === 0) {
 		return new Date(baseNow.getTime());

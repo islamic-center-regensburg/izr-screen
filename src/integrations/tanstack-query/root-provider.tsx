@@ -1,27 +1,30 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MosqueProvider } from "@/contexts/mosque-context";
+import type { ReactNode } from "react";
 
-export function getContext() {
-	const queryClient = new QueryClient();
-	const mosque_name = "Islamisches Zentrum Regensburg";
-	return {
-		queryClient,
-		mosque_name,
-	};
+type Context = {
+	queryClient: QueryClient;
+};
+
+let clientContext: Context | undefined;
+
+function createContext(): Context {
+	return { queryClient: new QueryClient() };
 }
 
-export function Provider({
+export function getContext(): Context {
+	// Keep server caches request-local and reuse the browser's cache.
+	if (typeof document === "undefined") return createContext();
+	if (!clientContext) clientContext = createContext();
+	return clientContext;
+}
+
+export default function TanStackQueryProvider({
 	children,
-	queryClient,
 }: {
-	children: React.ReactNode;
-	queryClient: QueryClient;
+	children: ReactNode;
 }) {
+	const { queryClient } = getContext();
 	return (
-		<QueryClientProvider client={queryClient}>
-			<MosqueProvider mosque_name="Islamisches Zentrum Regensburg">
-				{children}
-			</MosqueProvider>
-		</QueryClientProvider>
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 	);
 }

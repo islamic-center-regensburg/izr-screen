@@ -5,19 +5,26 @@ interface PrayerTimeDisplayProps {
 	time: string | null;
 	isBlink?: boolean;
 	isActive?: boolean;
+	jumuahNumber?: number;
 }
 
 function PrayerTimeDisplay({
 	label,
 	time,
-	isBlink = false,
 	isActive = false,
+	jumuahNumber,
 }: PrayerTimeDisplayProps) {
 	return (
-		<div className={`prayer-time${isBlink ? " animate-pulse" : ""}`}>
+		<div className="prayer-time">
 			<span className={isActive ? "prayer-time__label--active" : ""}>
-				{IQAMA_ADHAN_NAME_MAPPING[label].de} /{" "}
-				{IQAMA_ADHAN_NAME_MAPPING[label].ar}
+				{jumuahNumber ? (
+					`Jumuah ${jumuahNumber} / الجمعة ${jumuahNumber}`
+				) : (
+					<>
+						{IQAMA_ADHAN_NAME_MAPPING[label].de} /{" "}
+						{IQAMA_ADHAN_NAME_MAPPING[label].ar}
+					</>
+				)}
 			</span>
 			<strong className={isActive ? "prayer-time__value--active" : ""}>
 				{time || "-"}

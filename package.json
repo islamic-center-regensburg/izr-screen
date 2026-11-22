@@ -3,37 +3,45 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5173 --host",
+    "dev": "vite --port 3000",
     "build": "vite build && tsc",
     "preview": "vite preview",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "openapi-ts": "openapi-ts -i http://localhost:8000/openapi.json -o src/api/gen"
+    "start": "srvx --prod -s ../client dist/server/server.js",
+    "typecheck": "tsc --noEmit",
+    "api:generate": "node --env-file=.env node_modules/.bin/openapi-ts --file openapi-ts.config.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-query": "^5.66.5",
     "@tanstack/react-query-devtools": "^5.84.2",
-    "@tanstack/react-router": "^1.132.0",
-    "@tanstack/react-router-devtools": "^1.132.0",
-    "@tanstack/router-plugin": "^1.132.0",
+    "@tanstack/react-router": "^1.161.1",
+    "@tanstack/react-router-devtools": "^1.161.1",
+    "@tanstack/react-router-ssr-query": "^1.161.1",
+    "@tanstack/react-start": "^1.161.1",
+    "@tanstack/router-plugin": "^1.161.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.561.0",
+    "isomorphic-dompurify": "^2.30.0",
     "next-themes": "^0.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "sonner": "^2.0.7",
+    "srvx": "^0.11.22",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.6",
-    "tw-animate-css": "^1.3.6"
+    "tw-animate-css": "^1.3.6",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "vite-tsconfig-paths": "^5.1.4",
     "@biomejs/biome": "2.2.4",
-    "@hey-api/openapi-ts": "0.92.3",
+    "@hey-api/openapi-ts": "^0.92.4",
     "@tanstack/devtools-vite": "^0.3.11",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
@@ -46,5 +54,8 @@
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0"
+  },
+  "overrides": {
+    "@tanstack/router-core": "1.161.1"
   }
 }
