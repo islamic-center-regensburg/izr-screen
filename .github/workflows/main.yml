@@ -44,7 +44,7 @@ jobs:
       - name: Scan dependencies for vulnerabilities
         # Matches website CI while existing dependency CVEs are triaged.
         continue-on-error: true
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -52,7 +52,7 @@ jobs:
           exit-code: 1
 
       - name: Scan Dockerfile for misconfigurations
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: .
