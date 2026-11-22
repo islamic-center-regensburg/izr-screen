@@ -2,6 +2,7 @@ import type { PrayerName, PrayerTimesOut } from "@/api/gen";
 import { useNextPrayer } from "@/contexts";
 import usePrayerIqama from "@/hooks/usePrayerIqama";
 import { useTimer } from "@/hooks/useTimer";
+import { nowTime } from "@/utils/time-utils";
 import { displayIqamas } from "./prayer/components/iqama-display";
 import PrayerCard from "./prayer/components/PrayerCard";
 import PrayerNames from "./prayer/components/PrayerNames";
@@ -21,15 +22,21 @@ interface PrayerTimesGridProps {
 }
 
 function FeaturedPrayer({ prayerTimes }: PrayerTimesGridProps) {
-	const { nextPrayerName, nextPrayerTime } = useNextPrayer();
+	const { nextPrayerName, nextPrayerTime, nextPrayerIsTomorrow } =
+		useNextPrayer();
 	const { data: iqamas = [] } = usePrayerIqama(nextPrayerName ?? "fajr");
 	const timer = useTimer({
 		targetTime: nextPrayerTime ?? "00:00",
 		isActive: !!nextPrayerName && !!nextPrayerTime,
+		nextDay: nextPrayerIsTomorrow,
 	});
-	const adhan = nextPrayerName
-		? prayerTimes?.[nextPrayerName as keyof PrayerTimesOut]
-		: undefined;
+	const adhan = nextPrayerIsTomorrow
+		? (nextPrayerTime ?? undefined)
+		: nextPrayerName
+			? prayerTimes?.[nextPrayerName as keyof PrayerTimesOut]
+			: undefined;
+	const prayerDate = nowTime({});
+	if (nextPrayerIsTomorrow) prayerDate.setDate(prayerDate.getDate() + 1);
 	const isIqama =
 		!!nextPrayerTime &&
 		(!adhan || nextPrayerTime.slice(0, 5) !== adhan.slice(0, 5));
@@ -38,6 +45,7 @@ function FeaturedPrayer({ prayerTimes }: PrayerTimesGridProps) {
 			<span className="prayer-featured__eyebrow">
 				Nächstes Gebet / الصلاة القادمة
 			</span>
+			{nextPrayerIsTomorrow && <span>Morgen / غداً</span>}
 			{nextPrayerName && nextPrayerTime ? (
 				<>
 					<PrayerNames prayerName={nextPrayerName} isActive />
@@ -49,17 +57,19 @@ function FeaturedPrayer({ prayerTimes }: PrayerTimesGridProps) {
 								isActive
 							/>
 						)}
-						{displayIqamas(iqamas, nextPrayerName, adhan).map((time, index) => (
-							<PrayerTimeDisplay
-								key={`${nextPrayerName}-${time}`}
-								label="iqama"
-								jumuahNumber={
-									nextPrayerName === "jumah" ? index + 1 : undefined
-								}
-								time={time}
-								isActive
-							/>
-						))}
+						{displayIqamas(iqamas, nextPrayerName, adhan, prayerDate).map(
+							(time, index) => (
+								<PrayerTimeDisplay
+									key={`${nextPrayerName}-${time}`}
+									label="iqama"
+									jumuahNumber={
+										nextPrayerName === "jumah" ? index + 1 : undefined
+									}
+									time={time}
+									isActive
+								/>
+							),
+						)}
 					</div>
 					<div className="prayer-featured__countdown">
 						<span>{isIqama ? "Bis Iqama" : "Bis Adhan"}</span>
@@ -69,7 +79,9 @@ function FeaturedPrayer({ prayerTimes }: PrayerTimesGridProps) {
 					</div>
 				</>
 			) : (
-				<p className="prayer-featured__empty">Kein weiteres Gebet heute</p>
+				<p className="prayer-featured__empty">
+					Nächste Gebetszeit nicht verfügbar
+				</p>
 			)}
 		</div>
 	);

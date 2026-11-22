@@ -10,6 +10,7 @@ const state = vi.hoisted(() => ({
 	isManual: false,
 	navigate: vi.fn(),
 	nextPrayerName: "dhuhr",
+	nextPrayerIsTomorrow: false,
 	fixedTime: "12:05",
 	iqamas: [] as Array<{
 		prayer: string;
@@ -31,6 +32,7 @@ vi.mock("@/contexts", () => ({
 	useNextPrayer: () => ({
 		nextPrayerName: state.nextPrayerName,
 		nextPrayerTime: state.fixedTime,
+		nextPrayerIsTomorrow: state.nextPrayerIsTomorrow,
 	}),
 }));
 
@@ -43,6 +45,14 @@ vi.mock("@/hooks/usePrayerIqama", () => ({
 
 vi.mock("@/utils/time-utils", () => ({
 	nowTime: () => new Date(),
+	timeUntilTomorrow: (time: string) => {
+		const now = new Date();
+		const [hours, minutes] = time.split(":").map(Number);
+		const target = new Date(now);
+		target.setDate(target.getDate() + 1);
+		target.setHours(hours, minutes, 0, 0);
+		return target.getTime() - now.getTime();
+	},
 }));
 
 beforeEach(() => {
@@ -51,8 +61,36 @@ beforeEach(() => {
 	state.isManual = false;
 	state.navigate.mockReset();
 	state.nextPrayerName = "dhuhr";
+	state.nextPrayerIsTomorrow = false;
 	state.fixedTime = "12:05";
 	state.iqamas = [];
+});
+
+it("features tomorrow's Fajr and its weekday iqama without activating today's Fajr card", () => {
+	vi.setSystemTime(new Date(2026, 10, 6, 20));
+	state.nextPrayerName = "fajr";
+	state.nextPrayerIsTomorrow = true;
+	state.fixedTime = "06:07";
+	state.iqamas = [
+		{ prayer: "fajr", weekday: "friday", type: "fixed", fixed_time: "06:10" },
+		{ prayer: "fajr", weekday: "saturday", type: "fixed", fixed_time: "06:30" },
+	];
+	const { container } = render(
+		<PrayerTimesGrid prayerTimes={{ fajr: "06:00" } as PrayerTimesOut} />,
+	);
+	const featured = container.querySelector(".prayer-featured");
+	expect(featured?.textContent).toContain("Morgen");
+	expect(featured?.textContent).toContain("06:07");
+	expect(featured?.textContent).toContain("06:30");
+	expect(featured?.textContent).not.toContain("06:10");
+	expect(featured?.textContent).toContain("Bis Adhan");
+	expect(featured?.querySelector('[role="timer"]')?.textContent).toBe(
+		"10:07:00",
+	);
+	expect(
+		container.querySelector('.prayer-card[aria-current="true"]'),
+	).toBeNull();
+	expect(state.navigate).not.toHaveBeenCalled();
 });
 
 it("always shows six prayers and Friday iqamas, without a second navigation owner", () => {
@@ -87,7 +125,7 @@ it("always shows six prayers and Friday iqamas, without a second navigation owne
 	);
 	state.nextPrayerName = null as unknown as string;
 	view.rerender(<PrayerTimesGrid prayerTimes={times} />);
-	expect(screen.getByText("Kein weiteres Gebet heute")).toBeTruthy();
+	expect(screen.getByText("Nächste Gebetszeit nicht verfügbar")).toBeTruthy();
 });
 
 it("displays Friday Jumuah iqamas on weekdays without triggering Jumuah navigation", () => {

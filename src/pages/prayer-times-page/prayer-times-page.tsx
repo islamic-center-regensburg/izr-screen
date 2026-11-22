@@ -18,7 +18,11 @@ import {
 	visibleSections,
 } from "@/lib/playlist";
 import { calendarDate } from "@/utils/calendar-date";
-import { nowTime, setDisplayTimezone } from "@/utils/time-utils";
+import {
+	nowTime,
+	setDisplayTimezone,
+	timeUntilTomorrow,
+} from "@/utils/time-utils";
 import ProblemPage from "../problem-page";
 import Footer from "./footer";
 import Header from "./header";
@@ -68,7 +72,8 @@ function Playlist({
 		id: number | undefined;
 		duration: number;
 	} | null>(null);
-	const { nextPrayerName, nextPrayerTime } = useNextPrayer();
+	const { nextPrayerName, nextPrayerTime, nextPrayerIsTomorrow } =
+		useNextPrayer();
 	const mode =
 		(settings as ItemsScreenConfig & { mode?: string }).mode === "manual"
 			? "manual"
@@ -138,11 +143,16 @@ function Playlist({
 		nextPrayerName && prayerTimes
 			? (prayerTimes as unknown as Record<string, string>)[nextPrayerName]
 			: null;
-	const until = nextPrayerTime ? toSeconds(nextPrayerTime) - seconds : Infinity;
+	const until = nextPrayerTime
+		? nextPrayerIsTomorrow
+			? timeUntilTomorrow(nextPrayerTime) / 1000
+			: toSeconds(nextPrayerTime) - seconds
+		: Infinity;
 	const interrupt =
 		!!prayerTimes &&
 		((until >= 0 && until <= 300) ||
-			(!!adhan &&
+			(!nextPrayerIsTomorrow &&
+				!!adhan &&
 				!!nextPrayerTime &&
 				seconds >= toSeconds(adhan) &&
 				seconds <= toSeconds(nextPrayerTime)));
@@ -340,7 +350,11 @@ function Playlist({
 	);
 }
 function PrayerTimesPage() {
-	const { prayerTimes, settings: initialSettings } = useLoaderData({
+	const {
+		prayerTimes,
+		tomorrowPrayerTimes,
+		settings: initialSettings,
+	} = useLoaderData({
 		from: "/",
 	});
 	const router = useRouter();
@@ -373,7 +387,10 @@ function PrayerTimesPage() {
 		return () => clearInterval(timer);
 	}, [router, timezone]);
 	return (
-		<NextPrayerProvider prayerTimes={prayerTimes}>
+		<NextPrayerProvider
+			prayerTimes={prayerTimes}
+			tomorrowPrayerTimes={tomorrowPrayerTimes}
+		>
 			{isError && (
 				<p className="screen-notice" role="alert">
 					Bildschirm-Konfiguration nicht erreichbar.

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { nowTime } from "@/utils/time-utils";
+import { nowTime, timeUntilTomorrow } from "@/utils/time-utils";
 
 interface UseTimerOptions {
 	targetTime: string; // "HH:MM" format
 	onReached?: () => void;
 	isActive?: boolean;
+	nextDay?: boolean;
 }
 
 interface TimerResult {
@@ -17,6 +18,7 @@ export function useTimer({
 	targetTime,
 	onReached,
 	isActive = true,
+	nextDay = false,
 }: UseTimerOptions): TimerResult {
 	const [timeRemaining, setTimeRemaining] = useState<string>("00:00:00");
 	const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
@@ -41,7 +43,7 @@ export function useTimer({
 
 			const [targetHours, targetMinutes] = targetTime.split(":").map(Number);
 			const targetMs = targetHours * 3600000 + targetMinutes * 60000;
-			const diffMs = targetMs - nowMs;
+			const diffMs = nextDay ? timeUntilTomorrow(targetTime) : targetMs - nowMs;
 
 			if (diffMs <= 0) {
 				setIsExpired(true);
@@ -73,7 +75,7 @@ export function useTimer({
 		const interval = setInterval(calculateTime, 250);
 
 		return () => clearInterval(interval);
-	}, [targetTime, onReached, isActive]);
+	}, [targetTime, onReached, isActive, nextDay]);
 
 	return {
 		timeRemaining,

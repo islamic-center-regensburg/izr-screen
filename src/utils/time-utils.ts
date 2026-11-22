@@ -110,3 +110,43 @@ export const nowTime = ({ offsetMinutes = 0, baseTime }: NowProps): Date => {
 
 	return new Date(baseNow.getTime() + offsetMinutes * 60 * 1000);
 };
+
+export function timeUntilTomorrow(targetTime: string): number {
+	const now = getMockNow() ?? new Date();
+	const wallNow = nowTime({ baseTime: now });
+	const [hours, minutes] = targetTime.split(":").map(Number);
+	const targetWallMs = Date.UTC(
+		wallNow.getFullYear(),
+		wallNow.getMonth(),
+		wallNow.getDate() + 1,
+		hours,
+		minutes,
+	);
+	const formatter = new Intl.DateTimeFormat("en-GB", {
+		timeZone:
+			displayTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hourCycle: "h23",
+	});
+	let targetMs = targetWallMs;
+	for (let i = 0; i < 2; i++) {
+		const parts = formatter.formatToParts(new Date(targetMs));
+		const part = (name: string) =>
+			Number(parts.find((value) => value.type === name)?.value);
+		const formattedMs = Date.UTC(
+			part("year"),
+			part("month") - 1,
+			part("day"),
+			part("hour"),
+			part("minute"),
+			part("second"),
+		);
+		targetMs += targetWallMs - formattedMs;
+	}
+	return targetMs - now.getTime();
+}
