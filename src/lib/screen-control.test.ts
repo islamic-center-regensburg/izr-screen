@@ -116,7 +116,7 @@ describe("dashboard navigation", () => {
 		);
 		expect(Object.fromEntries(url.searchParams)).toEqual({
 			existing: "value",
-			fullscreen: "true",
+			fullscreen: "false",
 			callback,
 			time: "90",
 		});
