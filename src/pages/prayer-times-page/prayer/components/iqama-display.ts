@@ -6,6 +6,7 @@ export function displayIqamas(
 	rows: CmsIqama[],
 	prayer: PrayerName,
 	adhan?: string,
+	date = nowTime({}),
 ): string[] {
 	const weekday =
 		prayer === "jumah"
@@ -18,7 +19,7 @@ export function displayIqamas(
 					"thursday",
 					"friday",
 					"saturday",
-				][nowTime({}).getDay()];
+				][date.getDay()];
 	const times = rows
 		.filter(
 			(row) =>

@@ -164,7 +164,11 @@ function MyComponent() {
 1. **Initialization:**
    - NextPrayerProvider calculates next prayer on mount
    - Finds first prayer time after current time
-   - If no prayer found today, next is Fajr tomorrow
+   - After Isha (or its configured iqama), the featured prayer shows
+     tomorrow's stored Fajr time and its countdown. The grid continues to
+     show today's times.
+   - If tomorrow's times are unavailable, the next prayer is shown as
+     unavailable rather than using today's Fajr.
 
 2. **Timer Loop:**
    - Runs every second

@@ -28,7 +28,10 @@ function PrayerCard({ prayerName, prayerTime }: PrayerCardProps) {
 		prayerName === "jumah"
 			? nowTime({}).getDay() === 5
 			: prayerName !== "dhuhr" || nowTime({}).getDay() !== 5;
-	const isNextPrayer = ownsToday && nextPrayer.nextPrayerName === prayerName;
+	const isNextPrayer =
+		ownsToday &&
+		!nextPrayer.nextPrayerIsTomorrow &&
+		nextPrayer.nextPrayerName === prayerName;
 
 	const toHHMM = (time: string) => time.split(":").slice(0, 2).join(":");
 	const toMinutes = (time: string) => {

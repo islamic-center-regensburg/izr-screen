@@ -9,11 +9,13 @@ import {
 import type { CmsIqama } from "@/api/collections/iqama-times/queries";
 import type { PrayerName } from "@/api/gen";
 import { iqamaQueryOptions, selectIqama } from "@/api/iqama";
+import { nextCalendarDate } from "@/utils/calendar-date";
 import { nowTime } from "@/utils/time-utils";
 
 interface NextPrayerContextValue {
 	nextPrayerName: PrayerName | null;
 	nextPrayerTime: string | null;
+	nextPrayerIsTomorrow: boolean;
 }
 
 const NextPrayerContext = createContext<NextPrayerContextValue | undefined>(
@@ -23,6 +25,7 @@ const NextPrayerContext = createContext<NextPrayerContextValue | undefined>(
 interface NextPrayerProviderProps {
 	children: ReactNode;
 	prayerTimes: Record<string, string> | null;
+	tomorrowPrayerTimes?: Record<string, string> | null;
 }
 
 const WEEKDAY_PRAYER_ORDER: PrayerName[] = [
@@ -72,11 +75,13 @@ function getPrayerTimeForName(
 export function NextPrayerProvider({
 	children,
 	prayerTimes,
+	tomorrowPrayerTimes,
 }: NextPrayerProviderProps) {
 	const { data: iqamas = EMPTY_IQAMAS } = useQuery(iqamaQueryOptions());
 	const [nextPrayer, setNextPrayer] = useState<NextPrayerContextValue>({
 		nextPrayerName: null,
 		nextPrayerTime: null,
+		nextPrayerIsTomorrow: false,
 	});
 
 	useEffect(() => {
@@ -84,6 +89,25 @@ export function NextPrayerProvider({
 			if (!prayerTimes) return;
 
 			const now = nowTime({});
+			const currentDate = [
+				now.getFullYear(),
+				String(now.getMonth() + 1).padStart(2, "0"),
+				String(now.getDate()).padStart(2, "0"),
+			].join("-");
+			const todayTimes =
+				prayerTimes.gregorian_date && prayerTimes.gregorian_date !== currentDate
+					? tomorrowPrayerTimes?.gregorian_date === currentDate
+						? tomorrowPrayerTimes
+						: null
+					: prayerTimes;
+			if (!todayTimes) {
+				setNextPrayer({
+					nextPrayerName: null,
+					nextPrayerTime: null,
+					nextPrayerIsTomorrow: false,
+				});
+				return;
+			}
 			const isFriday = now.getDay() === 5;
 			const prayerOrder = getPrayerOrder(isFriday);
 			const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -92,7 +116,7 @@ export function NextPrayerProvider({
 			for (const prayerName of prayerOrder) {
 				const iqama = selectIqama(iqamas, prayerName, now);
 				const prayerTime = getPrayerTimeForName(
-					prayerTimes,
+					todayTimes,
 					prayerName,
 					isFriday,
 				);
@@ -115,7 +139,7 @@ export function NextPrayerProvider({
 			// keep that prayer active instead of switching to the next one.
 			for (const prayerName of prayerOrder) {
 				const prayerTimeStr = getPrayerTimeForName(
-					prayerTimes,
+					todayTimes,
 					prayerName,
 					isFriday,
 				);
@@ -140,6 +164,7 @@ export function NextPrayerProvider({
 					setNextPrayer({
 						nextPrayerName: prayerName,
 						nextPrayerTime: iqamaTimeStr,
+						nextPrayerIsTomorrow: false,
 					});
 					return;
 				}
@@ -151,7 +176,7 @@ export function NextPrayerProvider({
 			// Find next prayer
 			for (const prayerName of prayerOrder) {
 				const prayerTimeStr =
-					getPrayerTimeForName(prayerTimes, prayerName, isFriday) ||
+					getPrayerTimeForName(todayTimes, prayerName, isFriday) ||
 					iqamaTimesByPrayer[prayerName];
 				if (!prayerTimeStr) continue;
 
@@ -163,11 +188,18 @@ export function NextPrayerProvider({
 				}
 			}
 
-			// If no prayer found today, do not highlight any next prayer
 			if (nextPrayerIdx === -1) {
+				const tomorrowFajr =
+					todayTimes === prayerTimes &&
+					(!tomorrowPrayerTimes?.gregorian_date ||
+						tomorrowPrayerTimes.gregorian_date ===
+							nextCalendarDate(currentDate))
+						? tomorrowPrayerTimes?.fajr
+						: undefined;
 				setNextPrayer({
-					nextPrayerName: null,
-					nextPrayerTime: null,
+					nextPrayerName: tomorrowFajr ? "fajr" : null,
+					nextPrayerTime: tomorrowFajr ? toHHMM(tomorrowFajr) : null,
+					nextPrayerIsTomorrow: Boolean(tomorrowFajr),
 				});
 				return;
 			}
@@ -177,6 +209,7 @@ export function NextPrayerProvider({
 			setNextPrayer({
 				nextPrayerName,
 				nextPrayerTime: nextTime,
+				nextPrayerIsTomorrow: false,
 			});
 		};
 
@@ -184,7 +217,7 @@ export function NextPrayerProvider({
 		const interval = setInterval(updateNextPrayer, 1000);
 
 		return () => clearInterval(interval);
-	}, [prayerTimes, iqamas]);
+	}, [prayerTimes, tomorrowPrayerTimes, iqamas]);
 
 	return (
 		<NextPrayerContext.Provider value={nextPrayer}>

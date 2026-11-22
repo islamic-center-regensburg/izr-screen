@@ -14,6 +14,7 @@ const state = vi.hoisted(() => ({
 	prayer: {
 		nextPrayerName: null as string | null,
 		nextPrayerTime: null as string | null,
+		nextPrayerIsTomorrow: false,
 	},
 }));
 vi.mock("@tanstack/react-router", () => ({
@@ -58,7 +59,11 @@ beforeEach(() => {
 		languages: ["en", "ar", "de"],
 	};
 	state.prayerTimes = null;
-	state.prayer = { nextPrayerName: null, nextPrayerTime: null };
+	state.prayer = {
+		nextPrayerName: null,
+		nextPrayerTime: null,
+		nextPrayerIsTomorrow: false,
+	};
 });
 
 it.each([
@@ -70,7 +75,11 @@ it.each([
 	(now, expected, afterSecond) => {
 		vi.setSystemTime(new Date(now));
 		setDisplayTimezone("UTC");
-		state.prayer = { nextPrayerName: "dhuhr", nextPrayerTime: "13:00" };
+		state.prayer = {
+			nextPrayerName: "dhuhr",
+			nextPrayerTime: "13:00",
+			nextPrayerIsTomorrow: false,
+		};
 		render(<NextPrayerCountdown language="ar" />);
 		expect(
 			screen.getByLabelText("الوقت المتبقي للصلاة القادمة").textContent,
@@ -81,6 +90,43 @@ it.each([
 		).toBe(afterSecond);
 	},
 );
+
+it("interrupts the playlist only when tomorrow's Fajr is within five minutes", () => {
+	vi.setSystemTime(new Date("2026-03-28T23:54:00Z"));
+	const client = new QueryClient({
+		defaultOptions: { queries: { enabled: false, retry: false } },
+	});
+	client.setQueryData(
+		["cms-screen-sections"],
+		[{ id: 1, type: "news", enabled: true, sort: 1, duration_seconds: 30 }],
+	);
+	state.settings = { ...state.settings, timezone: "UTC" };
+	state.prayerTimes = {
+		fajr: "06:00",
+		shuruq: "07:00",
+		dhuhr: "12:00",
+		jumah: "",
+		asr: "15:00",
+		maghrib: "18:00",
+		isha: "20:00",
+		gregorian_date: "2026-03-28",
+		hijri_date: "1447-10-10",
+	};
+	state.prayer = {
+		nextPrayerName: "fajr",
+		nextPrayerTime: "00:01",
+		nextPrayerIsTomorrow: true,
+	};
+	render(
+		<QueryClientProvider client={client}>
+			<PrayerTimesPage />
+		</QueryClientProvider>,
+	);
+	expect(screen.getByTestId("playlist-item")).toBeTruthy();
+	vi.setSystemTime(new Date("2026-03-28T23:56:00Z"));
+	act(() => vi.advanceTimersByTime(1000));
+	expect(screen.queryByTestId("playlist-item")).toBeNull();
+});
 
 it("keeps the selected section and language fixed in manual mode, cycles items, and resumes automatic state", () => {
 	const client = new QueryClient({
@@ -187,7 +233,11 @@ it("pauses manual item timing for prayer interruption and reports a deleted sele
 		gregorian_date: "2026-03-28",
 		hijri_date: "1447-10-10",
 	};
-	state.prayer = { nextPrayerName: "fajr", nextPrayerTime: "23:00" };
+	state.prayer = {
+		nextPrayerName: "fajr",
+		nextPrayerTime: "23:00",
+		nextPrayerIsTomorrow: false,
+	};
 	const view = render(
 		<QueryClientProvider client={client}>
 			<PrayerTimesPage />
@@ -195,7 +245,11 @@ it("pauses manual item timing for prayer interruption and reports a deleted sele
 	);
 	act(() => vi.advanceTimersByTime(1000));
 	expect(screen.queryByTestId("playlist-item")).toBeNull();
-	state.prayer = { nextPrayerName: null, nextPrayerTime: null };
+	state.prayer = {
+		nextPrayerName: null,
+		nextPrayerTime: null,
+		nextPrayerIsTomorrow: false,
+	};
 	view.rerender(
 		<QueryClientProvider client={client}>
 			<PrayerTimesPage />

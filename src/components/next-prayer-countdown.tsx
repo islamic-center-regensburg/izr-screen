@@ -49,10 +49,12 @@ export default function NextPrayerCountdown({
 }: {
 	language: string;
 }) {
-	const { nextPrayerName, nextPrayerTime } = useNextPrayer();
+	const { nextPrayerName, nextPrayerTime, nextPrayerIsTomorrow } =
+		useNextPrayer();
 	const countdown = useTimer({
 		targetTime: nextPrayerTime ?? "00:00",
 		isActive: Boolean(nextPrayerName && nextPrayerTime),
+		nextDay: nextPrayerIsTomorrow,
 	});
 	const locale = messages[language as keyof typeof messages] ? language : "de";
 
