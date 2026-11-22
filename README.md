@@ -1,70 +1,30 @@
-Welcome to your new TanStack app! 
+# IZR screen
 
-# Getting Started
+TanStack Start runs on port 3000. Set `DIRECTUS_API_URL` and `DIRECTUS_READ_TOKEN` on the server with read access to `screen_config`, `screen_sections`, `prayer_times`, `iqama_times`, `news`, `events`, `campaigns`, their translations, and donations. Never put the token in a `VITE_` variable. Run `npm run dev`, `npm run typecheck`, `npm test`, and `npm run build`. Regenerate the SDK with `npm run api:generate` and a private `.env` containing `OPENAPI_INPUT`.
 
-To run this application:
+## Display configuration
 
-```bash
-npm install
-npm run dev
-```
+The CMS singleton `screen_config` selects the IANA timezone, automatic or manual mode, ordered languages, landscape/portrait layout, refresh interval, and clock visibility. The screen is always dark. Automatic mode starts in the first configured language, plays the entire playlist, then repeats in the remaining configured order; language changes only when the playlist wraps. That first language is also the translation fallback. Manual mode requires `manual_section`, which is shown even if disabled or outside its automatic visibility window, and cycles its items using the section's `duration_seconds`; `manual_language` remains fixed independently of the configured language order. A missing manual selection is shown as an explicit configuration error rather than falling back to automatic mode. Prayer interruptions pause either mode and resume its independent position afterward. Arabic content is right-to-left. No thumbnail proxy is exposed; thumbnails are omitted.
 
-# Building For Production
+`screen_sections` controls the playlist. Enabled sections whose optional `visible_from` and `visible_until` include the current instant are ordered by `sort`, then `id`. Each item in a section is shown alone for `duration_seconds`; `max_items` caps the number of items selected (ignored for prayer times, which is one item). The cycle duration is the sum of each section's item count multiplied by its duration. Counts, visibility, section settings, and content refresh while running. Localized `screen_summary` is used for news, events, and campaigns; long descriptions are never used as a fallback. Summaries allow paragraphs, line breaks, emphasis, and lists; HTML attributes and other tags are removed by the SSR-safe sanitizer before rendering. Missing summaries leave the summary area empty. Content errors and empty results have explicit visible states. The current playlist position and language pause for prayer countdowns and the Adhan-to-Iqama window, then resume. No external dashboard or legacy public remote-control endpoint is used.
 
-To build this application for production:
+Suggested seed definitions (the CMS files are unchanged):
 
-```bash
-npm run build
-```
+| type | content | sort | duration_seconds | max_items |
+| --- | --- | ---: | ---: | ---: |
+| `prayer_times` | Today's schedule and configured iqamas | 1 | 30 | ignored |
+| `news` | Published, within visibility window, newest first | 2 | 15 | 5 |
+| `events` | Upcoming published events, earliest first | 3 | 15 | 3 |
+| `campaign_progress` | Active campaigns; confirmed received and pending pledged, grouped by currency, with optional target | 4 | 15 | 2 |
 
-## Remote screen control
+The example cycle is 75 seconds only when each section has one item and all four sections are visible and uninterrupted. With five news items, three events, and two campaigns, it is 180 seconds per language. Content errors and empty sections are shown explicitly. Donations are aggregated on the server; individual donation records are not sent to screens. Prayer times and iqamas are read from the CMS; no schedules are synthesized. Existing prayer interruption timing uses the first configured iqama for each prayer/weekday; additional configured iqamas are displayed but do not trigger separate interruptions. Prayer-screen labels retain their existing multilingual layout rather than rotating with the content language.
+## Continuous integration
 
-The app reads the public Directus singleton at
-`https://api.iz-regensburg.de/cms/public/items/izr_screen_cfg` immediately and
-every **2 seconds**, including while the tab is in the background. Override the
-endpoint at build time with `VITE_SCREEN_CONFIG_URL` if needed. Directus must
-allow browser requests from the screen app's origin (CORS). Only this config
-should be publicly readable; writes must require authenticated admin access.
+GitHub Actions runs lint, typecheck, unit tests, and Trivy scans on every branch push and pull requests targeting `main`. CI uses Node.js 22. Dependency vulnerability findings are currently non-blocking, matching the website workflow; configuration findings block CI. The workflow does not build or publish Docker images and does not deploy the application.
 
-The singleton's `data` object has the following fields:
+## Display sizing
 
-| Field | Values |
-| --- | --- |
-| `id` | String ID |
-| `mode` | `automatic` or `manual` |
-| `manual_view` | `prayer_times`, `izr`, `ramadan`, or `dashboard` |
-| `dashboard_url` | Absolute HTTP(S) dashboard URL |
-| `dashboard_enabled` | Include dashboard visits in automatic mode |
-| `dashboard_interval_minutes` | Positive integer; interval between visit starts |
-| `dashboard_duration_seconds` | Positive integer; time on the dashboard |
-| `manual_expires_at` | Nullable timestamp; use a timezone/UTC for unambiguous expiry |
-| `date_updated` | Nullable Directus update timestamp |
-
-Automatic mode preserves the prayer-times, Iqama, no-phone, and branding flow.
-Dashboard visits start after the configured interval, only from the prayer-times
-page. They wait through the Adhan-to-Iqama window and when a visit would overlap
-the next prayer (plus a 60-second safety margin).
-
-Manual mode holds the selected view and suppresses timed route changes.
-An expired manual override resumes automatic mode locally without changing
-Directus. `dashboard_enabled` only affects automatic visits; manually selecting
-the dashboard always opens it.
-
-Dashboard navigation adds `fullscreen=true`, `callback=<screen app root URL>`,
-and `time=<dashboard_duration_seconds>`. The dashboard is responsible for
-redirecting back; it also handles its own German/Arabic/English cycling.
-Manual visits are shortened if necessary to return by `manual_expires_at`.
-After a manual dashboard visit, the app shows prayer times for **2 seconds**,
-then opens the dashboard again if the latest config still selects manual
-dashboard mode. Changing the view/mode or reaching the manual expiry cancels
-the pending visit. The same delay applies on initial load or refresh.
-
-**While the external dashboard is open, this app is unloaded and cannot poll
-Directus or interrupt the dashboard.** Config fetching resumes on return.
-The last valid config is retained (also across reloads in the same tab) if
-Directus fails, with a visible error indicator and continued polling. Without
-a previously loaded config, the app continues in automatic mode. Invalid
-responses are reported rather than replacing the last valid config.
+News, event, and campaign sections use viewport-height-aware sizing and compact charts. A ResizeObserver fits the complete section (including its header) only when needed, using layout-aware CSS zoom with stable line wrapping; no text is clipped or scrolled. Modern browsers with CSS zoom and ResizeObserver are required.
 
 ## Testing
 
