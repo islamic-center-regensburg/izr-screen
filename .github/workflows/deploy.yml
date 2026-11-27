@@ -1,0 +1,18 @@
+name: Deploy
+
+# Calls the shared deploy workflow of the superproject after a merge into dev or
+# main. The webhook URLs are organization secrets.
+on:
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    uses: islamic-center-regensburg/izr/.github/workflows/deploy.yml@main
+    with:
+      webhook_secret_dev: DEPLOY_WEBHOOK_SCREEN_DEV
+      webhook_secret_prod: DEPLOY_WEBHOOK_SCREEN_PROD
+    secrets: inherit
