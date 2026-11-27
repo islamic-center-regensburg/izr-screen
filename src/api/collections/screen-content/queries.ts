@@ -156,6 +156,7 @@ const fetchContent = createServerFn({ method: "GET" })
 					status: { _in: ["confirmed", "pending"] },
 				}),
 				fields: [
+					"id",
 					"campaign",
 					"amount",
 					"currency",
