@@ -219,6 +219,104 @@ export const readSingleItemsPrayerTimes = <
 /**
  * List Items
  *
+ * List the campaigns items.
+ */
+export const readItemsCampaigns = <ThrowOnError extends boolean = false>(
+  options?: Options<ReadItemsCampaignsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    ReadItemsCampaignsResponses,
+    ReadItemsCampaignsErrors,
+    ThrowOnError
+  >({
+    querySerializer: {
+      parameters: {
+        fields: { array: { explode: false } },
+        sort: { array: { explode: false } },
+      },
+    },
+    responseValidator: async (data) =>
+      await zReadItemsCampaignsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/campaigns",
+    ...options,
+  });
+
+/**
+ * Retrieve an Item
+ *
+ * Retrieve a single campaigns item by unique identifier.
+ */
+export const readSingleItemsCampaigns = <ThrowOnError extends boolean = false>(
+  options: Options<ReadSingleItemsCampaignsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    ReadSingleItemsCampaignsResponses,
+    ReadSingleItemsCampaignsErrors,
+    ThrowOnError
+  >({
+    querySerializer: { parameters: { fields: { array: { explode: false } } } },
+    responseValidator: async (data) =>
+      await zReadSingleItemsCampaignsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/campaigns/{id}",
+    ...options,
+  });
+
+/**
+ * List Items
+ *
+ * List the campaigns_translations items.
+ */
+export const readItemsCampaignsTranslations = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ReadItemsCampaignsTranslationsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    ReadItemsCampaignsTranslationsResponses,
+    ReadItemsCampaignsTranslationsErrors,
+    ThrowOnError
+  >({
+    querySerializer: {
+      parameters: {
+        fields: { array: { explode: false } },
+        sort: { array: { explode: false } },
+      },
+    },
+    responseValidator: async (data) =>
+      await zReadItemsCampaignsTranslationsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/campaigns_translations",
+    ...options,
+  });
+
+/**
+ * Retrieve an Item
+ *
+ * Retrieve a single campaigns_translations item by unique identifier.
+ */
+export const readSingleItemsCampaignsTranslations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ReadSingleItemsCampaignsTranslationsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    ReadSingleItemsCampaignsTranslationsResponses,
+    ReadSingleItemsCampaignsTranslationsErrors,
+    ThrowOnError
+  >({
+    querySerializer: { parameters: { fields: { array: { explode: false } } } },
+    responseValidator: async (data) =>
+      await zReadSingleItemsCampaignsTranslationsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/campaigns_translations/{id}",
+    ...options,
+  });
+
+/**
+ * List Items
+ *
  * List the languages items.
  */
 export const readItemsLanguages = <ThrowOnError extends boolean = false>(
@@ -360,100 +458,6 @@ export const readSingleItemsEvents = <ThrowOnError extends boolean = false>(
 /**
  * List Items
  *
- * List the news items.
- */
-export const readItemsNews = <ThrowOnError extends boolean = false>(
-  options?: Options<ReadItemsNewsData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    ReadItemsNewsResponses,
-    ReadItemsNewsErrors,
-    ThrowOnError
-  >({
-    querySerializer: {
-      parameters: {
-        fields: { array: { explode: false } },
-        sort: { array: { explode: false } },
-      },
-    },
-    responseValidator: async (data) =>
-      await zReadItemsNewsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/news",
-    ...options,
-  });
-
-/**
- * Retrieve an Item
- *
- * Retrieve a single news item by unique identifier.
- */
-export const readSingleItemsNews = <ThrowOnError extends boolean = false>(
-  options: Options<ReadSingleItemsNewsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    ReadSingleItemsNewsResponses,
-    ReadSingleItemsNewsErrors,
-    ThrowOnError
-  >({
-    querySerializer: { parameters: { fields: { array: { explode: false } } } },
-    responseValidator: async (data) =>
-      await zReadSingleItemsNewsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/news/{id}",
-    ...options,
-  });
-
-/**
- * List Items
- *
- * List the campaigns items.
- */
-export const readItemsCampaigns = <ThrowOnError extends boolean = false>(
-  options?: Options<ReadItemsCampaignsData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    ReadItemsCampaignsResponses,
-    ReadItemsCampaignsErrors,
-    ThrowOnError
-  >({
-    querySerializer: {
-      parameters: {
-        fields: { array: { explode: false } },
-        sort: { array: { explode: false } },
-      },
-    },
-    responseValidator: async (data) =>
-      await zReadItemsCampaignsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/campaigns",
-    ...options,
-  });
-
-/**
- * Retrieve an Item
- *
- * Retrieve a single campaigns item by unique identifier.
- */
-export const readSingleItemsCampaigns = <ThrowOnError extends boolean = false>(
-  options: Options<ReadSingleItemsCampaignsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    ReadSingleItemsCampaignsResponses,
-    ReadSingleItemsCampaignsErrors,
-    ThrowOnError
-  >({
-    querySerializer: { parameters: { fields: { array: { explode: false } } } },
-    responseValidator: async (data) =>
-      await zReadSingleItemsCampaignsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/campaigns/{id}",
-    ...options,
-  });
-
-/**
- * List Items
- *
  * List the events_translations items.
  */
 export const readItemsEventsTranslations = <
@@ -505,6 +509,53 @@ export const readSingleItemsEventsTranslations = <
 /**
  * List Items
  *
+ * List the news items.
+ */
+export const readItemsNews = <ThrowOnError extends boolean = false>(
+  options?: Options<ReadItemsNewsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    ReadItemsNewsResponses,
+    ReadItemsNewsErrors,
+    ThrowOnError
+  >({
+    querySerializer: {
+      parameters: {
+        fields: { array: { explode: false } },
+        sort: { array: { explode: false } },
+      },
+    },
+    responseValidator: async (data) =>
+      await zReadItemsNewsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/news",
+    ...options,
+  });
+
+/**
+ * Retrieve an Item
+ *
+ * Retrieve a single news item by unique identifier.
+ */
+export const readSingleItemsNews = <ThrowOnError extends boolean = false>(
+  options: Options<ReadSingleItemsNewsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    ReadSingleItemsNewsResponses,
+    ReadSingleItemsNewsErrors,
+    ThrowOnError
+  >({
+    querySerializer: { parameters: { fields: { array: { explode: false } } } },
+    responseValidator: async (data) =>
+      await zReadSingleItemsNewsResponse.parseAsync(data),
+    security: [{ name: "Authorization", type: "apiKey" }],
+    url: "/items/news/{id}",
+    ...options,
+  });
+
+/**
+ * List Items
+ *
  * List the news_translations items.
  */
 export const readItemsNewsTranslations = <ThrowOnError extends boolean = false>(
@@ -548,57 +599,6 @@ export const readSingleItemsNewsTranslations = <
       await zReadSingleItemsNewsTranslationsResponse.parseAsync(data),
     security: [{ name: "Authorization", type: "apiKey" }],
     url: "/items/news_translations/{id}",
-    ...options,
-  });
-
-/**
- * List Items
- *
- * List the campaigns_translations items.
- */
-export const readItemsCampaignsTranslations = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<ReadItemsCampaignsTranslationsData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    ReadItemsCampaignsTranslationsResponses,
-    ReadItemsCampaignsTranslationsErrors,
-    ThrowOnError
-  >({
-    querySerializer: {
-      parameters: {
-        fields: { array: { explode: false } },
-        sort: { array: { explode: false } },
-      },
-    },
-    responseValidator: async (data) =>
-      await zReadItemsCampaignsTranslationsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/campaigns_translations",
-    ...options,
-  });
-
-/**
- * Retrieve an Item
- *
- * Retrieve a single campaigns_translations item by unique identifier.
- */
-export const readSingleItemsCampaignsTranslations = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<ReadSingleItemsCampaignsTranslationsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    ReadSingleItemsCampaignsTranslationsResponses,
-    ReadSingleItemsCampaignsTranslationsErrors,
-    ThrowOnError
-  >({
-    querySerializer: { parameters: { fields: { array: { explode: false } } } },
-    responseValidator: async (data) =>
-      await zReadSingleItemsCampaignsTranslationsResponse.parseAsync(data),
-    security: [{ name: "Authorization", type: "apiKey" }],
-    url: "/items/campaigns_translations/{id}",
     ...options,
   });
 

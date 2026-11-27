@@ -5,25 +5,25 @@ export type ClientOptions = {
 };
 
 export type ItemsScreenConfig = {
-  id?: number;
+  id: string;
   /**
    * IANA timezone, for example Europe/Berlin. Set this to the mosque's timezone.
    */
   timezone?: string;
   languages?: Array<string>;
-  orientation?: string;
-  refresh_interval_seconds?: number;
-  show_clock?: boolean;
   mode?: string;
   /**
    * Section shown in manual mode, regardless of its automatic visibility settings.
    */
-  manual_section?: number | ItemsScreenSections | null;
+  manual_section?: string | ItemsScreenSections | null;
   manual_language?: string;
+  orientation?: string;
+  refresh_interval_seconds?: number;
+  show_clock?: boolean;
 };
 
 export type ItemsScreenSections = {
-  id?: number;
+  id: string;
   /**
    * Internal label, not translated display content.
    */
@@ -46,28 +46,28 @@ export type ItemsScreenSections = {
   max_items?: number;
 };
 
-export type ItemsCampaignsTranslations = {
-  id?: number;
-  campaigns_id: number | ItemsCampaigns;
+export type ItemsNewsTranslations = {
+  id: string;
+  news_id: string | ItemsNews;
   languages_code: string | ItemsLanguages;
-  name: string;
+  title: string;
   /**
    * URL path segment for this language; lowercase letters, digits, and hyphens only. Must be unique per language; not enforced by the schema.
    */
-  slug: string;
-  description?: string | null;
+  slug?: string | null;
+  body: string;
   /**
-   * Optional SEO page title; defaults to name when empty.
+   * Optional short, localized summary for mosque screens.
+   */
+  screen_summary?: string | null;
+  /**
+   * Optional SEO page title; defaults to title when empty.
    */
   meta_title?: string | null;
   /**
    * Optional SEO meta description.
    */
   meta_description?: string | null;
-  /**
-   * Optional short, localized summary for mosque screens.
-   */
-  screen_summary?: string | null;
 };
 
 export type ItemsLanguages = {
@@ -76,8 +76,106 @@ export type ItemsLanguages = {
   direction: string;
 };
 
+export type ItemsNews = {
+  id: string;
+  status?: string;
+  /**
+   * Optional start of visibility; empty means immediately when published.
+   */
+  published_at?: string | null;
+  /**
+   * Optional end of visibility; empty means no expiry.
+   */
+  expires_at?: string | null;
+  /**
+   * Optional thumbnail shown on the news card; falls back to the default background when empty.
+   */
+  thumbnail?: string | null;
+  translations?: Array<string | ItemsNewsTranslations> | null;
+};
+
+export type ItemsEventsTranslations = {
+  id: string;
+  events_id: string | ItemsEvents;
+  languages_code: string | ItemsLanguages;
+  title: string;
+  /**
+   * Required URL path segment for this language; lowercase letters, digits, and hyphens only. Must be unique per language; not enforced by the schema.
+   */
+  slug?: string | null;
+  description?: string | null;
+  /**
+   * Optional short, localized summary for mosque screens.
+   */
+  screen_summary?: string | null;
+  location?: string | null;
+  /**
+   * Optional SEO page title; defaults to title when empty.
+   */
+  meta_title?: string | null;
+  /**
+   * Optional SEO meta description.
+   */
+  meta_description?: string | null;
+};
+
+export type ItemsEvents = {
+  id: string;
+  starts_at: string;
+  /**
+   * Optional event end time.
+   */
+  ends_at?: string | null;
+  status?: string;
+  /**
+   * Optional thumbnail shown on the event card; falls back to the default background when empty.
+   */
+  thumbnail?: string | null;
+  translations?: Array<string | ItemsEventsTranslations> | null;
+};
+
+export type ItemsDonations = {
+  id: string;
+  /**
+   * Optional; leave empty for a general donation.
+   */
+  campaign?: string | ItemsCampaigns | null;
+  amount: string;
+  /**
+   * Uppercase ISO 4217 currency code; must match the linked campaign.
+   */
+  currency?: string;
+  donated_at: string;
+  method: string;
+  status?: string;
+};
+
+export type ItemsCampaignsTranslations = {
+  id: string;
+  campaigns_id: string | ItemsCampaigns;
+  languages_code: string | ItemsLanguages;
+  name: string;
+  /**
+   * URL path segment for this language; lowercase letters, digits, and hyphens only. Must be unique per language; not enforced by the schema.
+   */
+  slug: string;
+  description?: string | null;
+  /**
+   * Optional short, localized summary for mosque screens.
+   */
+  screen_summary?: string | null;
+  /**
+   * Optional SEO page title; defaults to name when empty.
+   */
+  meta_title?: string | null;
+  /**
+   * Optional SEO meta description.
+   */
+  meta_description?: string | null;
+};
+
 export type ItemsCampaigns = {
-  id?: number;
+  id: string;
   /**
    * Optional fundraising goal in the campaign's currency.
    */
@@ -92,323 +190,8 @@ export type ItemsCampaigns = {
   /**
    * Optional thumbnail shown on the campaign card; falls back to the default background when empty.
    */
-  thumbnail?: string | Files | null;
-  translations?: Array<number | ItemsCampaignsTranslations> | null;
-};
-
-export type Roles = {
-  /**
-   * Unique identifier for the role.
-   */
-  id?: string;
-  /**
-   * Name of the role.
-   */
-  name?: string;
-  /**
-   * The role's icon.
-   */
-  icon?: string;
-  /**
-   * Description of the role.
-   */
-  description?: string | null;
-  /**
-   * $t:field_options.directus_roles.parent_note
-   */
-  parent?: string | Roles | null;
-  /**
-   * $t:field_options.directus_roles.children_note
-   */
-  children?: Array<string | Roles> | null;
-  policies?: unknown;
-  users?: Array<string | Users> | null;
-};
-
-export type Users = {
-  /**
-   * Unique identifier for the user.
-   */
-  id?: string;
-  /**
-   * First name of the user.
-   */
-  first_name?: string;
-  /**
-   * Last name of the user.
-   */
-  last_name?: string;
-  /**
-   * Unique email address for the user.
-   */
-  email?: string;
-  /**
-   * Password of the user.
-   */
-  password?: string;
-  /**
-   * The user's location.
-   */
-  location?: string | null;
-  /**
-   * The user's title.
-   */
-  title?: string | null;
-  /**
-   * The user's description.
-   */
-  description?: string | null;
-  /**
-   * The user's tags.
-   */
-  tags?: Array<string> | null;
-  /**
-   * The user's avatar.
-   */
-  avatar?: string | Files | null;
-  /**
-   * The user's language used in Directus.
-   */
-  language?: string;
-  /**
-   * The 2FA secret string that's used to generate one time passwords.
-   */
-  tfa_secret?: string | null;
-  /**
-   * Status of the user.
-   */
-  status?: "active" | "invited" | "draft" | "suspended" | "deleted";
-  /**
-   * Unique identifier of the role of this user.
-   */
-  role?: string | Roles;
-  /**
-   * Static token for the user.
-   */
-  token?: string | null;
-  /**
-   * When this user used the API last.
-   */
-  last_access?: string | null;
-  /**
-   * Last page that the user was on.
-   */
-  last_page?: string | null;
-  provider?: string;
-  external_identifier?: string | null;
-  auth_data?: unknown;
-  email_notifications?: boolean | null;
-  appearance?: string | null;
-  theme_dark?: string | null;
-  theme_light?: string | null;
-  theme_light_overrides?: unknown;
-  theme_dark_overrides?: unknown;
-  text_direction?: string;
-  policies?: unknown;
-};
-
-export type Files = {
-  /**
-   * Unique identifier for the file.
-   */
-  id?: string;
-  /**
-   * Where the file is stored. Either `local` for the local filesystem or the name of the storage adapter (for example `s3`).
-   */
-  storage?: string;
-  /**
-   * Name of the file on disk. By default, Directus uses a random hash for the filename.
-   */
-  filename_disk?: string;
-  /**
-   * How you want to the file to be named when it's being downloaded.
-   */
-  filename_download?: string;
-  /**
-   * Title for the file. Is extracted from the filename on upload, but can be edited by the user.
-   */
-  title?: string;
-  /**
-   * MIME type of the file.
-   */
-  type?: string;
-  /**
-   * Virtual folder where this file resides in.
-   */
-  folder?: string | Folders | null;
-  /**
-   * Who uploaded the file.
-   */
-  uploaded_by?: string | Users;
-  /**
-   * When the file was created.
-   */
-  created_on?: string;
-  modified_by?: string | Users | null;
-  modified_on?: string;
-  /**
-   * Character set of the file.
-   */
-  charset?: string | null;
-  /**
-   * Size of the file in bytes.
-   */
-  filesize?: number;
-  /**
-   * Width of the file in pixels. Only applies to images.
-   */
-  width?: number | null;
-  /**
-   * Height of the file in pixels. Only applies to images.
-   */
-  height?: number | null;
-  /**
-   * Duration of the file in seconds. Only applies to audio and video.
-   */
-  duration?: number | null;
-  /**
-   * Where the file was embedded from.
-   */
-  embed?: string | null;
-  /**
-   * Description for the file.
-   */
-  description?: string | null;
-  /**
-   * Where the file was created. Is automatically populated based on Exif data for images.
-   */
-  location?: string | null;
-  /**
-   * Tags for the file. Is automatically populated based on Exif data for images.
-   */
-  tags?: Array<string> | null;
-  /**
-   * IPTC, Exif, and ICC metadata extracted from file
-   */
-  metadata?: {
-    [key: string]: unknown;
-  } | null;
-  focal_point_x?: number | null;
-  focal_point_y?: number | null;
-  tus_id?: string | null;
-  tus_data?: unknown;
-  /**
-   * When the file was last uploaded/replaced.
-   */
-  uploaded_on?: string;
-};
-
-export type Folders = {
-  /**
-   * Unique identifier for the folder.
-   */
-  id?: string;
-  /**
-   * Name of the folder.
-   */
-  name?: string;
-  /**
-   * Unique identifier of the parent folder. This allows for nested folders.
-   */
-  parent?: string | Folders | null;
-};
-
-export type ItemsNewsTranslations = {
-  id?: number;
-  news_id: number | ItemsNews;
-  languages_code: string | ItemsLanguages;
-  title: string;
-  /**
-   * URL path segment for this language; lowercase letters, digits, and hyphens only. Must be unique per language; not enforced by the schema.
-   */
-  slug: string;
-  body: string;
-  /**
-   * Optional SEO page title; defaults to title when empty.
-   */
-  meta_title?: string | null;
-  /**
-   * Optional SEO meta description.
-   */
-  meta_description?: string | null;
-  /**
-   * Optional short, localized summary for mosque screens.
-   */
-  screen_summary?: string | null;
-};
-
-export type ItemsNews = {
-  id?: number;
-  status?: string;
-  /**
-   * Optional start of visibility; empty means immediately when published.
-   */
-  published_at?: string | null;
-  /**
-   * Optional end of visibility; empty means no expiry.
-   */
-  expires_at?: string | null;
-  /**
-   * Optional thumbnail shown on the news card; falls back to the default background when empty.
-   */
-  thumbnail?: string | Files | null;
-  translations?: Array<number | ItemsNewsTranslations> | null;
-};
-
-export type ItemsEventsTranslations = {
-  id?: number;
-  events_id: number | ItemsEvents;
-  languages_code: string | ItemsLanguages;
-  title: string;
-  /**
-   * URL path segment for this language; lowercase letters, digits, and hyphens only. Must be unique per language; not enforced by the schema.
-   */
-  slug: string;
-  description?: string | null;
-  location?: string | null;
-  /**
-   * Optional SEO page title; defaults to title when empty.
-   */
-  meta_title?: string | null;
-  /**
-   * Optional SEO meta description.
-   */
-  meta_description?: string | null;
-  /**
-   * Optional short, localized summary for mosque screens.
-   */
-  screen_summary?: string | null;
-};
-
-export type ItemsEvents = {
-  id?: number;
-  starts_at: string;
-  /**
-   * Optional event end time.
-   */
-  ends_at?: string | null;
-  status?: string;
-  /**
-   * Optional thumbnail shown on the event card; falls back to the default background when empty.
-   */
-  thumbnail?: string | Files | null;
-  translations?: Array<number | ItemsEventsTranslations> | null;
-};
-
-export type ItemsDonations = {
-  id?: number;
-  /**
-   * Optional; leave empty for a general donation.
-   */
-  campaign?: number | ItemsCampaigns | null;
-  amount: string;
-  /**
-   * Uppercase ISO 4217 currency code; must match the linked campaign.
-   */
-  currency?: string;
-  donated_at: string;
-  method: string;
-  status?: string;
+  thumbnail?: string | null;
+  translations?: Array<string | ItemsCampaignsTranslations> | null;
 };
 
 export type ItemsPrayerTimes = {
@@ -416,7 +199,7 @@ export type ItemsPrayerTimes = {
   /**
    * Hijri calendar date for this entry, as YYYY-MM-DD (hijri year-month-day).
    */
-  hijri: string;
+  hijri?: string | null;
   fajr: string;
   sunrise: string;
   dhuhr: string;
@@ -430,7 +213,7 @@ export type ItemsPrayerTimes = {
 };
 
 export type ItemsIqamaTimes = {
-  id?: number;
+  id: string;
   prayer: string;
   weekday: string;
   type: string;
@@ -750,6 +533,260 @@ export type ReadSingleItemsPrayerTimesResponses = {
 
 export type ReadSingleItemsPrayerTimesResponse =
   ReadSingleItemsPrayerTimesResponses[keyof ReadSingleItemsPrayerTimesResponses];
+
+export type ReadItemsCampaignsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * A limit on the number of objects that are returned.
+     */
+    limit?: number;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * How many items to skip when fetching data.
+     */
+    offset?: number;
+    /**
+     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
+     *
+     */
+    sort?: Array<string>;
+    /**
+     * Select items in collection by given conditions.
+     */
+    filter?: string;
+    /**
+     * Filter by items that contain the given search query in one of their fields.
+     */
+    search?: string;
+  };
+  url: "/items/campaigns";
+};
+
+export type ReadItemsCampaignsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadItemsCampaignsError =
+  ReadItemsCampaignsErrors[keyof ReadItemsCampaignsErrors];
+
+export type ReadItemsCampaignsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: Array<ItemsCampaigns>;
+    meta?: XMetadata;
+  };
+};
+
+export type ReadItemsCampaignsResponse =
+  ReadItemsCampaignsResponses[keyof ReadItemsCampaignsResponses];
+
+export type ReadSingleItemsCampaignsData = {
+  body?: never;
+  path: {
+    /**
+     * Index of the item.
+     */
+    id: number | string;
+  };
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
+     *
+     */
+    version?: string;
+  };
+  url: "/items/campaigns/{id}";
+};
+
+export type ReadSingleItemsCampaignsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+  /**
+   * Error: Not found.
+   */
+  404: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadSingleItemsCampaignsError =
+  ReadSingleItemsCampaignsErrors[keyof ReadSingleItemsCampaignsErrors];
+
+export type ReadSingleItemsCampaignsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: ItemsCampaigns;
+  };
+};
+
+export type ReadSingleItemsCampaignsResponse =
+  ReadSingleItemsCampaignsResponses[keyof ReadSingleItemsCampaignsResponses];
+
+export type ReadItemsCampaignsTranslationsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * A limit on the number of objects that are returned.
+     */
+    limit?: number;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * How many items to skip when fetching data.
+     */
+    offset?: number;
+    /**
+     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
+     *
+     */
+    sort?: Array<string>;
+    /**
+     * Select items in collection by given conditions.
+     */
+    filter?: string;
+    /**
+     * Filter by items that contain the given search query in one of their fields.
+     */
+    search?: string;
+  };
+  url: "/items/campaigns_translations";
+};
+
+export type ReadItemsCampaignsTranslationsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadItemsCampaignsTranslationsError =
+  ReadItemsCampaignsTranslationsErrors[keyof ReadItemsCampaignsTranslationsErrors];
+
+export type ReadItemsCampaignsTranslationsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: Array<ItemsCampaignsTranslations>;
+    meta?: XMetadata;
+  };
+};
+
+export type ReadItemsCampaignsTranslationsResponse =
+  ReadItemsCampaignsTranslationsResponses[keyof ReadItemsCampaignsTranslationsResponses];
+
+export type ReadSingleItemsCampaignsTranslationsData = {
+  body?: never;
+  path: {
+    /**
+     * Index of the item.
+     */
+    id: number | string;
+  };
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
+     *
+     */
+    version?: string;
+  };
+  url: "/items/campaigns_translations/{id}";
+};
+
+export type ReadSingleItemsCampaignsTranslationsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+  /**
+   * Error: Not found.
+   */
+  404: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadSingleItemsCampaignsTranslationsError =
+  ReadSingleItemsCampaignsTranslationsErrors[keyof ReadSingleItemsCampaignsTranslationsErrors];
+
+export type ReadSingleItemsCampaignsTranslationsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: ItemsCampaignsTranslations;
+  };
+};
+
+export type ReadSingleItemsCampaignsTranslationsResponse =
+  ReadSingleItemsCampaignsTranslationsResponses[keyof ReadSingleItemsCampaignsTranslationsResponses];
 
 export type ReadItemsLanguagesData = {
   body?: never;
@@ -1132,259 +1169,6 @@ export type ReadSingleItemsEventsResponses = {
 export type ReadSingleItemsEventsResponse =
   ReadSingleItemsEventsResponses[keyof ReadSingleItemsEventsResponses];
 
-export type ReadItemsNewsData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * A limit on the number of objects that are returned.
-     */
-    limit?: number;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * How many items to skip when fetching data.
-     */
-    offset?: number;
-    /**
-     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
-     *
-     */
-    sort?: Array<string>;
-    /**
-     * Select items in collection by given conditions.
-     */
-    filter?: string;
-    /**
-     * Filter by items that contain the given search query in one of their fields.
-     */
-    search?: string;
-  };
-  url: "/items/news";
-};
-
-export type ReadItemsNewsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadItemsNewsError = ReadItemsNewsErrors[keyof ReadItemsNewsErrors];
-
-export type ReadItemsNewsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: Array<ItemsNews>;
-    meta?: XMetadata;
-  };
-};
-
-export type ReadItemsNewsResponse =
-  ReadItemsNewsResponses[keyof ReadItemsNewsResponses];
-
-export type ReadSingleItemsNewsData = {
-  body?: never;
-  path: {
-    /**
-     * Index of the item.
-     */
-    id: number | string;
-  };
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
-     *
-     */
-    version?: string;
-  };
-  url: "/items/news/{id}";
-};
-
-export type ReadSingleItemsNewsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-  /**
-   * Error: Not found.
-   */
-  404: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadSingleItemsNewsError =
-  ReadSingleItemsNewsErrors[keyof ReadSingleItemsNewsErrors];
-
-export type ReadSingleItemsNewsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: ItemsNews;
-  };
-};
-
-export type ReadSingleItemsNewsResponse =
-  ReadSingleItemsNewsResponses[keyof ReadSingleItemsNewsResponses];
-
-export type ReadItemsCampaignsData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * A limit on the number of objects that are returned.
-     */
-    limit?: number;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * How many items to skip when fetching data.
-     */
-    offset?: number;
-    /**
-     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
-     *
-     */
-    sort?: Array<string>;
-    /**
-     * Select items in collection by given conditions.
-     */
-    filter?: string;
-    /**
-     * Filter by items that contain the given search query in one of their fields.
-     */
-    search?: string;
-  };
-  url: "/items/campaigns";
-};
-
-export type ReadItemsCampaignsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadItemsCampaignsError =
-  ReadItemsCampaignsErrors[keyof ReadItemsCampaignsErrors];
-
-export type ReadItemsCampaignsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: Array<ItemsCampaigns>;
-    meta?: XMetadata;
-  };
-};
-
-export type ReadItemsCampaignsResponse =
-  ReadItemsCampaignsResponses[keyof ReadItemsCampaignsResponses];
-
-export type ReadSingleItemsCampaignsData = {
-  body?: never;
-  path: {
-    /**
-     * Index of the item.
-     */
-    id: number | string;
-  };
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
-     *
-     */
-    version?: string;
-  };
-  url: "/items/campaigns/{id}";
-};
-
-export type ReadSingleItemsCampaignsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-  /**
-   * Error: Not found.
-   */
-  404: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadSingleItemsCampaignsError =
-  ReadSingleItemsCampaignsErrors[keyof ReadSingleItemsCampaignsErrors];
-
-export type ReadSingleItemsCampaignsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: ItemsCampaigns;
-  };
-};
-
-export type ReadSingleItemsCampaignsResponse =
-  ReadSingleItemsCampaignsResponses[keyof ReadSingleItemsCampaignsResponses];
-
 export type ReadItemsEventsTranslationsData = {
   body?: never;
   path?: never;
@@ -1512,6 +1296,132 @@ export type ReadSingleItemsEventsTranslationsResponses = {
 export type ReadSingleItemsEventsTranslationsResponse =
   ReadSingleItemsEventsTranslationsResponses[keyof ReadSingleItemsEventsTranslationsResponses];
 
+export type ReadItemsNewsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * A limit on the number of objects that are returned.
+     */
+    limit?: number;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * How many items to skip when fetching data.
+     */
+    offset?: number;
+    /**
+     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
+     *
+     */
+    sort?: Array<string>;
+    /**
+     * Select items in collection by given conditions.
+     */
+    filter?: string;
+    /**
+     * Filter by items that contain the given search query in one of their fields.
+     */
+    search?: string;
+  };
+  url: "/items/news";
+};
+
+export type ReadItemsNewsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadItemsNewsError = ReadItemsNewsErrors[keyof ReadItemsNewsErrors];
+
+export type ReadItemsNewsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: Array<ItemsNews>;
+    meta?: XMetadata;
+  };
+};
+
+export type ReadItemsNewsResponse =
+  ReadItemsNewsResponses[keyof ReadItemsNewsResponses];
+
+export type ReadSingleItemsNewsData = {
+  body?: never;
+  path: {
+    /**
+     * Index of the item.
+     */
+    id: number | string;
+  };
+  query?: {
+    /**
+     * Control what fields are being returned in the object.
+     */
+    fields?: Array<string>;
+    /**
+     * What metadata to return in the response.
+     */
+    meta?: string;
+    /**
+     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
+     *
+     */
+    version?: string;
+  };
+  url: "/items/news/{id}";
+};
+
+export type ReadSingleItemsNewsErrors = {
+  /**
+   * Error: Unauthorized request
+   */
+  401: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+  /**
+   * Error: Not found.
+   */
+  404: {
+    error?: {
+      code?: number;
+      message?: string;
+    };
+  };
+};
+
+export type ReadSingleItemsNewsError =
+  ReadSingleItemsNewsErrors[keyof ReadSingleItemsNewsErrors];
+
+export type ReadSingleItemsNewsResponses = {
+  /**
+   * Successful request
+   */
+  200: {
+    data?: ItemsNews;
+  };
+};
+
+export type ReadSingleItemsNewsResponse =
+  ReadSingleItemsNewsResponses[keyof ReadSingleItemsNewsResponses];
+
 export type ReadItemsNewsTranslationsData = {
   body?: never;
   path?: never;
@@ -1638,133 +1548,6 @@ export type ReadSingleItemsNewsTranslationsResponses = {
 
 export type ReadSingleItemsNewsTranslationsResponse =
   ReadSingleItemsNewsTranslationsResponses[keyof ReadSingleItemsNewsTranslationsResponses];
-
-export type ReadItemsCampaignsTranslationsData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * A limit on the number of objects that are returned.
-     */
-    limit?: number;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * How many items to skip when fetching data.
-     */
-    offset?: number;
-    /**
-     * How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
-     *
-     */
-    sort?: Array<string>;
-    /**
-     * Select items in collection by given conditions.
-     */
-    filter?: string;
-    /**
-     * Filter by items that contain the given search query in one of their fields.
-     */
-    search?: string;
-  };
-  url: "/items/campaigns_translations";
-};
-
-export type ReadItemsCampaignsTranslationsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadItemsCampaignsTranslationsError =
-  ReadItemsCampaignsTranslationsErrors[keyof ReadItemsCampaignsTranslationsErrors];
-
-export type ReadItemsCampaignsTranslationsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: Array<ItemsCampaignsTranslations>;
-    meta?: XMetadata;
-  };
-};
-
-export type ReadItemsCampaignsTranslationsResponse =
-  ReadItemsCampaignsTranslationsResponses[keyof ReadItemsCampaignsTranslationsResponses];
-
-export type ReadSingleItemsCampaignsTranslationsData = {
-  body?: never;
-  path: {
-    /**
-     * Index of the item.
-     */
-    id: number | string;
-  };
-  query?: {
-    /**
-     * Control what fields are being returned in the object.
-     */
-    fields?: Array<string>;
-    /**
-     * What metadata to return in the response.
-     */
-    meta?: string;
-    /**
-     * Retrieve an item's state from a specific Content Version. The value corresponds to the "key" of the Content Version.
-     *
-     */
-    version?: string;
-  };
-  url: "/items/campaigns_translations/{id}";
-};
-
-export type ReadSingleItemsCampaignsTranslationsErrors = {
-  /**
-   * Error: Unauthorized request
-   */
-  401: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-  /**
-   * Error: Not found.
-   */
-  404: {
-    error?: {
-      code?: number;
-      message?: string;
-    };
-  };
-};
-
-export type ReadSingleItemsCampaignsTranslationsError =
-  ReadSingleItemsCampaignsTranslationsErrors[keyof ReadSingleItemsCampaignsTranslationsErrors];
-
-export type ReadSingleItemsCampaignsTranslationsResponses = {
-  /**
-   * Successful request
-   */
-  200: {
-    data?: ItemsCampaignsTranslations;
-  };
-};
-
-export type ReadSingleItemsCampaignsTranslationsResponse =
-  ReadSingleItemsCampaignsTranslationsResponses[keyof ReadSingleItemsCampaignsTranslationsResponses];
 
 export type ReadItemsScreenSectionsData = {
   body?: never;

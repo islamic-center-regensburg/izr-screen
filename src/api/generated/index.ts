@@ -30,9 +30,7 @@ export {
 export type {
   ClientOptions,
   Fields,
-  Files,
   Filter,
-  Folders,
   ItemsCampaigns,
   ItemsCampaignsTranslations,
   ItemsDonations,
@@ -168,10 +166,8 @@ export type {
   ReadSingleItemsScreenSectionsErrors,
   ReadSingleItemsScreenSectionsResponse,
   ReadSingleItemsScreenSectionsResponses,
-  Roles,
   Search,
   Sort,
-  Users,
   Version,
   XMetadata,
 } from "./types.gen";
