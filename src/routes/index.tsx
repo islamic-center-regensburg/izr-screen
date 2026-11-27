@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
 					maghrib: row.maghrib,
 					isha: row.isha,
 					gregorian_date: row.date,
-					hijri_date: row.hijri,
+					hijri_date: row.hijri ?? "",
 				},
 				tomorrowPrayerTimes: tomorrow
 					? {
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/")({
 							maghrib: tomorrow.maghrib,
 							isha: tomorrow.isha,
 							gregorian_date: tomorrow.date,
-							hijri_date: tomorrow.hijri,
+							hijri_date: tomorrow.hijri ?? "",
 						}
 					: null,
 				settings,

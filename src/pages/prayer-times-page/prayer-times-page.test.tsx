@@ -98,7 +98,7 @@ it("interrupts the playlist only when tomorrow's Fajr is within five minutes", (
 	});
 	client.setQueryData(
 		["cms-screen-sections"],
-		[{ id: 1, type: "news", enabled: true, sort: 1, duration_seconds: 30 }],
+		[{ id: "1", type: "news", enabled: true, sort: 1, duration_seconds: 30 }],
 	);
 	state.settings = { ...state.settings, timezone: "UTC" };
 	state.prayerTimes = {
@@ -136,7 +136,7 @@ it("keeps the selected section and language fixed in manual mode, cycles items, 
 		["cms-screen-sections"],
 		[
 			{
-				id: 1,
+				id: "1",
 				type: "news",
 				enabled: true,
 				sort: 1,
@@ -144,7 +144,7 @@ it("keeps the selected section and language fixed in manual mode, cycles items, 
 				max_items: 1,
 			},
 			{
-				id: 2,
+				id: "2",
 				type: "events",
 				enabled: false,
 				sort: 2,
@@ -162,7 +162,7 @@ it("keeps the selected section and language fixed in manual mode, cycles items, 
 	});
 	state.settings = {
 		mode: "manual",
-		manual_section: 2,
+		manual_section: "2",
 		manual_language: "ar",
 		timezone: "Europe/Berlin",
 		refresh_interval_seconds: 3600,
@@ -202,7 +202,7 @@ it("pauses manual item timing for prayer interruption and reports a deleted sele
 		["cms-screen-sections"],
 		[
 			{
-				id: 2,
+				id: "2",
 				type: "events",
 				enabled: false,
 				sort: 2,
@@ -216,7 +216,7 @@ it("pauses manual item timing for prayer interruption and reports a deleted sele
 	});
 	state.settings = {
 		mode: "manual",
-		manual_section: 2,
+		manual_section: "2",
 		manual_language: "en",
 		timezone: "Europe/Berlin",
 		refresh_interval_seconds: 3600,
@@ -260,7 +260,7 @@ it("pauses manual item timing for prayer interruption and reports a deleted sele
 	expect(screen.getByTestId("playlist-item").textContent).toBe("events:0");
 	act(() => vi.advanceTimersByTime(1000));
 	expect(screen.getByTestId("playlist-item").textContent).toBe("events:1");
-	state.settings = { ...state.settings, manual_section: 99 };
+	state.settings = { ...state.settings, manual_section: "99" };
 	client.setQueryData(["cms-screen-settings"], state.settings);
 	view.rerender(
 		<QueryClientProvider client={client}>
@@ -280,7 +280,7 @@ it("cycles through each content item for its configured duration before switchin
 		["cms-screen-sections"],
 		[
 			{
-				id: 1,
+				id: "1",
 				type: "news",
 				enabled: true,
 				sort: 1,
@@ -288,7 +288,7 @@ it("cycles through each content item for its configured duration before switchin
 				max_items: 2,
 			},
 			{
-				id: 2,
+				id: "2",
 				type: "events",
 				enabled: true,
 				sort: 2,
@@ -296,7 +296,7 @@ it("cycles through each content item for its configured duration before switchin
 				max_items: 1,
 			},
 			{
-				id: 3,
+				id: "3",
 				type: "campaign_progress",
 				enabled: true,
 				sort: 3,
@@ -347,7 +347,7 @@ it("gives every news item fifteen seconds in each playlist language", () => {
 		["cms-screen-sections"],
 		[
 			{
-				id: 1,
+				id: "1",
 				type: "news",
 				enabled: true,
 				sort: 1,

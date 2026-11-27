@@ -33,7 +33,7 @@ function Playlist({
 	settings,
 }: {
 	prayerTimes: PrayerTimesOut | null;
-	settings: ItemsScreenConfig;
+	settings: Partial<ItemsScreenConfig>;
 }) {
 	const refresh = Math.max(1, settings.refresh_interval_seconds ?? 60);
 	const sectionsQuery = useQuery({
@@ -47,7 +47,7 @@ function Playlist({
 				sessionStorage.getItem("izr:playlist") || "null",
 			);
 			return saved &&
-				typeof saved.id === "number" &&
+				typeof saved.id === "string" &&
 				typeof saved.remaining === "number"
 				? {
 						id: saved.id,
@@ -64,12 +64,12 @@ function Playlist({
 		}
 	});
 	const [manualPosition, setManualPosition] = useState({
-		sectionId: null as number | null,
+		sectionId: null as string | null,
 		itemIndex: 0,
 		remaining: 0,
 	});
 	const durationRef = useRef<{
-		id: number | undefined;
+		id: string | undefined;
 		duration: number;
 	} | null>(null);
 	const { nextPrayerName, nextPrayerTime, nextPrayerIsTomorrow } =
@@ -82,11 +82,11 @@ function Playlist({
 	const sections = visibleSections(allSections, now);
 	const selectedSection = (
 		settings as ItemsScreenConfig & {
-			manual_section?: number | { id?: number } | null;
+			manual_section?: string | { id?: string } | null;
 		}
 	).manual_section;
 	const selectedSectionId =
-		typeof selectedSection === "number"
+		typeof selectedSection === "string"
 			? selectedSection
 			: (selectedSection?.id ?? null);
 	const manualSection =
@@ -106,7 +106,7 @@ function Playlist({
 				refetchInterval: refresh * 1000,
 			})),
 	});
-	const counts: Partial<Record<number, number>> = {};
+	const counts: Partial<Record<string, number>> = {};
 	targetSections
 		.filter((s) => s.type !== "prayer_times")
 		.forEach((section, index) => {
@@ -117,7 +117,7 @@ function Playlist({
 	const countsBySection = itemCounts(targetSections, counts);
 	const autoCurrent = sections.find((s) => s.id === position.id) ?? sections[0];
 	const current = mode === "manual" ? manualSection : autoCurrent;
-	const manualItemCount = countsBySection[manualSection?.id ?? 0] ?? 1;
+	const manualItemCount = countsBySection[manualSection?.id ?? ""] ?? 1;
 	const itemIndex =
 		mode === "manual"
 			? manualPosition.sectionId === manualSection?.id
@@ -128,7 +128,7 @@ function Playlist({
 						0,
 						Math.min(
 							position.itemIndex,
-							(countsBySection[autoCurrent.id ?? 0] ?? 1) - 1,
+							(countsBySection[autoCurrent.id ?? ""] ?? 1) - 1,
 						),
 					)
 				: 0;
@@ -243,7 +243,7 @@ function Playlist({
 			return;
 		if (manualPosition.sectionId !== manualSection.id) return;
 		const duration = Math.max(1, manualSection.duration_seconds ?? 15);
-		const itemCount = countsBySection[manualSection.id ?? 0] ?? 1;
+		const itemCount = countsBySection[manualSection.id ?? ""] ?? 1;
 		const timer = setTimeout(
 			() =>
 				setManualPosition((previous) => {
@@ -275,7 +275,7 @@ function Playlist({
 		interrupt,
 		sectionsQuery.isPending,
 		sectionsQuery.isError,
-		countsBySection[manualSection?.id ?? 0],
+		countsBySection[manualSection?.id ?? ""],
 	]);
 	const languages = settings.languages?.length ? settings.languages : ["de"];
 	const fallback = languages[0] || "de";

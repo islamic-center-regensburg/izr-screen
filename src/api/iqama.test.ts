@@ -5,6 +5,7 @@ describe("CMS iqama selection", () => {
 	it("selects by weekday and maps Friday prayer without using inactive fields", () => {
 		const rows = [
 			{
+				id: "iqama-friday",
 				prayer: "jumuah",
 				weekday: "friday",
 				type: "offset",
@@ -12,6 +13,7 @@ describe("CMS iqama selection", () => {
 				fixed_time: "13:00",
 			},
 			{
+				id: "iqama-saturday",
 				prayer: "jumuah",
 				weekday: "saturday",
 				type: "fixed",

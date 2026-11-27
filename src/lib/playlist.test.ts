@@ -7,7 +7,7 @@ const section = (
 	sort: number,
 	extra: Partial<ItemsScreenSections> = {},
 ): ItemsScreenSections => ({
-	id,
+	id: String(id),
 	sort,
 	name: String(id),
 	type: "news",
@@ -26,7 +26,7 @@ describe("screen sections", () => {
 				],
 				1000,
 			).map((s) => s.id),
-		).toEqual([2, 3]);
+		).toEqual(["2", "3"]);
 	});
 	it("includes visibility boundaries and excludes out-of-window or invalid timestamps", () => {
 		const at = "2026-01-01T00:00:00Z";
@@ -41,7 +41,7 @@ describe("screen sections", () => {
 				],
 				now,
 			).map((s) => s.id),
-		).toEqual([1]);
+		).toEqual(["1"]);
 	});
 });
 
@@ -60,7 +60,7 @@ it("derives and advances the entire cycle from current durations and visibility"
 	const active = visibleSections(rows, Date.parse(boundary) - 1);
 	const counts = { 2: 5 };
 	expect(playlistDuration(active, counts)).toBe(9);
-	let state = { id: 1 as number | null, itemIndex: 0, remaining: 3 };
+	let state = { id: "1" as string | null, itemIndex: 0, remaining: 3 };
 	const visited = [];
 	for (let i = 0; i < playlistDuration(active, counts); i++) {
 		visited.push(`${state.id}:${state.itemIndex}`);
@@ -77,7 +77,7 @@ it("derives and advances the entire cycle from current durations and visibility"
 		"2:2",
 		"2:2",
 	]);
-	expect(state).toEqual({ id: 1, itemIndex: 0, remaining: 3, cycle: 1 });
+	expect(state).toEqual({ id: "1", itemIndex: 0, remaining: 3, cycle: 1 });
 	expect(playlistDuration(active, { 2: 1 })).toBe(5);
 	expect(
 		playlistDuration(visibleSections(rows, Date.parse(boundary) + 1), counts),
@@ -94,18 +94,18 @@ it("advances one-second items instead of restarting them", () => {
 		section(1, 1, { duration_seconds: 1 }),
 		section(2, 2, { duration_seconds: 1 }),
 	];
-	let state = { id: null as number | null, itemIndex: 0, remaining: 0 };
+	let state = { id: null as string | null, itemIndex: 0, remaining: 0 };
 	state = advancePlaylist(rows, state, { 1: 2, 2: 1 });
-	expect(state).toEqual({ id: 1, itemIndex: 0, remaining: 0 });
+	expect(state).toEqual({ id: "1", itemIndex: 0, remaining: 0 });
 	state = advancePlaylist(rows, state, { 1: 2, 2: 1 });
-	expect(state).toEqual({ id: 1, itemIndex: 1, remaining: 1 });
+	expect(state).toEqual({ id: "1", itemIndex: 1, remaining: 1 });
 	state = advancePlaylist(rows, state, { 1: 2, 2: 1 });
-	expect(state).toEqual({ id: 2, itemIndex: 0, remaining: 1, cycle: 0 });
+	expect(state).toEqual({ id: "2", itemIndex: 0, remaining: 1, cycle: 0 });
 });
 
 it("starts at the first item when the active section disappears", () => {
 	const rows = [section(2, 1, { duration_seconds: 3 })];
 	expect(
-		advancePlaylist(rows, { id: 1, itemIndex: 2, remaining: 5 }, { 2: 4 }),
-	).toEqual({ id: 2, itemIndex: 0, remaining: 2 });
+		advancePlaylist(rows, { id: "1", itemIndex: 2, remaining: 5 }, { 2: 4 }),
+	).toEqual({ id: "2", itemIndex: 0, remaining: 2 });
 });
